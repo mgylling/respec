@@ -27,7 +27,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       "js/deps/jquery.js",
-      "js/deps/fetch.js",
       {
         pattern: "builds/**/*.*",
         included: false,
@@ -79,6 +78,7 @@ module.exports = function(config) {
       "/js/deps/": "/base/js/deps/",
       "/base/deps/": "/base/js/deps/",
       "/base/deps/marked.js": "/base/js/deps/marked.js",
+      "/worker/respec-worker.js": "/base/worker/respec-worker.js",
     },
 
     // preprocess matching files before serving them to the browser
@@ -115,15 +115,14 @@ module.exports = function(config) {
     concurrency: 1,
 
     browserNoActivityTimeout: 100000,
-
   };
   if (process.env.TRAVIS) {
-    options.detectBrowsers.enabled = true;
+    options.detectBrowsers.enabled = false;
     options.autoWatch = false;
     options.singleRun = true;
     options.concurrency = 2;
     options.reporters = ["mocha"];
-    //options.browsers = ["FirefoxNightly"]; //"FirefoxNightly"
+    options.browsers = ["Firefox", "Chrome"]; //"FirefoxNightly"
   }
   config.set(options);
 };

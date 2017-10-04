@@ -30,7 +30,8 @@ var specStatus = [
   },
   {
     status: "FAKE-TEST-TYPE",
-    expectedURL: "https://www.w3.org/StyleSheets/TR/{version}W3C-FAKE-TEST-TYPE",
+    expectedURL:
+      "https://www.w3.org/StyleSheets/TR/{version}W3C-FAKE-TEST-TYPE",
   },
   {
     status: "CG-FINAL",
@@ -86,10 +87,7 @@ function loadWithStatus(status, expectedURL, mode) {
 }
 
 describe("W3C - Style", function() {
-  afterEach(function(done) {
-    flushIframes();
-    done();
-  });
+  afterAll(flushIframes);
 
   it("should include 'fixup.js'", function(done) {
     var ops = makeStandardOps();

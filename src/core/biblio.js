@@ -5,7 +5,6 @@
 
 /*jshint jquery: true*/
 /*globals console*/
-import "deps/regenerator";
 import { biblioDB } from "core/biblio-db";
 import { createResourceHint } from "core/utils";
 import { pub } from "core/pubsubhub";
@@ -19,10 +18,7 @@ const bibrefsURL = new URL("https://specref.herokuapp.com/bibrefs?refs=");
 function normalizeReferences(conf) {
   Array.from(conf.informativeReferences)
     .filter(key => conf.normativeReferences.has(key))
-    .reduce((informs, redundantKey) => {
-      informs.delete(redundantKey);
-      return informs;
-    }, conf.informativeReferences);
+    .forEach(redundantKey => conf.informativeReferences.delete(redundantKey));
 }
 
 function getRefKeys(conf) {
@@ -58,9 +54,8 @@ const defaultsReference = Object.freeze({
 const endNormalizer = function(endStr) {
   return str => {
     const trimmed = str.trim();
-    const result = !trimmed || trimmed.endsWith(endStr)
-      ? trimmed
-      : trimmed + endStr;
+    const result =
+      !trimmed || trimmed.endsWith(endStr) ? trimmed : trimmed + endStr;
     return result;
   };
 };
@@ -69,7 +64,7 @@ const endWithDot = endNormalizer(".");
 
 export function wireReference(rawRef, target = "_blank") {
   if (typeof rawRef !== "object") {
-    throw new TypeError("Only modern object refereces are allowed");
+    throw new TypeError("Only modern object references are allowed");
   }
   const ref = Object.assign({}, defaultsReference, rawRef);
   const authors = ref.authors.join("; ") + (ref.etAl ? " et al" : "");
@@ -138,9 +133,10 @@ function bibref(conf) {
   for (var i = 0; i < types.length; i++) {
     var type = types[i];
     var refs = type === "Normative" ? norms : informs;
-    var l10nRefs = type === "Normative"
-      ? conf.l10n.norm_references
-      : conf.l10n.info_references;
+    var l10nRefs =
+      type === "Normative"
+        ? conf.l10n.norm_references
+        : conf.l10n.info_references;
     if (!refs.length) continue;
     var $sec = $("<section><h3></h3></section>")
       .appendTo($refsec)
@@ -217,16 +213,26 @@ export const done = new Promise(resolve => {
 });
 
 async function updateFromNetwork(refs, options = { forceUpdate: false }) {
-  // Update database if needed
-  if (!refs.length) {
+  // Update database if needed, if we are online
+  if (!refs.length || navigator.onLine === false) {
     return;
   }
-  const response = await fetch(bibrefsURL.href + refs.join(","));
+  let response;
+  try {
+    response = await fetch(bibrefsURL.href + refs.join(","));
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
   if ((!options.forceUpdate && !response.ok) || response.status !== 200) {
     return null;
   }
   const data = await response.json();
-  await biblioDB.addAll(data);
+  try {
+    await biblioDB.addAll(data);
+  } catch (err) {
+    console.error(err);
+  }
   return data;
 }
 
@@ -275,23 +281,27 @@ export async function run(conf, doc, cb) {
       return collector;
     }, [])
     .sort();
+  const idbRefs = [];
+
   // See if we have them in IDB
-  const promisesToFind = neededRefs.map(async id => ({
-    id,
-    data: await biblioDB.find(id),
-  }));
-  const idbRefs = await Promise.all(promisesToFind);
-  const split = idbRefs.reduce(
-    (collector, ref) => {
-      if (ref.data) {
-        collector.hasData.push(ref);
-      } else {
-        collector.noData.push(ref);
-      }
-      return collector;
-    },
-    { hasData: [], noData: [] }
-  );
+  try {
+    await biblioDB.ready; // can throw
+    const promisesToFind = neededRefs.map(async id => ({
+      id,
+      data: await biblioDB.find(id),
+    }));
+    idbRefs.push(...(await Promise.all(promisesToFind)));
+  } catch (err) {
+    // IndexedDB died, so we need to go to the network for all
+    // references
+    idbRefs.push(...neededRefs.map(id => ({ id, data: null })));
+    console.warn(err);
+  }
+  const split = { hasData: [], noData: [] };
+  idbRefs.reduce((collector, ref) => {
+    ref.data ? collector.hasData.push(ref) : collector.noData.push(ref);
+    return collector;
+  }, split);
   split.hasData.reduce((collector, ref) => {
     collector[ref.id] = ref.data;
     return collector;

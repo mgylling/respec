@@ -1,9 +1,6 @@
 "use strict";
 describe("W3C — Permalinks", function() {
-  afterAll(function(done) {
-    flushIframes();
-    done();
-  });
+  afterAll(flushIframes);
 
   function makeCustomConfig() {
     return {
@@ -34,8 +31,9 @@ describe("W3C — Permalinks", function() {
   ) {
     var ops = {
       config: makeCustomConfig(),
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<section id='testing'><h2>a heading</h2><p>some content</p></section>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<section id='testing'><h2>a heading</h2><p>some content</p></section>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#sotd", doc);
@@ -52,8 +50,9 @@ describe("W3C — Permalinks", function() {
   ) {
     var ops = {
       config: makeCustomConfig(),
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<div id='testing'><h2>a heading</h2><p>some content</p></div>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<div id='testing'><h2>a heading</h2><p>some content</p></div>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#sotd", doc);
@@ -70,9 +69,10 @@ describe("W3C — Permalinks", function() {
   ) {
     var ops = {
       config: makeCustomConfig(),
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<section id='testing'><h2>a heading</h2><p>some content</p></section>" +
-        "<section><h2>another heading</h2><p>Other Content</p></section>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<section id='testing'><h2>a heading</h2><p>some content</p></section>" +
+          "<section><h2>another heading</h2><p>Other Content</p></section>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#testing", doc);
@@ -87,8 +87,9 @@ describe("W3C — Permalinks", function() {
   ) {
     var ops = {
       config: makeCustomConfig(),
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<section class='nolink' id='testing'><h2>a heading</h2><p>some content</p></section>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<section class='nolink' id='testing'><h2>a heading</h2><p>some content</p></section>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#testing", doc);
@@ -119,8 +120,9 @@ describe("W3C — Permalinks", function() {
     };
     var ops = {
       config: noConfig,
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<section id='testing'><h2>a heading</h2><p>some content</p></section>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<section id='testing'><h2>a heading</h2><p>some content</p></section>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#sotd", doc);
@@ -137,8 +139,9 @@ describe("W3C — Permalinks", function() {
   ) {
     var ops = {
       config: makeCustomConfig(),
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<div id='testing'><h2>a heading with \" and '</h2><p>some content</p></div>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<div id='testing'><h2>a heading with \" and '</h2><p>some content</p></div>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#testing", doc);
@@ -154,8 +157,9 @@ describe("W3C — Permalinks", function() {
   ) {
     var ops = {
       config: makeCustomConfig(),
-      body: "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
-        "<div id='testing'><h2>a heading with \" and '</h2><p>some content</p></div>",
+      body:
+        "<section class='introductory' id='sotd'>Some unique SOTD content</section>" +
+          "<div id='testing'><h2>a heading with \" and '</h2><p>some content</p></div>",
     };
     makeRSDoc(ops, function(doc) {
       var $c = $("#testing", doc);

@@ -1,9 +1,6 @@
 "use strict";
 describe("W3C — RDFa", function() {
-  afterAll(function(done) {
-    flushIframes();
-    done();
-  });
+  afterAll(flushIframes);
 
   function makeCustomConfig() {
     return {
@@ -161,8 +158,8 @@ describe("W3C — RDFa", function() {
   it("should mark abstract using dc:abstract", function(done) {
     var ops = {
       config: makeCustomConfig(),
-      body: makeDefaultBody() +
-        "<section id='abstract'>test abstract</section>",
+      body:
+        makeDefaultBody() + "<section id='abstract'>test abstract</section>",
     };
     makeRSDoc(ops, function(doc) {
       var $abs = $("#abstract", doc);

@@ -5,14 +5,26 @@
  * to manage the config.l10n object so that other parts of the system can
  * localize their text.
  */
+export const name = "core/l10n";
+
+const html = document.documentElement;
+if (html && !html.hasAttribute("lang")) {
+  html.lang = "en";
+  if (!html.hasAttribute("dir")) {
+    html.dir = "ltr";
+  }
+}
+
 // We use en-US as the base
 const base = {
+  about_respec: "About ReSpec",
   abstract: "Abstract",
   author: "Author:",
   authors: "Authors:",
   bug_tracker: "Bug tracker:",
   close_parens: ")",
   commit_history: "Commit history",
+  definition_list: "Definition List",
   editor: "Editor:",
   editors_note: "Editor's note",
   editors: "Editors:",
@@ -24,12 +36,16 @@ const base = {
   issue: "Issue",
   latest_editors_draft: "Latest editor's draft:",
   latest_published_version: "Latest published version:",
+  list_of_definitions: "List of Definitions",
   norm_references: "Normative references",
   note: "Note",
   open_bugs: "open bugs",
   open_parens: "(",
   participate: "Participate",
   references: "References",
+  save_as: "Save as",
+  save_snapshot: "Save Snapshot",
+  search_specref: "Search Specref",
   sotd: "Status of This Document",
   table_of_fig: "Table of Figures",
   this_version: "This version:",
@@ -81,11 +97,13 @@ const ja = {
 };
 
 const nl = {
+  about_respec: "Over ReSpec",
   abstract: "Samenvatting",
   author: "Auteur:",
   authors: "Auteurs:",
   bug_tracker: "Meldingensysteem:",
   commit_history: "Revisiehistorie",
+  definition_list: "Lijst van Definities",
   editor: "Redacteur:",
   editors_note: "Redactionele noot",
   editors: "Redacteurs:",
@@ -96,11 +114,15 @@ const nl = {
   issue_summary: "Lijst met issues",
   latest_editors_draft: "Laatste werkversie:",
   latest_published_version: "Laatst gepubliceerde versie:",
+  list_of_definitions: "Lijst van Definities",
   norm_references: "Normatieve referenties",
   note: "Noot",
   open_bugs: "open meldingen",
   participate: "Doe mee",
   references: "Referenties",
+  save_as: "Bewaar als",
+  save_snapshot: "Bewaar Snapshot",
+  search_specref: "Doorzoek Specref",
   sotd: "Status van dit document",
   table_of_fig: "Lijst met figuren",
   this_version: "Deze versie:",
@@ -140,18 +162,18 @@ const es = {
 };
 
 export const l10n = {
-  en: Object.assign({}, base),
-  ko: Object.assign({}, base, ko),
-  zh: Object.assign({}, base, ko),
-  ja: Object.assign({}, base, ja),
-  nl: Object.assign({}, base, nl),
-  es: Object.assign({}, base, es),
+  en: { ...base },
+  ko: { ...base, ...ko },
+  zh: { ...base, ...zh },
+  ja: { ...base, ...ja },
+  nl: { ...base, ...nl },
+  es: { ...base, ...es },
 };
 
 l10n["zh-hans"] = l10n.zh;
 l10n["zh-cn"] = l10n.zh;
 
-const lang = document.documentElement.lang || "en";
+export const lang = html && html.lang in l10n ? html.lang : "en";
 
 export function run(config) {
   config.l10n = l10n[lang] || l10n.en;

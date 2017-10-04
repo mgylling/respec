@@ -1,21 +1,7 @@
 "use strict";
-// Hide document, because we are about to change it radically.
-if (document.body) {
-  document.body.hidden = true;
-} else {
-  document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-      document.body.hidden = true;
-    },
-    { once: true }
-  );
-}
-
-// In case everything else fails, we always want to show the document
+// In case everything else fails, we want the error
 window.addEventListener("error", function(ev) {
-  console.error(ev.error);
-  document.body.hidden = false;
+  console.error(ev.error, ev.message, ev);
 });
 
 // this is only set in a build, not at all in the dev environment
@@ -46,10 +32,11 @@ define(
     "deps/domReady",
     "core/base-runner",
     "core/ui",
+    "core/l10n",
+    "w3c/defaults",
     "core/aria",
     "core/style",
     "w3c/style",
-    "core/l10n",
     "w3c/l10n",
     "core/github",
     "core/data-include",
@@ -84,13 +71,16 @@ define(
     "ui/dfn-list",
     "ui/save-html",
     "ui/search-specref",
+    "core/seo",
     "w3c/seo",
     "core/highlight",
     "core/webidl-clipboard",
+    "core/data-tests",
     /*Linter must be the last thing to run*/
-    "w3c/linter",
+    "core/linter",
   ],
   function(domReady, runner, ui) {
+    ui = ui.ui;
     var args = Array.from(arguments).filter(function(item) {
       return item;
     });
@@ -99,11 +89,11 @@ define(
       runner
         .runAll(args)
         .then(document.respecIsReady)
-        .then(ui.enable)
+        .then(function() {
+          ui.enable();
+        })
         .catch(function(err) {
           console.error(err);
-          // In case processing fails, we still want to show the document.
-          document.body.hidden = false;
           // even if things go critically bad, we should still try to show the UI
           ui.enable();
         });

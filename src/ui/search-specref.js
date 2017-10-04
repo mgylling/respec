@@ -1,10 +1,11 @@
 // Module ui/search-specref
 // Search Specref database
-import ui from "core/ui";
+import { ui } from "core/ui";
 import { wireReference } from "core/biblio";
+import { l10n, lang } from "core/l10n";
 
 const button = ui.addCommand(
-  "Search Specref",
+  l10n[lang].search_specref,
   "ui/search-specref",
   "Ctrl+Shift+Alt+space",
   "🔎"
@@ -22,7 +23,7 @@ function renderResults(resultMap, query, timeTaken) {
   if (!resultMap.size) {
     return resultList`
       <p class="state">
-        Your search - <strong>${query}</strong> -
+        Your search - <strong> ${query} </strong> -
         did not match any references.
       </p>
     `;
@@ -95,7 +96,7 @@ form.addEventListener("submit", async ev => {
     const startTime = performance.now();
     const jsonData = await Promise.all([
       fetch(refSearch).then(response => response.json()),
-      fetch(reverseLookup).then(response => response.json())
+      fetch(reverseLookup).then(response => response.json()),
     ]);
     const { checked: includeVersions } = form.includeVersions;
     const processResults = resultProcessor({ includeVersions });
@@ -104,7 +105,7 @@ form.addEventListener("submit", async ev => {
       query,
       results,
       state: "",
-      timeTaken: Math.round(performance.now() - startTime) / 1000
+      timeTaken: Math.round(performance.now() - startTime) / 1000,
     });
   } catch (err) {
     console.error(err);
@@ -116,7 +117,7 @@ form.addEventListener("submit", async ev => {
 
 function show() {
   render();
-  ui.freshModal("Search Specref", form, button);
+  ui.freshModal(l10n[lang].search_specref, form, button);
   form.querySelector("input[type=search]").focus();
 }
 
@@ -147,13 +148,16 @@ const mast = hyperHTML.wire()`
 function render({ state, results, timeTaken, query } = { state: "" }) {
   if (!results) {
     renderer`<div>${mast}</div>`;
+    return;
   }
   renderer`
     <div>${mast}</div>
     <p class="state" hidden="${!state}">
       ${state}
     </p>
-    <section hidden="${!results}">${results ? renderResults(results, query, timeTaken) : hyperHTML.wire()``}</section>
+    <section hidden="${!results}">${results
+    ? renderResults(results, query, timeTaken)
+    : []}</section>
   `;
 }
 

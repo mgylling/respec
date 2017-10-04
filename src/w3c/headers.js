@@ -96,6 +96,8 @@ import hb from "handlebars.runtime";
 import { pub } from "core/pubsubhub";
 import tmpls from "templates";
 
+export const name = "w3c/headers";
+
 const cgbgHeadersTmpl = tmpls["cgbg-headers.html"];
 const headersTmpl = tmpls["headers.html"];
 
@@ -106,9 +108,7 @@ const W3CDate = new Intl.DateTimeFormat(["en-AU"], {
   day: "2-digit",
 });
 
-const humanNow = W3CDate.format(new Date());
-
-hb.registerHelper("showPeople", function(name, items) {
+hb.registerHelper("showPeople", function(name, items = []) {
   // stuff to handle RDFa
   var re = "",
     rp = "",
@@ -246,20 +246,23 @@ function toLogo(obj) {
   const a = document.createElement("a");
   if (!obj.alt) {
     const msg = "Found spec logo without an `alt` attribute. See dev console.";
-    a.classList.addClass("respec-offending-element");
+    a.classList.add("respec-offending-element");
     pub("warn", msg);
     console.warn("warn", msg, a);
   }
   a.href = obj.href ? obj.href : "";
   a.classList.add("logo");
-  return hyperHTML.bind(a)`
-    <span id="${obj.id}">
+  hyperHTML.bind(a)`
       <img
+        id="${obj.id}"
         alt="${obj.alt}"
-        src="${obj.src}"
         width="${obj.width}"
         height="${obj.height}">
-    </span>`;
+  `;
+  // avoid triggering 404 requests from dynamically generated
+  // hyperHTML attribute values
+  a.querySelector("img").src = obj.src;
+  return a;
 }
 
 hb.registerHelper("showLogos", logos => {
@@ -351,8 +354,7 @@ const licenses = {
   "w3c-software-doc": {
     name: "W3C Software and Document Notice and License",
     short: "W3C Software and Document",
-    url:
-      "https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document",
+    url: "https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document",
   },
   "cc-by": {
     name: "Creative Commons Attribution 4.0 International Public License",
@@ -370,15 +372,24 @@ const baseLogo = Object.freeze({
   width: "72",
 });
 
+function validateDateAndRecover(conf, prop, fallbackDate = new Date()) {
+  const date = conf[prop] ? new Date(conf[prop]) : new Date(fallbackDate);
+  // if date is valid
+  if (Number.isFinite(date.valueOf())) {
+    const formattedDate = ISODate.format(date);
+    return new Date(formattedDate);
+  }
+  const msg =
+    `[\`${prop}\`](https://github.com/w3c/respec/wiki/${prop}) ` +
+    `is not a valid date: "${conf[prop]}". Expected format 'YYYY-MM-DD'.`;
+  pub("error", msg);
+  return new Date(ISODate.format(new Date()));
+}
+
 export function run(conf, doc, cb) {
   // TODO: move to w3c defaults
   if (!conf.logos) {
-    const W3CLogo = {
-      alt: "W3C",
-      href: "https://www.w3.org/",
-      src: "https://www.w3.org/StyleSheets/TR/2016/logos/W3C",
-    };
-    conf.logos = [{ ...baseLogo, ...W3CLogo }];
+    conf.logos = [];
   }
   // Default include RDFa document metadata
   if (conf.doRDFa === undefined) conf.doRDFa = true;
@@ -406,10 +417,10 @@ export function run(conf, doc, cb) {
   }
   conf.title = doc.title || "No Title";
   if (!conf.subtitle) conf.subtitle = "";
-  conf.publishDate = new Date(
-    ISODate.format(
-      new Date(conf.publishDate ? conf.publishDate : doc.lastModified)
-    )
+  conf.publishDate = validateDateAndRecover(
+    conf,
+    "publishDate",
+    doc.lastModified
   );
   conf.publishYear = conf.publishDate.getUTCFullYear();
   conf.publishHumanDate = W3CDate.format(conf.publishDate);
@@ -478,7 +489,12 @@ export function run(conf, doc, cb) {
     if (!conf.previousMaturity && !conf.isTagFinding) {
       pub("error", "`previousPublishDate` is set, but not `previousMaturity`.");
     }
-    conf.previousPublishDate = new Date(conf.previousPublishDate);
+
+    conf.previousPublishDate = validateDateAndRecover(
+      conf,
+      "previousPublishDate"
+    );
+
     var pmat = status2maturity[conf.previousMaturity]
       ? status2maturity[conf.previousMaturity]
       : conf.previousMaturity;
@@ -539,23 +555,25 @@ export function run(conf, doc, cb) {
   });
   conf.multipleAlternates =
     conf.alternateFormats && conf.alternateFormats.length > 1;
-  conf.alternatesHTML = joinAnd(conf.alternateFormats, function(alt) {
-    var optional = alt.hasOwnProperty("lang") && alt.lang
-      ? " hreflang='" + alt.lang + "'"
-      : "";
-    optional += alt.hasOwnProperty("type") && alt.type
-      ? " type='" + alt.type + "'"
-      : "";
-    return (
-      "<a rel='alternate' href='" +
-      alt.uri +
-      "'" +
-      optional +
-      ">" +
-      alt.label +
-      "</a>"
-    );
-  });
+  conf.alternatesHTML =
+    conf.alternateFormats &&
+    joinAnd(conf.alternateFormats, function(alt) {
+      var optional = alt.hasOwnProperty("lang") && alt.lang
+        ? " hreflang='" + alt.lang + "'"
+        : "";
+      optional += alt.hasOwnProperty("type") && alt.type
+        ? " type='" + alt.type + "'"
+        : "";
+      return (
+        "<a rel='alternate' href='" +
+        alt.uri +
+        "'" +
+        optional +
+        ">" +
+        alt.label +
+        "</a>"
+      );
+    });
   if (conf.bugTracker) {
     if (conf.bugTracker["new"] && conf.bugTracker.open) {
       conf.bugTrackerHTML =
@@ -668,7 +686,7 @@ export function run(conf, doc, cb) {
   var wgPotentialArray = [conf.wg, conf.wgURI, conf.wgPatentURI];
   if (
     wgPotentialArray.some(item => Array.isArray(item)) &&
-    wgPotentialArray.every(item => Array.isArray(item))
+    !wgPotentialArray.every(item => Array.isArray(item))
   ) {
     pub(
       "error",
@@ -709,25 +727,20 @@ export function run(conf, doc, cb) {
       `\`specStatus\` is "CR", but no \`crEnd\` is specified in Respec config.`
     );
   }
-  conf.humanCREnd = conf.crEnd
-    ? W3CDate.format(new Date(conf.crEnd))
-    : humanNow;
+  conf.crEnd = validateDateAndRecover(conf, "crEnd");
+  conf.humanCREnd = W3CDate.format(conf.crEnd);
 
   if (conf.specStatus === "PR" && !conf.prEnd) {
     pub("error", `\`specStatus\` is "PR" but no \`prEnd\` is specified.`);
-    conf.prEnd = new Date();
   }
-  conf.humanPREnd = conf.prEnd
-    ? W3CDate.format(new Date(conf.prEnd))
-    : humanNow;
+  conf.prEnd = validateDateAndRecover(conf, "prEnd");
+  conf.humanPREnd = W3CDate.format(conf.prEnd);
 
   if (conf.specStatus === "PER" && !conf.perEnd) {
     pub("error", "Status is PER but no perEnd is specified");
-    conf.perEnd = new Date();
   }
-  conf.humanPEREnd = conf.perEnd
-    ? W3CDate.format(new Date(conf.perEnd))
-    : humanNow;
+  conf.perEnd = validateDateAndRecover(conf, "perEnd");
+  conf.humanPEREnd = W3CDate.format(conf.perEnd);
 
   conf.recNotExpected =
     !conf.isRecTrack &&

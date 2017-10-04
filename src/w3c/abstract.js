@@ -1,7 +1,8 @@
 // Module w3c/abstract
 // Handle the abstract section properly.
-import "deps/regenerator";
 import { pub } from "core/pubsubhub";
+import { l10n, lang } from "core/l10n";
+export const name = "w3c/abstract";
 
 export async function run(conf) {
   const abs = document.getElementById("abstract");
@@ -15,6 +16,6 @@ export async function run(conf) {
     return;
   }
   abstractHeading = document.createElement("h2");
-  abstractHeading.innerText = conf.l10n.abstract;
+  abstractHeading.innerText = l10n[lang].abstract;
   abs.insertAdjacentElement("afterbegin", abstractHeading);
 }

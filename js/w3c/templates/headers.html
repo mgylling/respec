@@ -1,4 +1,9 @@
 <div class='head'>
+  {{#unless isUnofficial}}
+    <p>
+      <a class='logo' href='https://www.w3.org/'><img width='72' height='48' src='https://www.w3.org/StyleSheets/TR/2016/logos/W3C' alt='W3C'></a>
+    </p>
+  {{/unless}}
   {{{showLogos logos}}}
   <h1 class='title p-name' id='title'{{#if doRDFa}} property='dcterms:title'{{/if}}>{{title}}</h1>
   {{#if subtitle}}
@@ -94,6 +99,12 @@
     <p>
       Please check the <a href="{{errata}}"><strong>errata</strong></a> for any errors or issues
       reported since publication.
+    </p>
+  {{/if}}
+  {{#if isRec}}
+    <p>
+      See also <a href="http://www.w3.org/2003/03/Translations/byTechnology?technology={{shortName}}">
+      <strong>translations</strong></a>.
     </p>
   {{/if}}
   {{#if alternateFormats}}

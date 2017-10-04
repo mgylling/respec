@@ -1,13 +1,11 @@
 "use strict";
 describe("Core — Issues and Notes", function() {
-  afterAll(function(done) {
-    flushIframes();
-    done();
-  });
+  afterAll(flushIframes);
   it("should process issues and notes", function(done) {
     var ops = {
       config: makeBasicConfig(),
-      body: makeDefaultBody() +
+      body:
+        makeDefaultBody() +
         "<section><p>BLAH <span class='issue'>ISS-INLINE</span></p>" +
         "<p class='issue' title='ISS-TIT'>ISSUE</p>" +
         "<p>BLAH <span class='issue atrisk'>ATR-INLINE</span></p>" +
@@ -58,7 +56,8 @@ describe("Core — Issues and Notes", function() {
   it("should process ednotes", function(done) {
     var ops = {
       config: makeBasicConfig(),
-      body: makeDefaultBody() +
+      body:
+        makeDefaultBody() +
         "<section><p>BLAH <span class='ednote'>EDNOTE-INLINE</span></p>" +
         "<p class='ednote' title='EDNOTE-TIT'>EDNOTE</p>",
     };
@@ -83,7 +82,8 @@ describe("Core — Issues and Notes", function() {
   it("should process warnings", function(done) {
     var ops = {
       config: makeBasicConfig(),
-      body: makeDefaultBody() +
+      body:
+        makeDefaultBody() +
         "<section><p>BLAH <span class='warning'>WARN-INLINE</span></p>" +
         "<p class='warning' title='WARN-TIT'>WARNING</p>" +
         "<p class='issue' title='ISS-TIT'>ISSUE</p></section>",
@@ -105,7 +105,8 @@ describe("Core — Issues and Notes", function() {
   it("should use data-number for issue and note numbers", function(done) {
     var ops = {
       config: makeBasicConfig(),
-      body: makeDefaultBody() +
+      body:
+        makeDefaultBody() +
         "<section><p id='i10' class='issue' data-number='10'>Numbered ISSUE</p>" +
         "<p id='i11' class='issue' title='ISS-TIT' data-number='11'>Titled and Numbered Issue</p>" +
         "<p id='ixx' class='issue'>Unnumbered ISSUE</p></section>",
@@ -146,7 +147,8 @@ describe("Core — Issues and Notes", function() {
     };
     var ops = {
       config: issueBaseConfig,
-      body: makeDefaultBody() +
+      body:
+        makeDefaultBody() +
         "<section><p class='issue' data-number='10'>ISSUE</p></section>",
     };
     makeRSDoc(
@@ -184,7 +186,8 @@ describe("Core — Issues and Notes", function() {
     };
     var ops = {
       config: atRiskBaseConfig,
-      body: makeDefaultBody() +
+      body:
+        makeDefaultBody() +
         "<section><p class='issue atrisk' data-number='10'>FEATURE AT RISK</p></section>",
     };
     makeRSDoc(

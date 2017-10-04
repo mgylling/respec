@@ -3,7 +3,12 @@
 "use strict";
 var iframes = [];
 
-function makeRSDoc(opts = {}, cb = () => {}, src = "about-blank.html", style = "") {
+function makeRSDoc(
+  opts = {},
+  cb = () => {},
+  src = "about-blank.html",
+  style = ""
+) {
   return new Promise(function(resove, reject) {
     var ifr = document.createElement("iframe");
     opts = opts || {};
@@ -33,10 +38,8 @@ function makeRSDoc(opts = {}, cb = () => {}, src = "about-blank.html", style = "
     if (style) {
       try {
         ifr.style = style;
-      } catch (err) {
-        console.warn(
-          "Could not override iframe style: " + style + " (" + err.message + ")"
-        );
+      } catch ({ message }) {
+        console.warn(`Could not override iframe style: ${style} (${message})`);
       }
     }
     if (src) {
@@ -58,6 +61,14 @@ function decorateDocument(doc, opts) {
     var path = opts.jsPath || "../js/";
     var loader = this.ownerDocument.createElement("script");
     var config = this.ownerDocument.createElement("script");
+    switch (Math.round(Math.random() * 2)) {
+      case 2:
+        loader.defer = true;
+        break;
+      case 1:
+        loader.async = true;
+        break;
+    }
     var configText = "";
     if (opts.config) {
       configText =
@@ -80,8 +91,11 @@ function decorateDocument(doc, opts) {
   }
 
   function decorateBody(opts) {
-    var bodyText =
-      opts.abstract || "<section id='abstract'><p>test abstract</p></section>";
+    var bodyText = `
+      <section id='abstract'>
+        ${opts.abstract === undefined ? "<p>test abstract</p>" : opts.abstract}
+      </section>
+    `;
     if (opts.body) {
       bodyText = bodyText.concat(opts.body);
     }
@@ -142,12 +156,12 @@ function makeBasicConfig() {
       },
     ],
     specStatus: "ED",
-    edDraftURI: "http://foo.com",
+    edDraftURI: "https://foo.com",
     shortName: "Foo",
     previousMaturity: "CR",
     previousPublishDate: "1999-01-01",
     errata: "https://github.com/tabatkins/bikeshed",
-    implementationReportURI: "http://example.com/implementationReportURI",
+    implementationReportURI: "https://example.com/implementationReportURI",
     perEnd: "1999-01-01",
     lint: false,
   };
