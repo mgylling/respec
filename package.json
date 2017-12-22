@@ -58,6 +58,7 @@
     "babel:build": "babel src -d js --source-maps -q",
     "babel:watch": "babel src -d js --watch --source-maps",
     "build:respec-w3c-common": "node ./tools/builder.js --profile=w3c-common",
+    "build:ims": "node ./tools/builder.js --profile=ims-default",
     "build": "npm run snyk-protect && npm run copydeps && npm run hb:build && npm run highlight:build && npm run babel:build",
     "copydeps": "node ./tools/copydeps.js",
     "handlebars": "handlebars",
