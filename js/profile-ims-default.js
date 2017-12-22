@@ -13,8 +13,13 @@ require.config({
     highlight: {
       exports: "hljs",
     },
+    beautify: {
+      exports: "beautify",
+    },
   },
   paths: {
+    "beautify-css": "deps/beautify-css",
+    "beautify-html": "deps/beautify-html",
     "handlebars.runtime": "deps/handlebars",
     "deps/highlight": "https://www.w3.org/Tools/respec/respec-highlight",
   },
@@ -76,11 +81,8 @@ define(
     "core/highlight",
     "core/webidl-clipboard",
     "core/data-tests",
-    "core/list-sorter",
-    //"ims/move-abstract",
     /*Linter must be the last thing to run*/
     "core/linter",
-    //"ims/remove-abstract"
   ],
   function(domReady, runner, ui) {
     ui = ui.ui;

@@ -1,12 +1,6 @@
 define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _pubsubhub) {
   "use strict";
 
-  /*
-  IMS TODO
-  IMS doesnt have different styles for different maturity levels, 
-  so most of this can go away
-  */
-
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
