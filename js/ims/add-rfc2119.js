@@ -22,8 +22,16 @@ define(['exports'], function (exports) {
       "The key words MAY, MUST, MUST NOT, RECOMMENDED, SHOULD, and SHOULD NOT " +
       "are to be interpreted as described in [[!RFC2119]]."       
     ));
-    
-    var ps = [p2,p1];
+        
+    var p3 = document.createElement("p");
+    p3.appendChild(document.createTextNode(
+      "The Conformance Certification Guide for this specification " +
+      "[[!" + conf.certGuideShortName + "]] may introduce greater normative constraints " +
+      "than those defined here for specific service or implementation " +
+      "categories."       
+    ));
+      
+    var ps = [p3,p2,p1];
     
     ps.forEach(function(element) {
       if (confH.nextSibling) {

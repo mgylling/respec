@@ -71,7 +71,7 @@ define(["exports"], function (exports) {
     // </section>`);
     // footer.appendChild(about);
 
-    var contrib = toElement(`<section><h2>List of Contributors</h2>
+    var contrib = toElement(`<section id='contributors'><h2>List of Contributors</h2>
     <p>The following individuals contributed to the development of this document:</p>
     <table class="contributors" title="List of Contributors" summary="The list of contributors to this work.">
                 <tbody>
@@ -82,16 +82,16 @@ define(["exports"], function (exports) {
     footer.appendChild(contrib);
 
     //TODO this may need to be handcoded, or use more variables
-    var revHistory = toElement(`<section><h2>Revision History</h2>
-  <table id="revisionHistory" title="Revision History" summary="Publication history and revision details for the document.">
-      <thead><tr><th class="one">Version No.</th><th class="two">Release Date</th><th class="three">Comments</th></tr></thead>
-              <tbody><tr>
-                      <td class="one">${conf.specStatus} ${conf.specVersion}</td>
-                      <td class="two">${conf.specDate}</td>
-                      <td class="three">The original Final Release. This declares the standard ready for public adoption.</td>
-                  </tr>
-                  </tbody></table></section>`);
-    footer.appendChild(revHistory);
+  //   var revHistory = toElement(`<section><h2>Revision History</h2>
+  // <table id="revisionHistory" title="Revision History" summary="Publication history and revision details for the document.">
+  //     <thead><tr><th class="one">Version No.</th><th class="two">Release Date</th><th class="three">Comments</th></tr></thead>
+  //             <tbody><tr>
+  //                     <td class="one">${conf.specStatus} ${conf.specVersion}</td>
+  //                     <td class="two">${conf.specDate}</td>
+  //                     <td class="three">The original Final Release. This declares the standard ready for public adoption.</td>
+  //                 </tr>
+  //                 </tbody></table></section>`);
+  //   footer.appendChild(revHistory);
 
     var ipr = toElement(`<div id="ipr">
     <h2>IPR and Distribution Notices</h2>
@@ -140,9 +140,13 @@ define(["exports"], function (exports) {
   }
 
   function personsToTableRows(arr) {
+    //TODO sort array? or use incoming sort
     var ret = "";
     arr.forEach(function (entry) {
-      ret += "<tr><td>" + entry.name + "</td><td>" + entry.company + "</td></tr>";
+      ret += "<tr><td class='name'>" + entry.name + "</td>";
+      if (entry.company) ret += "<td class='co'>" + entry.company + "</td>";
+      if (entry.role) ret += "<td class='role'>" + entry.role + "</td>";      
+      ret +="</tr>";
     });
     return ret;
   }
