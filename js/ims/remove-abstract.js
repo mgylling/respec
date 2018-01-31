@@ -5,14 +5,17 @@ define(['exports'], function (exports) {
     value: true
   });
   exports.run = run;
-  exports.name = "ims/move-abstract";
-
-  //moves the abstract to come before the ipr in the header
+  const name = exports.name = "ims/remove-abstract";
 
   function run(conf, doc, cb) {
+
+    //if we have a temp abstract, remove it
+    //id='abstract' class="ims-temp-abstract"
     var abstract = doc.getElementById('abstract');
-    var ipr = doc.getElementById('ipr');
-    ipr.parentElement.insertBefore(abstract, ipr);
+    if (abstract && abstract.classList.contains('ims-temp-abstract')) {
+      abstract.parentElement.removeChild(abstract);
+    }
+
     cb();
   }
 });

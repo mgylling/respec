@@ -1,0 +1,11 @@
+/*jshint browser: true */
+
+import { pub } from "core/pubsubhub";
+
+export const name = "ims/utils";
+
+export function toHTMLNodes(string) {
+  var element = document.createElement('div');
+  element.innerHTML = string;     
+  return element.childNodes;
+}

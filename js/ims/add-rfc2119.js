@@ -1,50 +1,57 @@
-define(['exports'], function (exports) {
-  'use strict';
+define(["exports", "core/pubsubhub"], function (exports, _pubsubhub2) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.name = undefined;
   exports.run = run;
-  exports.name = "ims/add-rfc2119";
-
-  
+  const name = exports.name = "ims/add-rfc2119";
 
   function run(conf, doc, cb) {
-    var confH = doc.getElementById('conformance').children[0];
-    var p1 = document.createElement("p");
-    p1.appendChild(document.createTextNode(
-      "All sections marked as non-normative, all authoring guidelines, " +
-      "diagrams, examples, and notes in this specification are non-normative. " +
-      "Everything else in this specification is normative."
-    ));
-    var p2 = document.createElement("p");
-    p2.appendChild(document.createTextNode(
-      "The key words MAY, MUST, MUST NOT, RECOMMENDED, SHOULD, and SHOULD NOT " +
-      "are to be interpreted as described in [[!RFC2119]]."       
-    ));
-        
-    var p3 = document.createElement("p");
-    p3.appendChild(document.createTextNode(
-      "The Conformance Certification Guide for this specification " +
-      "[[!" + conf.certGuideShortName + "]] may introduce greater normative constraints " +
-      "than those defined here for specific service or implementation " +
-      "categories."       
-    ));
-      
-    var ps = [p3,p2,p1];
-    
-    ps.forEach(function(element) {
-      if (confH.nextSibling) {
-          confH.parentNode.insertBefore(element, confH.nextSibling);
+
+    if (conf.specNature !== "errata") {
+      var confH = doc.getElementById('conformance').children[0];
+
+      let content;
+      if (conf.specNature === "normative") {
+        content = getNormativeText(conf);
+      } else if (conf.specNature === "informative") {
+        content = getInformativeText(conf);
       } else {
+        (0, _pubsubhub.pub)("error", "Document must have config.specNature set");
+      }
+
+      //console.log("content: " + content);
+
+      content.forEach(function (element) {
+        if (confH.nextSibling) {
+          confH.parentNode.insertBefore(element, confH.nextSibling);
+        } else {
           confH.parentNode.appendChild(element);
-      }  
-    });
-    
-    
-    
-  
+        }
+      });
+    }
     cb();
   }
+
+  function getNormativeText(conf) {
+    var p1 = document.createElement("p");
+    p1.appendChild(document.createTextNode("All sections marked as non-normative, all authoring guidelines, " + "diagrams, examples, and notes in this specification are non-normative. " + "Everything else in this specification is normative."));
+    var p2 = document.createElement("p");
+    p2.appendChild(document.createTextNode("The key words MAY, MUST, and MUST NOT" + "are to be interpreted as described in [[!RFC2119]]."));
+
+    var p3 = document.createElement("p");
+    p3.appendChild(document.createTextNode("The Conformance Certification Guide for this specification " + "[[!" + conf.certGuideBiblioKey + "]] may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));
+
+    return [p3, p2, p1];
+  }
+
+  function getInformativeText(conf) {
+    var p1 = document.createElement("p");
+    p1.appendChild(document.createTextNode("This document is an informative resource in the Document Set of the " + conf.mainSpecNiceName + " specification [[!" + conf.mainSpecBiblioKey + "]]. As such, it does not " + "include any normative requirements. Occurrences in this document of words " + "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " + "conformance critera for implementors of this specification."));
+
+    return [p1];
+  }
 });
-//# sourceMappingURL=remove-abstract.js.map
+//# sourceMappingURL=add-rfc2119.js.map
