@@ -2,7 +2,7 @@ import { toKeyValuePairs, createResourceHint, linkCSS } from "core/utils";
 import { pub, sub } from "core/pubsubhub";
 export const name = "ims/style";
 
-function attachFixupScript(doc) {
+function attachFixupScript(doc, conf) {
   
   const script = doc.createElement("script");
   script.addEventListener(
@@ -14,12 +14,17 @@ function attachFixupScript(doc) {
     },
     { once: true }
   );
-  //TODO IMS canonical location
-  script.src = "../js/fixup.js";
+  
+  //TODO IMS canonical location  
+  var fixupURL = "../js/fixup.js";
+  if(conf.overrideFixupLocation) {
+    fixupURL = conf.overrideFixupLocation;
+  }
+  script.src = fixupURL;
   doc.body.appendChild(script);
 }
 
 export function run(conf, doc, cb) {    
-  attachFixupScript(doc);  
+  attachFixupScript(doc, conf);  
   cb();
 }

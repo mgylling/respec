@@ -30,11 +30,13 @@ function attachMetaViewport(doc) {
   document.head.insertBefore(meta, document.head.firstChild);
 }
 
-export function run(conf, doc, cb) {    
-  
-  //attachFixupScript(doc);  
+export function run(conf, doc, cb) {        
   attachMetaViewport(doc);
   //TODO IMS canonical location
-  linkCSS(doc, "../css/ims-base.css");
+  var cssURL = "../css/ims-base.css";
+  if(conf.overrideCSSLocation) {
+    cssURL = conf.overrideCSSLocation;
+  }
+  linkCSS(doc, cssURL);
   cb();
 }

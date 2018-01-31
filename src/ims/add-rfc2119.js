@@ -15,8 +15,6 @@ export function run(conf, doc, cb) {
     } else {
       (0, _pubsubhub.pub)("error", "Document must have config.specNature set");
     }  
-    
-    //console.log("content: " + content);
             
     content.forEach(function(element) {
       if (confH.nextSibling) {
@@ -38,7 +36,7 @@ function getNormativeText(conf) {
   ));
   var p2 = document.createElement("p");
   p2.appendChild(document.createTextNode(
-    "The key words MAY, MUST, and MUST NOT" +
+    "The key words MAY, MUST, and MUST NOT " +
     "are to be interpreted as described in [[!RFC2119]]."       
   ));
       

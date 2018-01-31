@@ -8,7 +8,7 @@ define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _
   exports.run = run;
   const name = exports.name = "ims/style";
 
-  function attachFixupScript(doc) {
+  function attachFixupScript(doc, conf) {
 
     const script = doc.createElement("script");
     script.addEventListener("load", function () {
@@ -16,13 +16,18 @@ define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _
         window.location = window.location;
       }
     }, { once: true });
-    //TODO IMS canonical location
-    script.src = "../js/fixup.js";
+
+    //TODO IMS canonical location  
+    var fixupURL = "../js/fixup.js";
+    if (conf.overrideFixupLocation) {
+      fixupURL = conf.overrideFixupLocation;
+    }
+    script.src = fixupURL;
     doc.body.appendChild(script);
   }
 
   function run(conf, doc, cb) {
-    attachFixupScript(doc);
+    attachFixupScript(doc, conf);
     cb();
   }
 });

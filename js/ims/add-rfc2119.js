@@ -22,8 +22,6 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub2) {
         (0, _pubsubhub.pub)("error", "Document must have config.specNature set");
       }
 
-      //console.log("content: " + content);
-
       content.forEach(function (element) {
         if (confH.nextSibling) {
           confH.parentNode.insertBefore(element, confH.nextSibling);
@@ -39,7 +37,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub2) {
     var p1 = document.createElement("p");
     p1.appendChild(document.createTextNode("All sections marked as non-normative, all authoring guidelines, " + "diagrams, examples, and notes in this specification are non-normative. " + "Everything else in this specification is normative."));
     var p2 = document.createElement("p");
-    p2.appendChild(document.createTextNode("The key words MAY, MUST, and MUST NOT" + "are to be interpreted as described in [[!RFC2119]]."));
+    p2.appendChild(document.createTextNode("The key words MAY, MUST, and MUST NOT " + "are to be interpreted as described in [[!RFC2119]]."));
 
     var p3 = document.createElement("p");
     p3.appendChild(document.createTextNode("The Conformance Certification Guide for this specification " + "[[!" + conf.certGuideBiblioKey + "]] may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));

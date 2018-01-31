@@ -37,11 +37,13 @@ define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _
   }
 
   function run(conf, doc, cb) {
-
-    //attachFixupScript(doc);  
     attachMetaViewport(doc);
     //TODO IMS canonical location
-    (0, _utils.linkCSS)(doc, "../css/ims-base.css");
+    var cssURL = "../css/ims-base.css";
+    if (conf.overrideCSSLocation) {
+      cssURL = conf.overrideCSSLocation;
+    }
+    (0, _utils.linkCSS)(doc, cssURL);
     cb();
   }
 });
