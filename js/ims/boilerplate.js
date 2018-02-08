@@ -1,9 +1,10 @@
-define(["exports"], function (exports) {
+define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.name = undefined;
   exports.run = run;
   const name = exports.name = "ims/boilerplate";
 
@@ -32,7 +33,7 @@ define(["exports"], function (exports) {
     var statusPD = toElement(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
     header.appendChild(statusPD);
 
-    var versionTable = `<table id='versionTable' title='Version/Release Details' summary='Details about the version and release.'>
+    var versionTable = `<table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
   <tbody><tr>
   <td>Date Issued:</td><td>${conf.specDate}</td></tr>
   <tr><td>This version:</td>
@@ -68,7 +69,11 @@ define(["exports"], function (exports) {
 
     header.appendChild(copyRight);
 
-    body.insertBefore(header, body.firstChild);
+    if (body.firstChild) {
+      body.insertBefore(header, body.firstChild);
+    } else {
+      body.appendChild(header);
+    }
 
     var footer = doc.createElement("footer");
 

@@ -7,7 +7,7 @@ export function run(conf, doc, cb) {
   
   /*
   Filesystem transclusion is done using body script elements with a class 
-  of 'transclude'. If the script element has an id attribute equal to the 
+  of 'transclude'. If the script element has a data-id attribute equal to the 
   name of a string variable in global scope, then the script element is 
   replaced with HTML nodes corresponding to the given variable. 
   
@@ -24,14 +24,20 @@ export function run(conf, doc, cb) {
    var transcludes = doc.querySelectorAll('script.transclude');
    for(var i=0; i<transcludes.length; i++) {
        var script = transcludes[i];
-       if(!script.id) {
-         //warn
+       
+       if(!script.hasAttribute("data-id")) {
+         pub("error", "transclude script element without data-id attribute");
          continue;
-       } else if (typeof window[script.id] !== 'string' || window[script.id] === null) {
-         //warn 
+       }
+               
+       var str = window[script.getAttribute("data-id")];
+              
+       if (str === undefined || typeof str !== 'string') {
+         pub("error", "no transclude variable named '" + str + "' found in global scope");
          continue;
        }           
-       var newNodes = toHTMLNodes(window[script.id])           
+       
+       var newNodes = toHTMLNodes(str)           
        for(var k=0; k<newNodes.length; k++) {
          var clone = newNodes[k].cloneNode(true);
          script.parentNode.insertBefore(clone,script);

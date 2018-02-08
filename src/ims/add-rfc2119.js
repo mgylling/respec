@@ -1,20 +1,24 @@
-import { pub, sub } from "core/pubsubhub";
+import { pub } from "core/pubsubhub";
 
 export const name =  "ims/add-rfc2119";
 
 export function run(conf, doc, cb) {
   
   if(conf.specNature !== "errata") {    
-    var confH = doc.getElementById('conformance').children[0];
+    var confH = doc.getElementById('conformance'); //gets the heading element
+    if(!confH) {
+      pub("error", "No conformance section found (id='conformance')");
+    }
+    if(!conf.specNature) {
+      pub("error", "Document must have config.specNature set");
+    }
     
     let content;
     if(conf.specNature === "normative") {
       content = getNormativeText(conf);
     } else if(conf.specNature === "informative") {
       content = getInformativeText(conf);
-    } else {
-      (0, _pubsubhub.pub)("error", "Document must have config.specNature set");
-    }  
+    }   
             
     content.forEach(function(element) {
       if (confH.nextSibling) {

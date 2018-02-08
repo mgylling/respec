@@ -1,4 +1,4 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub2) {
+define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -11,15 +11,19 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub2) {
   function run(conf, doc, cb) {
 
     if (conf.specNature !== "errata") {
-      var confH = doc.getElementById('conformance').children[0];
+      var confH = doc.getElementById('conformance'); //gets the heading element
+      if (!confH) {
+        (0, _pubsubhub.pub)("error", "No conformance section found (id='conformance')");
+      }
+      if (!conf.specNature) {
+        (0, _pubsubhub.pub)("error", "Document must have config.specNature set");
+      }
 
       let content;
       if (conf.specNature === "normative") {
         content = getNormativeText(conf);
       } else if (conf.specNature === "informative") {
         content = getInformativeText(conf);
-      } else {
-        (0, _pubsubhub.pub)("error", "Document must have config.specNature set");
       }
 
       content.forEach(function (element) {

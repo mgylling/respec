@@ -1,3 +1,5 @@
+import { pub } from "core/pubsubhub";
+
 export const name =  "ims/contributors";
 
 export function run(conf, doc, cb) {

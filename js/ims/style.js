@@ -8,22 +8,6 @@ define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _
   exports.run = run;
   const name = exports.name = "ims/style";
 
-  // function attachFixupScript(doc) {
-  //   const script = doc.createElement("script");
-  //   script.addEventListener(
-  //     "load",
-  //     function() {
-  //       if (window.location.hash) {
-  //         window.location = window.location;
-  //       }
-  //     },
-  //     { once: true }
-  //   );
-  //   //TODO IMS canonical location
-  //   script.src = "../js/fixup.js";
-  //   doc.body.appendChild(script);
-  // }
-
   function attachMetaViewport(doc) {
     const meta = document.createElement("meta");
     meta.name = "viewport";

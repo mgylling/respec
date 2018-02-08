@@ -1,3 +1,5 @@
+import { pub } from "core/pubsubhub";
+
 export const name =  "ims/boilerplate";
 
 export function run(conf, doc, cb) {
@@ -25,7 +27,7 @@ export function run(conf, doc, cb) {
   var statusPD = toElement(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
   header.appendChild(statusPD);
 
-  var versionTable = `<table id='versionTable' title='Version/Release Details' summary='Details about the version and release.'>
+  var versionTable = `<table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
   <tbody><tr>
   <td>Date Issued:</td><td>${conf.specDate}</td></tr>
   <tr><td>This version:</td>
@@ -61,9 +63,12 @@ export function run(conf, doc, cb) {
     
   header.appendChild(copyRight);
 
-  body.insertBefore(header, body.firstChild);
-
-
+  if(body.firstChild) {
+    body.insertBefore(header, body.firstChild);  
+  } else {
+    body.appendChild(header);
+  }
+  
   var footer = doc.createElement("footer");
   
   var endWarranty = toElement(`<div id="endWarranty">

@@ -1,5 +1,5 @@
 import { toKeyValuePairs, createResourceHint, linkCSS } from "core/utils";
-import { pub, sub } from "core/pubsubhub";
+import { pub } from "core/pubsubhub";
 export const name = "ims/style";
 
 function attachFixupScript(doc, conf) {

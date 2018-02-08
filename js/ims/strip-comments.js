@@ -1,9 +1,10 @@
-define(["exports"], function (exports) {
+define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.name = undefined;
   exports.run = run;
   const name = exports.name = "ims/strip-comments";
 
