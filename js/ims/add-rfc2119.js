@@ -11,7 +11,10 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   function run(conf, doc, cb) {
 
     if (conf.specNature !== "errata") {
-      var confH = doc.getElementById('conformance'); //gets the heading element
+      var confH = doc.getElementById('conformance');
+      if (!confH) {
+        confH = doc.getElementById('conformance-statements');
+      }
       if (!confH) {
         (0, _pubsubhub.pub)("error", "No conformance section found (id='conformance')");
       }
@@ -44,7 +47,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     p2.appendChild(document.createTextNode("The key words MAY, MUST, and MUST NOT " + "are to be interpreted as described in [[!RFC2119]]."));
 
     var p3 = document.createElement("p");
-    p3.appendChild(document.createTextNode("The Conformance Certification Guide for this specification " + "[[!" + conf.certGuideBiblioKey + "]] may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));
+    p3.appendChild(document.createTextNode("The Conformance Certification Guide for this specification " + "may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));
 
     return [p3, p2, p1];
   }

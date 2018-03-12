@@ -5,7 +5,10 @@ export const name =  "ims/add-rfc2119";
 export function run(conf, doc, cb) {
   
   if(conf.specNature !== "errata") {    
-    var confH = doc.getElementById('conformance'); //gets the heading element
+    var confH = doc.getElementById('conformance'); 
+    if(!confH) {
+      confH = doc.getElementById('conformance-statements'); 
+    }  
     if(!confH) {
       pub("error", "No conformance section found (id='conformance')");
     }
@@ -46,8 +49,8 @@ function getNormativeText(conf) {
       
   var p3 = document.createElement("p");
   p3.appendChild(document.createTextNode(
-    "The Conformance Certification Guide for this specification " +
-    "[[!" + conf.certGuideBiblioKey + "]] may introduce greater normative constraints " +
+    "The <a href="#document-set">Conformance Certification Guide</a> for this specification " +
+    "may introduce greater normative constraints " +
     "than those defined here for specific service or implementation " +
     "categories."       
   ));

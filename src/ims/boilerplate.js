@@ -37,7 +37,7 @@ export function run(conf, doc, cb) {
     versionTable += `<tr><td>Errata:</td>
     <td><a href='${conf.thisURL}errata/'>${conf.thisURL}errata/</a></td></tr>      
     <tr><td>Latest version:</td>
-    <td><a href='${conf.canonicalURI}'>${conf.canonicalURI}</a></td></tr>`  
+    <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td></tr>`  
   }
   versionTable += `</tbody></table>`;
   header.appendChild(toElement(versionTable));
@@ -46,7 +46,7 @@ export function run(conf, doc, cb) {
   <h2>IPR and Distribution Notices</h2>
   <p>Recipients of this document are requested to submit, with their comments, notification of any relevant patent claims or other intellectual property rights of which they may be aware that might be infringed by any implementation of the specification set forth in this document, and to provide supporting documentation.</p>
   <p>IMS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on IMS's procedures with respect to rights in IMS specifications can be found at the IMS Intellectual Property Rights web page: <a href="http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf">http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf</a>.</p>
-  <p>Copyright © 2017 IMS Global Learning Consortium. All Rights Reserved.</p>
+  <p>Copyright © ${(new Date()).getFullYear()} IMS Global Learning Consortium. All Rights Reserved.</p>
   <p>Use of this specification to develop products or services is governed by the license with IMS found on the IMS website: <a href="http://www.imsglobal.org/speclicense.html">http://www.imsglobal.org/speclicense.html</a>.</p>
   <p>Permission is granted to all parties to use excerpts from this document as needed in producing requests for proposals.</p>
   <p>The limited permissions granted above are perpetual and will not be revoked by IMS or its successors or assigns.</p>
@@ -57,7 +57,7 @@ export function run(conf, doc, cb) {
 
   // IMS TODO make year below a var 
   var copyRight = toElement(`<div id="cpr">      
-      <p>© 2017 IMS Global Learning Consortium, Inc. All Rights Reserved.</p>        
+      <p>© ${(new Date()).getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>        
       <p>Trademark information: <a href="http://www.imsglobal.org/copyright.html">http://www.imsglobal.org/copyright.html</a></p>
     </div>`);
     
