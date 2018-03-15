@@ -10,7 +10,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
 
   function run(conf, doc, cb) {
 
-    if (conf.specType !== "errata") {
+    if (conf.specNature !== "errata") {
       var contrib = (0, _utils.toHTMLNode)(`<section id='contributors' class="appendix">
     <h2>List of Contributors</h2>
     <p>The following individuals contributed to the development of this document:</p>
@@ -39,4 +39,4 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     return ret;
   }
 });
-//# sourceMappingURL=contributors.js.map
+//# sourceMappingURL=contributors0.js.map

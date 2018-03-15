@@ -5,7 +5,7 @@ export const name =  "ims/boilerplate";
 
 export function run(conf, doc, cb) {
   
-  doc.title = conf.specTitle;
+  doc.title = conf.specTitle + " " + conf.specVersion + " " + conf.specStatus;
   
   var body = doc.body;
 
@@ -35,10 +35,10 @@ export function run(conf, doc, cb) {
   <td><a href='${conf.thisURL}'>${conf.thisURL}</a></td></tr>`;
   
   if(conf.specNature === "normative") {
-    versionTable += `<tr><td>Errata:</td>
-    <td><a href='${conf.thisURL}errata/'>${conf.thisURL}errata/</a></td></tr>      
-    <tr><td>Latest version:</td>
-    <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td></tr>`  
+    versionTable += `<tr><td>Latest version:</td>
+    <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td></tr>
+    <tr><td>Errata:</td>
+    <td><a href='${conf.errataURL}'>${conf.errataURL}</a></td></tr>`;  
   }
   versionTable += `</tbody></table>`;
   header.appendChild(toHTMLNode(versionTable));

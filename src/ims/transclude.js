@@ -23,7 +23,9 @@ export function run(conf, doc, cb) {
   */
    var transcludes = doc.querySelectorAll('script.transclude');
    for(var i=0; i<transcludes.length; i++) {
+       
        var script = transcludes[i];
+       console.log(script);
        
        if(!script.hasAttribute("data-id")) {
          pub("error", "transclude script element without data-id attribute");
@@ -31,19 +33,27 @@ export function run(conf, doc, cb) {
        }
                
        var str = window[script.getAttribute("data-id")];
+       //console.log(">>"+str);        
               
        if (str === undefined || typeof str !== 'string') {
          pub("error", "no transclude variable named '" + str + "' found in global scope");
          continue;
        }           
        
-       var newNodes = toHTMLNodes(str)           
-       for(var k=0; k<newNodes.length; k++) {
+       var newNodes = toHTMLNodes(str);          
+       
+       for(var k=0; k<newNodes.length; k++) {         
          var clone = newNodes[k].cloneNode(true);
+         //console.log("==>"+clone.textContent);
          script.parentNode.insertBefore(clone,script);
-       }   
-       script.parentNode.removeChild(script);
+       }          
    }   
+  
+  // transcludes = doc.querySelectorAll('script.transclude');
+  // for(var i=0; i<transcludes.length; i++) {
+  //   var script = transcludes[i];
+  //   script.parentNode.removeChild(script);
+  // }  
   
   cb();
 }

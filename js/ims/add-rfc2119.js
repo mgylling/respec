@@ -1,4 +1,4 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -10,7 +10,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
 
   function run(conf, doc, cb) {
 
-    if (conf.specNature !== "errata") {
+    if (conf.specType !== "errata") {
       var confH = doc.getElementById('conformance');
       if (!confH) {
         confH = doc.getElementById('conformance-statements');
@@ -46,15 +46,22 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     var p2 = document.createElement("p");
     p2.appendChild(document.createTextNode("The key words MAY, MUST, and MUST NOT " + "are to be interpreted as described in [[!RFC2119]]."));
 
-    var p3 = document.createElement("p");
-    p3.appendChild(document.createTextNode("The <a href='#document-set'>Conformance Certification Guide</a> for this specification " + "may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));
+    var p3 = (0, _utils.toHTMLNode)(`<p>The <a href='#document-set'>Conformance and Certification Guide</a> for this 
+  specification may introduce greater normative constraints than those defined 
+  here for specific service or implementation categories.</p>`);
 
     return [p3, p2, p1];
   }
 
   function getInformativeText(conf) {
+    if (!conf.mainSpecTitle) {
+      (0, _pubsubhub.pub)("warning", "No mainSpecTitle property found in config')");
+    }
+    if (!conf.mainSpecTitle) {
+      (0, _pubsubhub.pub)("warning", "No mainSpecBiblioKey property found in config')");
+    }
     var p1 = document.createElement("p");
-    p1.appendChild(document.createTextNode("This document is an informative resource in the Document Set of the " + conf.mainSpecNiceName + " specification [[!" + conf.mainSpecBiblioKey + "]]. As such, it does not " + "include any normative requirements. Occurrences in this document of words " + "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " + "conformance critera for implementors of this specification."));
+    p1.appendChild(document.createTextNode("This document is an informative resource in the Document Set of the " + conf.mainSpecTitle + " specification [[!" + conf.mainSpecBiblioKey + "]]. As such, it does not " + "include any normative requirements. Occurrences in this document of terms " + "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " + "conformance critera for implementors of this specification."));
 
     return [p1];
   }

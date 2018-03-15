@@ -1,10 +1,11 @@
 import { pub } from "core/pubsubhub";
+import { toHTMLNode } from "ims/utils";
 
 export const name =  "ims/add-rfc2119";
 
 export function run(conf, doc, cb) {
   
-  if(conf.specNature !== "errata") {    
+  if(conf.specType !== "errata") {    
     var confH = doc.getElementById('conformance'); 
     if(!confH) {
       confH = doc.getElementById('conformance-statements'); 
@@ -47,24 +48,26 @@ function getNormativeText(conf) {
     "are to be interpreted as described in [[!RFC2119]]."       
   ));
       
-  var p3 = document.createElement("p");
-  p3.appendChild(document.createTextNode(
-    "The <a href='#document-set'>Conformance Certification Guide</a> for this specification " +
-    "may introduce greater normative constraints " +
-    "than those defined here for specific service or implementation " +
-    "categories."       
-  ));
-    
+  var p3 = toHTMLNode(`<p>The <a href='#document-set'>Conformance and Certification Guide</a> for this 
+  specification may introduce greater normative constraints than those defined 
+  here for specific service or implementation categories.</p>`);
+      
   return [p3,p2,p1];
 }
 
 function getInformativeText(conf) {
+  if(!conf.mainSpecTitle) {
+    pub("warning", "No mainSpecTitle property found in config')");
+  }
+  if(!conf.mainSpecTitle) {
+    pub("warning", "No mainSpecBiblioKey property found in config')");
+  }
   var p1 = document.createElement("p");
   p1.appendChild(document.createTextNode(
     "This document is an informative resource in the Document Set of the " +
-    conf.mainSpecNiceName + " specification [[!" + conf.mainSpecBiblioKey + 
+    conf.mainSpecTitle + " specification [[!" + conf.mainSpecBiblioKey + 
     "]]. As such, it does not " +
-    "include any normative requirements. Occurrences in this document of words " +
+    "include any normative requirements. Occurrences in this document of terms " +
     "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " +
     "conformance critera for implementors of this specification."      
   ));

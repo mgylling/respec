@@ -13,5 +13,5 @@ export function toHTMLNodes(string) {
 export function toHTMLNode(string) {
   var element = document.createElement('div');
   element.innerHTML = string;     
-  return element.children[0];
+  return element.childNodes[0];
 }

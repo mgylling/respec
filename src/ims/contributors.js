@@ -5,7 +5,7 @@ export const name =  "ims/contributors";
 
 export function run(conf, doc, cb) {
   
-  if(conf.specNature !== "errata") {
+  if(conf.specType !== "errata") {
   var contrib = toHTMLNode(`<section id='contributors' class="appendix">
     <h2>List of Contributors</h2>
     <p>The following individuals contributed to the development of this document:</p>

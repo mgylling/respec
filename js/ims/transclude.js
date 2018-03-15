@@ -28,7 +28,9 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     */
     var transcludes = doc.querySelectorAll('script.transclude');
     for (var i = 0; i < transcludes.length; i++) {
+
       var script = transcludes[i];
+      console.log(script);
 
       if (!script.hasAttribute("data-id")) {
         (0, _pubsubhub.pub)("error", "transclude script element without data-id attribute");
@@ -36,6 +38,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
       }
 
       var str = window[script.getAttribute("data-id")];
+      //console.log(">>"+str);        
 
       if (str === undefined || typeof str !== 'string') {
         (0, _pubsubhub.pub)("error", "no transclude variable named '" + str + "' found in global scope");
@@ -43,12 +46,19 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
       }
 
       var newNodes = (0, _utils.toHTMLNodes)(str);
+
       for (var k = 0; k < newNodes.length; k++) {
         var clone = newNodes[k].cloneNode(true);
+        //console.log("==>"+clone.textContent);
         script.parentNode.insertBefore(clone, script);
       }
-      script.parentNode.removeChild(script);
     }
+
+    // transcludes = doc.querySelectorAll('script.transclude');
+    // for(var i=0; i<transcludes.length; i++) {
+    //   var script = transcludes[i];
+    //   script.parentNode.removeChild(script);
+    // }  
 
     cb();
   }

@@ -33,7 +33,7 @@ define(
     "core/base-runner",    
     "core/ui",    
     "core/l10n",
-//    "ims/boilerplate",
+    "ims/compute",
     "ims/transclude",    
     //"w3c/defaults",
     "core/aria",
