@@ -1,4 +1,4 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -18,19 +18,19 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     var headerTop = doc.createElement("div");
     headerTop.setAttribute("class", "header-top");
 
-    var hd = toElement(`<h1 class='title'>${conf.specTitle}</h1>`);
+    var hd = (0, _utils.toHTMLNode)(`<h1 class='title'>${conf.specTitle}</h1>`);
     headerTop.appendChild(hd);
 
     const imgURL = "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
-    var logo = toElement("<a href='https://www.imsglobal.org' id='logo'><img src='" + imgURL + "' alt='IMS logo'></img></a>");
+    var logo = (0, _utils.toHTMLNode)("<a href='https://www.imsglobal.org' id='logo'><img src='" + imgURL + "' alt='IMS logo'></img></a>");
     headerTop.appendChild(logo);
 
     header.appendChild(headerTop);
 
-    var release = toElement(`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`);
+    var release = (0, _utils.toHTMLNode)(`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`);
     header.appendChild(release);
 
-    var statusPD = toElement(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
+    var statusPD = (0, _utils.toHTMLNode)(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
     header.appendChild(statusPD);
 
     var versionTable = `<table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
@@ -46,9 +46,9 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td></tr>`;
     }
     versionTable += `</tbody></table>`;
-    header.appendChild(toElement(versionTable));
+    header.appendChild((0, _utils.toHTMLNode)(versionTable));
 
-    var ipr = toElement(`<div id="ipr">
+    var ipr = (0, _utils.toHTMLNode)(`<div id="ipr">
   <h2>IPR and Distribution Notices</h2>
   <p>Recipients of this document are requested to submit, with their comments, notification of any relevant patent claims or other intellectual property rights of which they may be aware that might be infringed by any implementation of the specification set forth in this document, and to provide supporting documentation.</p>
   <p>IMS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on IMS's procedures with respect to rights in IMS specifications can be found at the IMS Intellectual Property Rights web page: <a href="http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf">http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf</a>.</p>
@@ -61,8 +61,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   </div>`);
     header.appendChild(ipr);
 
-    // IMS TODO make year below a var 
-    var copyRight = toElement(`<div id="cpr">      
+    var copyRight = (0, _utils.toHTMLNode)(`<div id="cpr">      
       <p>© ${new Date().getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>        
       <p>Trademark information: <a href="http://www.imsglobal.org/copyright.html">http://www.imsglobal.org/copyright.html</a></p>
     </div>`);
@@ -77,7 +76,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
 
     var footer = doc.createElement("footer");
 
-    var endWarranty = toElement(`<div id="endWarranty">
+    var endWarranty = (0, _utils.toHTMLNode)(`<div id="endWarranty">
   <p>IMS Global Learning Consortium, Inc. ("IMS Global") is publishing the information contained in this document ("Specification") for purposes of scientific, experimental, and scholarly collaboration only.</p>
   <p>IMS Global makes no warranty or representation regarding the accuracy or completeness of the Specification.</p>
   <p>This material is provided on an "As Is" and "As Available" basis.</p>
@@ -93,12 +92,6 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     doc.body.appendChild(footer);
 
     cb();
-  }
-
-  function toElement(html) {
-    var element = document.createElement('div');
-    element.innerHTML = html;
-    return element.children[0];
   }
 });
 //# sourceMappingURL=boilerplate.js.map

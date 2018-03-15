@@ -47,7 +47,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     p2.appendChild(document.createTextNode("The key words MAY, MUST, and MUST NOT " + "are to be interpreted as described in [[!RFC2119]]."));
 
     var p3 = document.createElement("p");
-    p3.appendChild(document.createTextNode("The Conformance Certification Guide for this specification " + "may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));
+    p3.appendChild(document.createTextNode("The <a href='#document-set'>Conformance Certification Guide</a> for this specification " + "may introduce greater normative constraints " + "than those defined here for specific service or implementation " + "categories."));
 
     return [p3, p2, p1];
   }

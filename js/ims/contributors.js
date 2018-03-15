@@ -1,4 +1,4 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -11,7 +11,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   function run(conf, doc, cb) {
 
     if (conf.specNature !== "errata") {
-      var contrib = toElement(`<section id='contributors' class="appendix">
+      var contrib = (0, _utils.toHTMLNode)(`<section id='contributors' class="appendix">
     <h2>List of Contributors</h2>
     <p>The following individuals contributed to the development of this document:</p>
     <table class="contributors" title="List of Contributors" 
@@ -27,14 +27,8 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     cb();
   }
 
-  function toElement(html) {
-    var element = document.createElement('div');
-    element.innerHTML = html;
-    return element.children[0];
-  }
-
   function personsToTableRows(arr) {
-    //TODO sort array? or use incoming sort
+    //use incoming sort
     var ret = "";
     arr.forEach(function (entry) {
       ret += "<tr><td class='name'>" + entry.name + "</td>";

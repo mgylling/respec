@@ -11,7 +11,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
   function run(conf, doc, cb) {
 
     /*
-    Filesystem transclusion is done using body script elements with a class 
+    Filesystem transclusion is done using script elements with a class 
     of 'transclude'. If the script element has a data-id attribute equal to the 
     name of a string variable in global scope, then the script element is 
     replaced with HTML nodes corresponding to the given variable. 

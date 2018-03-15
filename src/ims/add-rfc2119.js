@@ -49,7 +49,7 @@ function getNormativeText(conf) {
       
   var p3 = document.createElement("p");
   p3.appendChild(document.createTextNode(
-    "The <a href="#document-set">Conformance Certification Guide</a> for this specification " +
+    "The <a href='#document-set'>Conformance Certification Guide</a> for this specification " +
     "may introduce greater normative constraints " +
     "than those defined here for specific service or implementation " +
     "categories."       

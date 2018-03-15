@@ -9,3 +9,9 @@ export function toHTMLNodes(string) {
   element.innerHTML = string;     
   return element.childNodes;
 }
+
+export function toHTMLNode(string) {
+  var element = document.createElement('div');
+  element.innerHTML = string;     
+  return element.children[0];
+}
