@@ -22,8 +22,8 @@ define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _
 
   function run(conf, doc, cb) {
     attachMetaViewport(doc);
-    //TODO IMS canonical location
-    var cssURL = "../css/ims-base.css";
+    //IMS canonical location
+    var cssURL = "https://purl.imsglobal.org/spec/ims-base.css";
     if (conf.overrideCSSLocation) {
       cssURL = conf.overrideCSSLocation;
     }

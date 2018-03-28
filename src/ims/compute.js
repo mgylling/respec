@@ -21,7 +21,7 @@ export function run(conf, doc, cb) {
       conf.latestURI = `${conf.latestURI}${conf.specType}/`;                    
     }
     
-    conf.errataURL = `${base}errata/`;
+    conf.errataURL = `${conf.thisURL}errata/`;
 
     //needed for aux docs that need to point back to main spec
     conf.mainSpecURL = `${base}${conf.versionURL}/`;

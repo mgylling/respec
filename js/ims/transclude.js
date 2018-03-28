@@ -26,19 +26,20 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     Note the use of template literals to allow easy authoring and maintenance
     of multi-line strings in the js files referenced. 
     */
-    var transcludes = doc.querySelectorAll('script.transclude');
-    for (var i = 0; i < transcludes.length; i++) {
 
-      var script = transcludes[i];
-      console.log(script);
+    while (true) {
+      var transclude = doc.querySelector('script.transclude');
 
-      if (!script.hasAttribute("data-id")) {
+      if (transclude == null) {
+        break;
+      }
+
+      if (!transclude.hasAttribute("data-id")) {
         (0, _pubsubhub.pub)("error", "transclude script element without data-id attribute");
         continue;
       }
 
-      var str = window[script.getAttribute("data-id")];
-      //console.log(">>"+str);        
+      var str = window[transclude.getAttribute("data-id")];
 
       if (str === undefined || typeof str !== 'string') {
         (0, _pubsubhub.pub)("error", "no transclude variable named '" + str + "' found in global scope");
@@ -49,16 +50,11 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
 
       for (var k = 0; k < newNodes.length; k++) {
         var clone = newNodes[k].cloneNode(true);
-        //console.log("==>"+clone.textContent);
-        script.parentNode.insertBefore(clone, script);
+        transclude.parentNode.insertBefore(clone, transclude);
       }
-    }
 
-    // transcludes = doc.querySelectorAll('script.transclude');
-    // for(var i=0; i<transcludes.length; i++) {
-    //   var script = transcludes[i];
-    //   script.parentNode.removeChild(script);
-    // }  
+      transclude.parentNode.removeChild(transclude);
+    }
 
     cb();
   }

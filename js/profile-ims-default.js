@@ -49,6 +49,7 @@ define(
     //"w3c/headers",    
     //"w3c/abstract",
     //"w3c/conformance",
+    "ims/biblio",
     "ims/add-rfc2119",
     "ims/strip-comments",
     "core/data-transform",

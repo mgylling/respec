@@ -44,15 +44,26 @@ function getNormativeText(conf) {
   ));
   var p2 = document.createElement("p");
   p2.appendChild(document.createTextNode(
-    "The key words MAY, MUST, and MUST NOT " +
-    "are to be interpreted as described in [[!RFC2119]]."       
+    `The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", 
+    "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to 
+    be interpreted as described in [[!RFC2119]].` 
   ));
       
-  var p3 = toHTMLNode(`<p>The <a href='#document-set'>Conformance and Certification Guide</a> for this 
+  var p3 = toHTMLNode(`<p>An implementation of this specification that fails to 
+    implement a MUST/REQUIRED/SHALL requirement or fails to abide by a 
+    MUST NOT/SHALL NOT prohibition is considered nonconformant. 
+    SHOULD/SHOULD NOT/RECOMMENDED statements constitute a best practice. 
+    Ignoring a best practice does not violate conformance but a decision to 
+    disregard such guidance should be carefully considered. 
+    MAY/OPTIONAL statements indicate that implementers are entirely free to 
+    choose whether or not to implement the option.</p>`);
+      
+      
+  var p4 = toHTMLNode(`<p>The <a href='#document-set'>Conformance and Certification Guide</a> for this 
   specification may introduce greater normative constraints than those defined 
   here for specific service or implementation categories.</p>`);
       
-  return [p3,p2,p1];
+  return [p4,p3,p2,p1];
 }
 
 function getInformativeText(conf) {

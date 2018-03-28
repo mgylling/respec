@@ -17,8 +17,8 @@ function attachMetaViewport(doc) {
 
 export function run(conf, doc, cb) {        
   attachMetaViewport(doc);
-  //TODO IMS canonical location
-  var cssURL = "../css/ims-base.css";
+  //IMS canonical location
+  var cssURL = "https://purl.imsglobal.org/spec/ims-base.css"  
   if(conf.overrideCSSLocation) {
     cssURL = conf.overrideCSSLocation;
   }

@@ -21,39 +21,36 @@ export function run(conf, doc, cb) {
   Note the use of template literals to allow easy authoring and maintenance
   of multi-line strings in the js files referenced. 
   */
-   var transcludes = doc.querySelectorAll('script.transclude');
-   for(var i=0; i<transcludes.length; i++) {
-       
-       var script = transcludes[i];
-       console.log(script);
-       
-       if(!script.hasAttribute("data-id")) {
-         pub("error", "transclude script element without data-id attribute");
-         continue;
-       }
-               
-       var str = window[script.getAttribute("data-id")];
-       //console.log(">>"+str);        
-              
-       if (str === undefined || typeof str !== 'string') {
-         pub("error", "no transclude variable named '" + str + "' found in global scope");
-         continue;
-       }           
-       
-       var newNodes = toHTMLNodes(str);          
-       
-       for(var k=0; k<newNodes.length; k++) {         
-         var clone = newNodes[k].cloneNode(true);
-         //console.log("==>"+clone.textContent);
-         script.parentNode.insertBefore(clone,script);
-       }          
-   }   
   
-  // transcludes = doc.querySelectorAll('script.transclude');
-  // for(var i=0; i<transcludes.length; i++) {
-  //   var script = transcludes[i];
-  //   script.parentNode.removeChild(script);
-  // }  
+  while(true) {
+    var transclude = doc.querySelector('script.transclude');
+    
+    if (transclude == null) { 
+      break; 
+    }
+    
+    if(!transclude.hasAttribute("data-id")) {
+      pub("error", "transclude script element without data-id attribute");
+      continue;
+    }
+    
+    var str = window[transclude.getAttribute("data-id")];
+    
+    if (str === undefined || typeof str !== 'string') {
+      pub("error", "no transclude variable named '" + str + "' found in global scope");
+      continue;
+    }
+    
+    var newNodes = toHTMLNodes(str);          
+    
+    for(var k=0; k<newNodes.length; k++) {         
+      var clone = newNodes[k].cloneNode(true);
+      transclude.parentNode.insertBefore(clone,transclude);
+    }
+    
+    transclude.parentNode.removeChild(transclude);
+    
+  }
   
   cb();
 }

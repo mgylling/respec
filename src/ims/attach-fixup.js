@@ -15,8 +15,8 @@ function attachFixupScript(doc, conf) {
     { once: true }
   );
   
-  //TODO IMS canonical location  
-  var fixupURL = "../js/fixup.js";
+  //IMS canonical location  
+  var fixupURL = "https://purl.imsglobal.org/spec/fixup.js";
   if(conf.overrideFixupLocation) {
     fixupURL = conf.overrideFixupLocation;
   }
