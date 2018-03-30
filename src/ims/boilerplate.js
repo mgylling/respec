@@ -31,6 +31,7 @@ export function run(conf, doc, cb) {
   var versionTable = `<table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
   <tbody><tr>
   <td>Date Issued:</td><td>${conf.specDate}</td></tr>
+  <td>Status:</td><td>${getStatusString(conf)}</td></tr>
   <tr><td>This version:</td>
   <td><a href='${conf.thisURL}'>${conf.thisURL}</a></td></tr>`;
   
@@ -89,3 +90,20 @@ export function run(conf, doc, cb) {
   cb();
 }
 
+function getStatusString(conf) {
+  //specStatusString: an override of the default descriptions
+  if(conf.specStatusString) {
+    return conf.specStatusString;
+  }
+  //specStatus: IMS Base Document, IMS Candidate Final (Public) or IMS Final Release
+  switch(conf.specStatus) {
+    case 'IMS Base Document': return "This document is for review and comment by IMS Contributing Members.";
+    case 'IMS Candidate Final': return "This document is for review and adoption by the IMS membership.";
+    case 'IMS Candidate Final Public': return "This document is for review and adoption by the IMS membership.";
+    case 'IMS Final Release': return "This document is made available for adoption by the public community at large.";
+    default: 
+      pub("warn", "Unrecognized specStatus, please use one of 'IMS Base Document', 'IMS Candidate Final (Public)' or 'IMS Final Release'");
+      return "specStatus ERROR";
+  }
+  
+}
