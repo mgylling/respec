@@ -6,7 +6,7 @@ export const name =  "ims/compute";
 export function run(conf, doc, cb) {
     //compute misc variables used by multiple other modules and store them back in conf.
   
-    var base = `https://www.imsglobal.org/${conf.shortName}/`
+    var base = `https://www.imsglobal.org/spec/${conf.shortName}/`
   
     //v1p2-style reformat for use in path segments
     conf.versionURL = `v${conf.specVersion}`.replace('.', 'p');

@@ -6,13 +6,24 @@ export const name =  "ims/add-rfc2119";
 export function run(conf, doc, cb) {
   
   if(conf.specType !== "errata") {    
+    
     var confH = doc.getElementById('conformance'); 
     if(!confH) {
       confH = doc.getElementById('conformance-statements'); 
     }  
+    console.log("==>" + confH.tagName);
+    //if we are at the section, get the heading
+    if(confH.tagName == 'SECTION') {    
+     confH = confH.querySelector("h1, h2, h3, h4, h5, h6");  
+     if(!confH) {
+       pub("error", "No heading found in conformance section");
+     }
+    }
+    
     if(!confH) {
       pub("error", "No conformance section found (id='conformance')");
     }
+    
     if(!conf.specNature) {
       pub("error", "Document must have config.specNature set");
     }
