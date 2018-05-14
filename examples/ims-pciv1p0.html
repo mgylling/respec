@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html>
+  <head>    
+    <meta charset='utf-8'>
+    <script src='../js/deps/require.js' data-main='../js/profile-ims-default' async class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+        specTitle: "IMS Global Portable Custom Interactions Specification",
+        shortName: "pci",
+        specStatus: "IMS Candidate Final",
+        specDate: "October 1, 2017",
+        specVersion: "1.0",        
+        specNature: "normative",
+        specType: "spec",
+        mainSpecTitle: "TBD 1.0",
+        mainSpecBiblioKey: "@@@-TODO-13",
+        contributors: [
+          {name: "Arjan Aarnink", company: "Cito (The Netherlands)", companyURL: "www.cito.com"},
+          {name: "Jérôme Bogaerts", company: "Open Assessment Technologies (Luxemburg)", companyURL: "www.taotesting.com", role: "Working Group Co-chair"},
+          {name: "Michael Aumock", company: "Origami3 (USA)", companyURL: "www.origami3.com"},
+          {name: "Gary Driscoll", company: "ETS (USA)", companyURL: "www.ets.org", role: "Working Group Co-chair"},
+          {name: "Paul Grudnitski", company: "Pearson (USA)", companyURL: "www.pearson.com", role: "Working Group Co-chair"},
+          {name: "Thomas Hoffmann", company: "ETS (USA)", companyURL: "www.ets.org", role: "Working Group Co-chair"},
+          {name: "Pádraig O'hiceadha", company: "HMH (UK)", companyURL: "www.hmh.com", role: "Editor"},
+          {name: "Rob Howard", company: "NWEA (USA)", companyURL: "www.nwea.org"},
+          {name: "Wilbert Kraan", company: "CETIS (UK)", companyURL: "www.cetis.org.uk"},
+          {name: "Justin Marks", company: "NWEA (USA)", companyURL: "www.nwea.org", role: "Working Group Co-chair"},
+          {name: "Mark McKell", company: "IMS Global (USA)", companyURL: "www.imsglobal.org", role: "Editor"},
+          {name: "Mark Molenaar", company: "Open Assessment Technologies (Luxemburg)", companyURL: "www.taotesting.com", role: "Working Group Co-chair"},
+          {name: "Michelle Richard", company: "Pearson (USA)", companyURL: "www.pearson.com"},
+          {name: "Somsack Sipasseuth", company: "Open Assessment Technologies (Luxemburg)", companyURL: "www.taotesting.com"},
+          {name: "Colin Smythe", company: "IMS Global (UK)", companyURL: "www.imsglobal.org", role: "Editor"},
+          {name: "Tjeerd Hans Terpstra", company: "Cito (The Netherlancs", companyURL: "www.cito.com"}
+        ], 
+        localBiblio: {
+          "APIP-10": {
+              title: "Accessible Portable Item Protocol (APIP) v1.0 Best Practices and Implementation Guide",
+              href: "https://www.imsglobal.org/apip/index.html",
+              date: "March 2012",
+              publisher: "IMS Global Learning Consortium",
+              "authors": [
+                "Gary Driscoll",
+                "Thomas Hoffmann",
+                "Wayne Ostler",
+                "Mike Russell",
+                "Colin Smythe",
+                "Mark McKell"
+              ]        
+          },
+		  "RFC-2119": {
+              title: "Request for Comments: 2119",
+              href: "http://www.ietf.org/rfc/rfc2119.txt",
+              date: "March 1997",
+              publisher: "IETF",
+              "authors": [
+                "S. Bradner"
+              ]        
+          },
+		  "STRICT-16": {
+              title: "ECMA Script® 2017 Language Specification",
+              href: "http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf",
+              date: "2016",
+              publisher: "Ecma International",
+              "authors": [
+              ]        
+          },
+	      "QTI-22": {
+              title: "IMS Question &amp; Test Interoperability Overview v2.2",
+              href: "http://www.imsglobal.org/question/index.html",
+              date: "August 2016",
+              publisher: "IMS Global Learning Consortium",
+              "authors": [
+                "Wilbert Kraan",
+                "Colin Smythe",
+                "Mark McKell"
+              ]        
+          }
+		}
+      };
+    </script>
+  </head>
+  <body>
+
+  
+    <section id="abstract">
+      <h2>Abstract</h2>
+      <p>The QTI workgroup has defined a standard way for interactive or technology enhanced items (TEIs), called Custom Interaction to be represented as part of the QTI specification. This best practice specification document outlines a method that allows an author to define an almost unlimited variety of custom interaction types, while still keeping the item portable between different systems. This is achieved by making use of common web technologies combined with an agreement about how to communicate the results of a learner's interaction to a QTI/APIP rendering engine. By following this specification, most TEIs and assessment components can increase their value by supporting interoperability.</p>
+    </section>
+    
+    <section>
+      <h2>Introduction</h2>
+	  <p>The IMS Global Question and Test Interoperability (QTI) specification [[QTI-22]] describes an interoperable format for assessment content and results. The focus of the standard is to provide interoperability between components in an assessment system. The standard supports a myriad of item interaction types. Technology Enhanced Items (TEI) that extend beyond the defined interaction types can still be supported by the QTI specification and in the related Accessible Portable Item Protocol (APIP) specification [[APIP-10]] by making use of the custom interactions feature. Interoperability between different components and platforms rendering TEIs provides a unique challenge, because the shape and functionality of these custom interactions are unknown outside of the system that originated it.</p>
+<p>This best practice outlines a method that allows an author to define an almost unlimited variety of custom interaction types, while still keeping the item portable between different systems. This is achieved by making use of common web technologies combined with an agreement about how to communicate the results of a learner's interaction to a QTI/APIP delivery engine. By following the best practice documented here, most TEIs and assessment components can increase their value by supporting interoperability.</p>
+
+<section>            
+<h3>Scope and Context</span></h3>
+			
+<p>Custom interactions are an extension point in the QTI specification, but do not provide guidelines on implementation, causing an issue of interoperability between different assessment components and platforms.</p>
+
+<p>Over time and through the use of the guidance described in this document, certain interactions or TEIs will very likely be established and become standard through the IMS assessment community. Details about sharing custom interactions are provided here: <a href="http://www.imsglobal.org/assessment/interactions.html">http://www.imsglobal.org/assessment/interactions.html</a>.</p>
+</section>
+			
+      <section id="terminology">
+        <h3>Terminology</h3>
+        <dl class="termlist" data-sort id="terms">
+          <dt><dfn data-lt="term1">AMD</dfn></dt>
+          <dd>The Asynchronous Module Definition (AMD) API specifies a mechanism for defining modules such that the module and its dependencies can be asynchronously loaded.</dd> 
+          <dt><dfn data-lt="term2">Custom Interaction</dfn></dt>
+          <dd>An item interaction defined in the QTI specification as an extension.</dd>                          
+          <dt><dfn data-lt="term3">Delivery Engine</dfn></dt>
+          <dd>The process that coordinates the rendering and delivery of the assessment item(s) and the evaluation of the responses to produce scores and Feedback.</dd>                          
+          <dt><dfn data-lt="term4">Portable Custom Interaction (PCI)</dfn></dt>
+          <dd>An item interaction defined in the QTI specification as an extension that references all of the code that is required to run the item that contains the portable custom interaction.</dd>  
+        </dl>  
+
+
+		</section>  
+      <section id="conformance">
+        <h3>Conformance Statements</h3>
+      </section>
+      
+    </section> <!-- /overview -->
+    </section>
+
+          
+
+<!-- Front Page -->
+
+    <section>
+<h1><a name="Solution"></a>Portable Custom Interactions Solution</h1>
+
+<p><span style="font-weight: 400;">The solution outlines minor adjustments to item development and delivery system to support the rendering and runtime management of custom interactions. Depending on the intended use of the solution any XML may be used, but HTML5 is preferred. This standard requires a delivery system capable of rendering HTML and executing JavaScript. In order to provide maximum accessibility of custom interactions, delivery systems are expected to support HTML5 and WAI-ARIA. At the time of this writing, HTML5 lacks a formal XML specification. Unexpected results may occur in systems not fully supporting HTML5 additions. The use of Adobe Flash, Silverlight, or other plug-in technologies may be incorporated into this solution, but are highly discouraged in order to keep interactions portable and accessible.</span></p>
+
+<p><span style="font-weight: 400;">Portable custom interactions are a special type of QTI custom interaction. However, unlike items with conventional QTI custom interactions, items with portable custom interactions include the code that is required to run those portable custom interactions. That means that where conventional custom interactions assume tools that have been specially modified for each custom interaction type, tools that support portable custom interactions only need to implement the additional standardized interfaces outlined in this document in order to support an essentially unlimited number of interaction types.</span></p>
+
+<section>
+<h2><a name="Solution_1"></a><span style="font-weight: 400;">Interaction Rendering</span></h2>
+<p><span style="font-weight: 400;">The rendering of custom interactions requires a communication bridge between the interaction and the delivery engine. The communication bridge provides state information, configuration, and results to be exchanged. Portable custom interactions are based on the following assumptions:</span></p>
+<ul>
+	<li><span style="font-weight: 400;">The delivery engine supports client-side JavaScript</span></li>
+	<li><span style="font-weight: 400;">The delivery engine supports HTML</span></li>
+	<li><span style="font-weight: 400;">A JavaScript context object implementing the communication bridge contract is made available to the interaction through an AMD dependency.</span></li>
+	<li><span style="font-weight: 400;">Any Javascript loaded as part of or to support a PCI MUST be written to run inside a strict Javascript execution context (e.g. it must expect that the delivery engine has called &ldquo;use strict&rdquo; before any of it&rsquo;s modules are loaded) [[STRICT-16]]. It is recommended that all PCI modules also call &ldquo;use strict&rdquo;.</span><span style="font-weight: 400;"> </span></li>
+</ul>
+</section>
+<section>
+<h2><a name="Solution_2"></a><span style="font-weight: 400;">Delivery Engine Support</span></h2>
+
+<p><span style="font-weight: 400;">The delivery engine supports portable custom interactions by injecting, via AMD, an object which supports the following contract which will allow interactions to register themselves and exchange state and configuration settings with the delivery engine. It will provide this via a standard AMD definition of &#39;qtiCustomInteractionContext&#39; which the portable custom interaction can require in its AMD module.</span></p>
+<p><span style="font-weight: 400;">As an alternate discovery method the qtiCustomInteractionContext MUST be assigned to the window object before the PCI is loaded. If a delivery engine support composite interactions the qtiCustomInteractionContext register method may be called more than once for different PCI types and it&rsquo;s getInstance method may be called multiple times to construct more than one PCI interaction in the assessmentItem.</span></p>
+<p>&nbsp;</p>
+<table border="1" width="600">
+	<tbody>
+		<tr bgcolor="darkblue">
+			<td colspan="2">
+				<p><span style="font-weight: 400; color: white">Required Method</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>register(customInteraction)</strong></p>
+				<p><span style="font-weight: 400;">The custom interaction uses this method to register its customInteraction interface, as described in Section 2.3.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>getInstance(typeIdentifier, dom, configuration, state)</strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><span style="font-weight: 400;">Construct a new custom interaction instance object by calling getInstance on the customInteraction object.</span></p>
+				<p><br />
+					<span style="font-weight: 400;">The typeIdentifier should be the value of the typeIdentifier property of the customInteraction object passed in a previous call to the register method. It should also match the value of the customInteractionTypeIdentifier on the portableCustomInteraction element.</span></p>
+				<p><span style="font-weight: 400;">The markup from the portableCustomInteraction should have been copied to the DOM and the containing element of the markup passed as the parameter &lsquo;dom&rsquo; to the getInstance call.</span><span style="font-weight: 400;">The state parameter is optional. It can be passed to recreate a previous interaction state of the item. The value of state, if provided, should have been previously returned by the same interaction type.</span></p>
+				<p><span style="font-weight: 400;">The configuration object should contain the following:</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">properties</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">An object containing all of the key/value pairs from the pci properties.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">templateVariables</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">An object containing all of the template variables referenced in the portableCustomInteraction and their current values.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">boundTo</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">The response variable this qti-custom-interaction is bound to and its value.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">onready</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">The delivery engine MUST provide a callback function here which MUST be called by the PCI instance when it is fully constructed and ready for interaction. The function passed should accept the parameters described for onready in Section 2.3.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">ondone</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">The delivery engine MAY provide a callback function here which MAY be called by the PCI instance if it allows the user to explicitly terminate the attempt, typically to request a hint. It allows a PCI to offer behaviour equivalent to the standard endAttemptInteraction. This function should accept the function signature described for ondone in Section 2.3.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">status</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">Optional. Specify the item status (as per Section 2.2.1 of the QTI 2.2 Information Model). If not specified it should default to &quot;interacting&quot;, to indicate that the attempt should be terminated provide a value of "closed". </span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><span style="font-weight: 400;">oncompleted()</span><br />
+				<span style="font-weight: 400;">Before unloading a PCI from the DOM the delivery engine MUST call oncompleted on the custom interaction object, which MUST in turn call oncompleted() on the custom interaction instance if the oncompleted function has been implemented by the custom interaction. This is to allow the custom interaction to free resources before it is unloaded. The oncompleted function has no parameters.</span></p>
+			</td>
+		</tr>
+		</tbody>
+</table>
+<p>&nbsp;</p>
+</section>
+<section>
+<h2><a name="Solution_3"></a><span style="font-weight: 400;">Custom Interaction Support</span></h2>
+
+<p><span style="font-weight: 400;">Custom interactions support the delivery engine by registering an interface with the AMD injected qtiCustomInteractionContext object. This interface allows the delivery engine to construct a custom interaction instance which can return result and state information for the custom interaction. The following methods are required:</span></p>
+<table border="1" width="600">
+	<tbody>
+		<tr bgcolor="darkblue">
+			<td colspan="2">
+				<p><strong><span color: white">Required Method</span></strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>getInstance(dom, configuration, state)</strong></p>
+				<p><span style="font-weight: 400;">Create a new instance of the custom interaction with the supplied configuration and state.</span><br />
+					<span style="font-weight: 400;">The definition of the parameters is the same as for the equivalent delivery engine methods.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>getResponse()</strong></p>
+				<p><span style="font-weight: 400;">This method may be called zero or more times. The type of the response data must correspond with the baseType and cardinality defined in the QTI response declaration of the response variable the qti-custom-interaction is bound to (via the responseIdentifier attribute).The value returned must follow the formats defined in Appendix A.</span></p>
+				<p><span style="font-weight: 400;">If the user has not yet interacted with the interaction or the response is not valid for any reason then getResponse should return undefined.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>getState()</strong></p>
+				<p><span style="font-weight: 400;">This method can be used to retrieve the current state of the custom interaction which can be later used to re-initialize the custom interaction to that state. This may for example be used by delivery engines when a student navigates away from the current item to another item and later returns to resume their interaction with the item.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>onready(customInteraction, state)</strong></p>
+				<p><span style="font-weight: 400;">If set by the delivery engine in the getInstance call, the onready callback MUST be called when the custom interaction has fully constructed itself and is ready for user interaction. It passes itself and the current state of the item to the callback (this could be later used by the delivery engine to reinitialize the interaction to an initial state).</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>ondone(customInteraction, response, state, status)</strong></p>
+				<p><span style="font-weight: 400;">If set by the delivery engine in the getInstance call, the ondone callback MAY be called by the custom interaction if the user interaction indicates that the user is finished with that interaction.</span></p>
+				<p><span style="font-weight: 400;">It will pass the following parameters:</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">customInteraction</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">The PCI instance, which should support the interface defined here.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">response</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">The response variable the custom interaction is bound to with the value to use for that response variable in response processing.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">state</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">The current state of the interaction.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">status </span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">Optionally, the status of the interaction (as per Section 2.2.1 of the QTI 2.2 Information Model). If not specified the callback function should apply a default value of "interacting". To indicate that the attempt should be terminated the PCI should provide a value of "closed".</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>oncompleted()</strong></p>
+				<p><span style="font-weight: 400;">If a custom interaction instance has allocated any resources which would not be automatically released when it is removed from the DOM it SHOULD implement an oncompleted function which will release those resources. The oncompleted function has no parameters.</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><strong>typeIdentifier</strong></p>
+				<p><span style="font-weight: 400;">This should have the same value as the customInteractionTypeIdentifier attribute in the portableCustomInteraction element.</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p>&nbsp;</p>
+</section>
+<section>
+<h2><a name="Solution_4"></a><span style="font-weight: 400;">Item XML Definition</span></h2>
+<p><span style="font-weight: 400;">To enable portability and to align with the QTI specification, a child element is used to define the portable custom interaction. This child element provides type identification, template variable bindings, interaction configuration settings and the initial HTML5 markup to add to the DOM and pass to the portable custom interaction on initialization.</span></p>
+
+        <table class="JSONSourceCodeTable" title="" summary="">
+        <caption></caption>
+            <tbody>
+                <tr>
+                    <td>
+<pre><span style="font-weight: 400;">&lt;?xml version=</span><em><span style="font-weight: 400;">&quot;1.0&quot;</span></em><span style="font-weight: 400;"> encoding=</span><em><span style="font-weight: 400;">&quot;UTF-8&quot;</span></em><span style="font-weight: 400;">?&gt;</span>
+<span style="font-weight: 400;">&lt;assessmentItem</span>
+<span style="font-weight: 400;">   xmlns=&quot;</span><em><span style="font-weight: 400;">http://www.imsglobal.org/xsd/imsqti_v2p2</span></em><span style="font-weight: 400;">&quot;</span> <span style="font-weight: 400;">xmlns:xsi=&quot;</span><em><span style="font-weight: 400;">http://www.w3.org/2001/XMLSchema-instance</span></em><span style="font-weight: 400;">&quot;</span>
+<span style="font-weight: 400;">   xsi:schemaLocation=</span><em><span style="font-weight: 400;">&quot;http://www.imsglobal.org/xsd/imsqti_v2p2</span></em><em><span style="font-weight: 400;"> http://www.imsglobal.org/xsd/imsqti_v2p2.xsd</span></em><em><span style="font-weight: 400;">&quot;</span></em>
+<span style="font-weight: 400;">   identifier=</span><em><span style="font-weight: 400;">&quot;SimpleExample&quot; </span></em><span style="font-weight: 400;">title=</span><em><span style="font-weight: 400;">&quot;Example&quot;</span></em><span style="font-weight: 400;"> adaptive=</span><em><span style="font-weight: 400;">&quot;false&quot;</span></em><span style="font-weight: 400;"> timeDependent=</span><em><span style="font-weight: 400;">&quot;false&quot;</span></em><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;"> &lt;stylesheet href=&quot;css/graph.css&quot; type=&quot;text/css&quot;/&gt;</span>
+<span style="font-weight: 400;"> &lt;responseDeclaration baseType=</span><em><span style="font-weight: 400;">&quot;point&quot;</span></em><span style="font-weight: 400;"> cardinality=</span><em><span style="font-weight: 400;">&quot;single&quot;</span></em><span style="font-weight: 400;"> identifier=</span><em><span style="font-weight: 400;">&quot;RESPONSE&quot;</span></em><span style="font-weight: 400;"> /&gt;</span>
+<span style="font-weight: 400;"> &lt;</span><span style="font-weight: 400;">templateDeclaration</span> <span style="font-weight: 400;">baseType</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;integer&quot;</span></em> <span style="font-weight: 400;">cardinality</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;single&quot;</span></em> <span style="font-weight: 400;">identifier</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;X&quot;</span></em> <span style="font-weight: 400;">defaultValue=</span><em><span style="font-weight: 400;">&quot;1&quot;</span></em><span style="font-weight: 400;">/&gt;</span>
+<span style="font-weight: 400;"> &lt;</span><span style="font-weight: 400;">templateDeclaration</span> <span style="font-weight: 400;">baseType</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;integer&quot;</span></em> <span style="font-weight: 400;">cardinality</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;single&quot;</span></em> <span style="font-weight: 400;">identifier</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;Y&quot;</span></em> <span style="font-weight: 400;">defaultValue</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;1&quot;</span></em><span style="font-weight: 400;">/&gt;</span>
+<span style="font-weight: 400;"> &lt;</span><span style="font-weight: 400;">itemBody</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;"> &lt;</span><span style="font-weight: 400;">customInteraction</span> <span style="font-weight: 400;">responseIdentifier</span><span style="font-weight: 400;">=&quot;RESPONSE&quot; </span><span style="font-weight: 400;">id</span><span style="font-weight: 400;">=&quot;graph1&quot; </span><span style="font-weight: 400;">xmlns=&quot;</span><em><span style="font-weight: 400;">http://www.imsglobal.org/xsd/portableCustomInteraction_v1</span></em><em><span style="font-weight: 400;">&quot;</span></em><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;">   </span><span style="font-weight: 400;">&lt;</span><span style="font-weight: 400;">portableCustomInteraction</span> <span style="font-weight: 400;">customInteractionTypeIdentifier</span><span style="font-weight: 400;">=&quot;vnd.Example.Graph&quot; </span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;">    </span><span style="font-weight: 400;">    </span><span style="font-weight: 400;">&lt;</span><span style="font-weight: 400;">templateVariable</span> <span style="font-weight: 400;">templateIdentifier</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;X&quot;</span></em> <span style="font-weight: 400;">/&gt;</span>
+<span style="font-weight: 400;">    </span><span style="font-weight: 400;">    </span><span style="font-weight: 400;">&lt;</span><span style="font-weight: 400;">templateVariable</span> <span style="font-weight: 400;">templateIdentifier</span><span style="font-weight: 400;">=</span><em><span style="font-weight: 400;">&quot;Y&quot;</span></em> <span style="font-weight: 400;">/&gt;</span>
+<span style="font-weight: 400;">     &lt;properties&gt;</span>
+<span style="font-weight: 400;">       &lt;property key=&quot;literal&quot;&gt;0&lt;/property&gt;</span>
+<span style="font-weight: 400;">       &lt;property key=&quot;scale&quot;&gt;5&lt;/property&gt;</span>
+<span style="font-weight: 400;">       &lt;property key=&quot;labelX&quot;&gt;Average precipitation&lt;/property&gt;</span>
+<span style="font-weight: 400;">       &lt;property key=&quot;labelY&quot;&gt;Month&lt;/property&gt;</span>
+<span style="font-weight: 400;">     &lt;/properties&gt;</span>
+<span style="font-weight: 400;">     &lt;modules primaryConfiguration=&quot;https://imsglobal.org/pci/1.0.15.modules.js&quot; fallbackConfiguration=&quot;modules/config.js&quot;&gt;</span>
+<span style="font-weight: 400;">       &lt;module id=&quot;chart&quot;/&gt;</span>
+<span style="font-weight: 400;">       &lt;module id=&quot;graph&quot; primaryPath=&quot;https://example.com/content/modules/1.5/graph&quot; fallbackPath=&quot;modules/graph&quot;/&gt;</span>
+<span style="font-weight: 400;">      &lt;/modules&gt;</span>
+<span style="font-weight: 400;">    </span><span style="font-weight: 400;">&lt;</span><span style="font-weight: 400;">markup xmlns=&quot;http://www.w3.org/1999/xhtml&quot;</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;"> </span><span style="font-weight: 400;"> </span><span style="font-weight: 400;">    </span><span style="font-weight: 400;">     </span><span style="font-weight: 400;">&lt;</span><span style="font-weight: 400;">div</span> <span style="font-weight: 400;">id</span><span style="font-weight: 400;">=&quot;graph1_box&quot; </span><span style="font-weight: 400;">class</span><span style="font-weight: 400;">=&quot;graph&quot; </span><span style="font-weight: 400;">style</span><span style="font-weight: 400;">=&quot;width:500px; height:500px;&quot;</span><span style="font-weight: 400;">&gt;&lt;/</span><span style="font-weight: 400;">div</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;"> </span><span style="font-weight: 400;">     </span><span style="font-weight: 400;">&lt;/</span><span style="font-weight: 400;">markup</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;">    &lt;/</span><span style="font-weight: 400;">portableCustomInteraction</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;">   &lt;/</span><span style="font-weight: 400;">customInteraction</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;"> &lt;/</span><span style="font-weight: 400;">itemBody</span><span style="font-weight: 400;">&gt;</span>
+<span style="font-weight: 400;">&lt;/assessmentItem&gt;</span>
+</pre>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+<section>
+<h2><a name="Solution_5"></a><span style="font-weight: 400;">Configuration</span></h2>
+
+<p><span style="font-weight: 400;">Configuration of portable custom interactions may leverage QTI templateDeclaration elements and/or properties defined in the portableCustomInteraction&#39;s property elements. The configuration data is set during system initialization and passed to the PCI module via a call to getInstance.</span></p>
+<p><span style="font-weight: 400;">QTI template variables may be leveraged to provide configuration data to custom interactions by template variable binding. The delivery system must read the mapping and provide configuration data before interaction initialization. QTI template variables are transcribed into JSON data by the delivery system.</span></p>
+<p><span style="font-weight: 400;">The JSON data is passed into the custom interaction object on creation via the getInstance method. Refer to the &ldquo;Appendix&rdquo; for the JSON representation of template variables. This example item in Section 2.4 above binds two template variables (X and Y) to this interaction, so that the value of these two variables will be passed by the delivery engine into the configuration in the templateVariables property when the custom interaction object is created.</span></p>
+</section>
+<section>
+<h2><a name="Solution_6"></a><span style="font-weight: 400;">Lifecycle</span></h2>
+<p>The diagram here illustrates the basic lifecycle of a PCI.
+
+    <figure class="graphic">
+        <img src="assets/pciLifecycle.png" alt="TBD">
+        <figcaption>PCI Lifecycle Sequence diagram</figcaption>
+    </figure>
+
+<p><span style="font-weight: 400;">If we take the example in Section 2.4 above a typical set of lifecycle events would be:</span></p>
+
+<ol style="margin-left: 40px;">
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine parses the assessmentItem.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">At some point the item is launched and the delivery engine begins to render the item in a web browser.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine identifies that there are one or more portableCustomInteractions in the assessmentItem.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">E.g., one portableCustomInteraction element with a customInteractionTypeIdentifier of vnd.Example.Graph.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine processes each portableCustomInteraction.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">It identifies if there is a modules element in the PCI namespace, and if so, begins the process of ensuring any Javascript AMD modules referenced there are loaded, by:</span><span style="font-weight: 400;">:</span></li>
+		<ol type="a">
+			<li style="font-weight: 400;"><span style="font-weight: 400;">​If the modules element has a primaryConfiguration attribute it downloads the JSON configuration file from the given URL which can provide fine grained control over the resolution of the AMD modules to be loaded. The format of this configuration file is defined in Appendix B. </span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">e.g. it reads the following configuration JSON:</span><br /></li>
+<pre>
+<span style="font-weight: 400;">{   &quot;waitSeconds&quot;: 60,</span>
+<span style="font-weight: 400;">              &quot;paths&quot;: {</span>
+<span style="font-weight: 400;">                  &quot;jquery&quot;: &quot;</span><span style="font-weight: 400;">https://code.jquery.com/jquery-1.10.2</span><span style="font-weight: 400;">&quot;,</span>
+<span style="font-weight: 400;">                  &quot;mobile&quot;: &quot;</span><span style="font-weight: 400;">https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0</span><span style="font-weight: 400;">&quot;,</span>
+<span style="font-weight: 400;">                  &quot;chart&quot;: &quot;</span><span style="font-weight: 400;">https://cdnjs.com/libraries/chart.js&quot;</span><span style="font-weight: 400;">   }</span>
+<span style="font-weight: 400;">         }</span>
+</pre>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">If it cannot download that config file it should attempt to load the config file from the URL in the fallbackConfiguration attribute, if set (this allows the item, for example, to specify CDN hosted Javascript modules, but allow the delivery engine to fallback to Javascript modules included in the QTI content package, if e.g., a secure browser test configuration does not allow loading resources from CDN locations).</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">It then processes each module element in turn. If a module resolution configuration has been set this is applied.</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">If primaryPath has been set for this module this can be used to provide the url to use when loading the module and will override the general module resolution configuration for this module. If the primaryPath location is not accessible then the fallbackPath location should be tried.</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">E.g. for the second module a primaryPath has been set so the module will be resolved as https://example.com/content/modules/1.5/chart/chart.js</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine should perform an AMD </span><em><span style="font-weight: 400;">require </span></em><span style="font-weight: 400;">operation for the module identified by the id attribute, injecting the qtiCustomInteractionContext object.</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">e.g. the first module has an id of &quot;chart&quot; and the JSON config file has a paths config for &quot;chart&quot; so it will load the module from </span><span style="font-weight: 400;">https://cdnjs.com/libraries/chart.js</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">The second module has an id of &quot;graph&quot; and a primaryPath override of https://example.com/content/modules/1.5/graph so it will load this module from </span><span style="font-weight: 400;">https://example.com/content/modules/1.5/graph/graph.js</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">When loaded the custom interaction module should call register(customInteraction) on the injected qtiCustomInteractionContext object to set the custom interaction interface for this custom interaction.</span></li>
+			<li style="font-weight: 400;"><span style="font-weight: 400;">The custom interaction module should return an object (e.g., itself) which implements the interface described in Section 2.3.</span></li>
+		</ol>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">​Once all of the required Javascript AMD modules have completed loading the delivery engine should copy the contents of the markup element to the DOM in the browser.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">E.g., &lt;div id=&quot;graph1_box&quot; class=&quot;graph&quot; style=&quot;width:500px; height:500px&quot;&gt;&lt;/div&gt;</span></li>
+        <li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine extracts the property keys and values and builds a Javascript object with all these values:</span></li>
+	<pre>
+<span style="font-weight: 400;">e.g. { &quot;literal&quot;: &quot;0&quot;,</span>
+<span style="font-weight: 400;">       &quot;scale&quot;: &quot;5&quot;,</span>
+<span style="font-weight: 400;">       &quot;labelX&quot;: &quot;Average precipitation&quot;,</span>
+<span style="font-weight: 400;">       &quot;labelY&quot;: &quot;Month&quot;</span>
+<span style="font-weight: 400;">     }</span>
+</pre>
+
+<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine identifies any templateVariable elements in the item and if there are any looks up the current value of those template variables and builds a Javascript object with the current values of those template variables</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">E.g., assuming the template variables have their default values: { &quot;X&quot;: { &quot;base&quot;: { "integer": 1} &quot;Y&quot;: { "integer": 1 }</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine then identifies the customInteraction element parent of the portableCustomInteraction, reads the responseIdentifier attribute and looks up the current value of that response variable which it will provide via the boundTo property.</span><br />
+		<span style="font-weight: 400;">E.g., RESPONSE=null</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">It then builds a configuration object containing the properties from step 7, the templateVariables from step 8 and the responseVariable value from step 9, the lifecycle callback functions, and the status of the interaction </span></li>
+	<pre>
+	<span style="font-weight: 400;">e.g. { &quot;properties&quot;: { &quot;literal&quot;: &quot;0&quot;,</span>
+	<span style="font-weight: 400;">       &quot;scale&quot;: &quot;5&quot;,</span>
+	<span style="font-weight: 400;">       &quot;labelX&quot;: &quot;Average precipitation&quot;,</span>
+	<span style="font-weight: 400;">       &quot;labelY&quot;: &quot;Month&quot; &nbsp;},</span>
+	<span style="font-weight: 400;">       &quot;templateVariables&quot;: { &quot;X&quot;: { &quot;base&quot;: { &quot;integer&quot;: 1} },</span>
+	<span style="font-weight: 400;">                              &quot;Y&quot;, { &quot;base&quot;: { &quot;integer&quot;: 1} } },</span>
+	<span style="font-weight: 400;">       &quot;boundTo&quot;: { &quot;RESPONSE&quot;: { &quot;base&quot;: { &quot;point&quot;: null } } },</span>
+	<span style="font-weight: 400;">       &quot;onready&quot;: this.onPCIReady.bind(this),</span>
+	<span style="font-weight: 400;">       &quot;ondone&quot;: this.onPCIDone.bind(this),</span>
+	<span style="font-weight: 400;">       &quot;status&quot;: &quot;interacting&quot; &nbsp;&nbsp;}</span>
+	</pre>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">It then calls getInstance on the custom interaction interface object registered &nbsp;in step 6.j. above and passes the customInteractionTypeIdentifier attribute of the portableCustomInteraction element and then the root element of the markup added to the DOM in step 6 and passes that along with the configuration and optionally the state in the case where the delivery engine wants to restore the interaction to a previous state (e.g., if the use is returning to an item they have previously navigated away from before finishing their work then the saved state captured before navigating away is also passed to the call).</span></li>
+	<pre>
+<span style="font-weight: 400;">e.g. var pciElement = this.createPCIMarkup(...);</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;var customInteraction = this.getPCI(customInteractionTypeIdentifier);</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;customInteraction.getInstance(customInteractionTypeIdentifier, pciElement, {</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;properties&quot;: { </span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;literal&quot;: &quot;0&quot;,</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;scale&quot;: &quot;5&quot;,</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;labelX&quot;: &quot;Average precipitation&quot;,</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;labelY&quot;: &quot;Month&quot;</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span>
+    <span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;templateVariables&quot;: { </span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;X&quot;: { &quot;base&quot;: { &quot;integer&quot;: 1} }, </span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Y&quot;, { &quot;base&quot;: { &quot;integer&quot;: 1} }</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;boundTo&quot;: { </span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;RESPONSE&quot;: { &quot;base&quot;: { &quot;point&quot;: null } }</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&quot;onready&quot;: this.onPCIReady.bind(this),</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&quot;ondone&quot;: this.onPCICompleted(this),</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&quot;status&quot;: &quot;interacting&quot;</span>
+	<span style="font-weight: 400;">&nbsp;}); // No saved state being passed as this is an initial construction</span>
+	</pre>
+
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The communication bridge(qtiCustomInteractionContext interface) then creates a custom interaction instance object by calling getInstance in turn on the PCI instance passing the configuration details described above. </span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The custom interaction instance then modifies the DOM containing the HTML copied from the markup element, if required (e.g., to support customization triggered by the supplied template variables). The delivery engine may have passed a status property in the configuration which the custom interaction may also choose to use to customize the rendering of the custom interaction to suit the use case. For example the status may be &quot;solution&quot; where the delivery engine is requesting the custom interaction display it&#39;s model solution and the custom interaction may choose in that case to render in a readonly mode.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">E.g., the custom interaction object will use the chart module to add a canvas element as a child of the div with id &quot;graph1_box&quot;, render labelled axes using the labels in the configuration properties and add an initial point at the X, Y position given by the two templateVariables values.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The custom interaction object then reads the configuration.onready callback property and calls that method, passing a representation of its current state as the argument.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">e.g. this.configuration.onready(this, this.getState());<br />
+	In this example the function onPCIReady passed by the delivery engine in the call to getInstance in step 14 will be called.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The delivery engine should retain a reference to the custom interaction object.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The user interacts with the custom interaction and the custom interaction object updates its view of the response value of the interaction.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">E.g., user clicks on a position on the graph and the internal response variable is set to that X, Y position:<br />
+	this.response = { &quot;base&quot;: { &quot;point&quot;: [ x, y ] } };</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">If the user performs an action which tells the interaction that the student&#39;s interaction is complete (e.g. requests a hint or model solution to be displayed) the custom interaction object will call the ondone callback method if set in the configuration, passing it&#39;s current view of the interaction response in the format specified in Appendix A, a representation of its current state and can optionally pass the status (typically if the user&#39;s interaction has changed that state, e.g., by ending the interaction).</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">E.g., this.ondone(this, this.getResponse(), this.getState(), this.getStatus());</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Where this.getResponse() returns { &quot;base&quot;: { &quot;point&quot;: [ 23, 19 ] }}</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">this.getState() returns an object which only the custom interaction object itself needs to understand,</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">this.getStatus returns &quot;closed&quot;<br />
+	In this example the function onPCIDone passed by the delivery engine in the call to getInstance in step 14 will be called with the above parameters.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">When the delivery engine identifies that the custom interaction is to be removed from display it should first call the method set in the oncompleted callback property of the custom interaction object</span></li>
+<pre>
+    <span style="font-weight: 400;">e.g. destroyItem: function () {</span>
+	<span style="font-weight: 400;">     for (var i = 0; i &lt; this.pciInteractions.length; i++) {</span>
+	<span style="font-weight: 400;">          this.pciInteractions[i].oncompleted(); }</span>
+	<span style="font-weight: 400;">   }</span>
+</pre>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">If the the custom interaction object has set an oncompleted callback method it can do whatever cleanup it requires before the interaction is unloaded.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">At any point after the custom interaction object has fired the onready callback (e.g. if the student has indicated that they wish to navigate away from the item) the delivery engine can call getResponse() on the custom interaction object to get the current value of the response to set on the response variable named in the responseIdentifier attribute of the customInteraction element.</span></li>
+<pre>
+    <span style="font-weight: 400;">e.g. var responseValue = this.pciInteractions[currentInteraction].getResponse();</span>
+	<span style="font-weight: 400;">     this.setResponseValue(currentInteraction, responseValue);</span><br />
+	<span style="font-weight: 400;">     where responseValue = { &quot;base&quot;: { &quot;point&quot;: [ 23, 19 ] }}</span>
+</pre>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">At any point &nbsp;after the custom interaction object has fired the onready callback the delivery engine can call getState to capture the current state of the interaction. It can use this to reconstruct the custom interaction in this same state so the user can continue to interact with it. It would do this by recreating the custom interaction and passing the result of getState as the final optional parameter to getInstance.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">If a delivery engine wants to persist this state on a server rather than in the browser it may be useful to call JSON.stringify to serialize the state and then call JSON.parse to recreate the object before passing it to getInstance().</span></li>
+</ol>
+
+<h2><a name="Solution_7"></a><span style="font-weight: 400;">2.7 Accessibility</span></h2>
+
+<p><span style="font-weight: 400;">It is possible to make portable custom interactions accessible. However, ensuring accessibility of custom interactions may require additional practices beyond those required for defined (i.e., non-custom) interactions. Best practices for accessibility of custom interactions are in the process of being developed and should become available in later versions of this and other documents.</span></p>
+<p><span style="font-weight: 400;">Custom interactions should rely, to the extent possible, on existing standards, including two specifications of the World Wide Web Consortium (W3C) -- the Web Content Accessibility Guidelines version 2 (WCAG) (a W3C recommendation) and WAI-ARIA accessibility guidelines (a W3C candidate recommendation).</span></p>
+<p><span style="font-weight: 400;">The WAI-ARIA guidelines describe semantics to identify user interface controls, dynamically changing content regions, and events. Reviewing</span><a href="http://www.w3.org/WAI/intro/aria"> <span style="font-weight: 400;">http://www.w3.org/WAI/intro/aria</span></a><span style="font-weight: 400;"> provides the reader with the published guidelines and best practices to follow. Below is also a list of JavaScript libraries working to align with the WAI-ARIA guidelines:</span></p>
+<ul>
+	<li>The Dojo Toolkit (<a href="http://dojotoolkit.org/">http://dojotoolkit.org/</a></li>
+	<li>YUI (<a href="http://yuilibrary.com/">http://yuilibrary.com/</a></li>
+	<li>jQueryUI (<a href="http://www.jqueryui.com/">http://www.jqueryui.com</a></li>
+</ul>
+<p><span style="font-weight: 400;">In order to increase the consistency of how these standards are applied and interpreted across vendors, interested vendors are encouraged to share their accessibility practices and approaches around custom interactions with others through the APMG.</span></p>
+<p><span style="font-weight: 400;">When the custom interaction part of the item content involves XHTML-like elements with clear identifying attributes, it is suggested to provide APIP accessibility information linked to that content by id. &nbsp;More information on APIP&rsquo;s standard approach to connecting content and accessibility metadata can be found in the linked portion of the APIP Best Practices document [[APIP-10]].</span></p>
+<p><span style="font-weight: 400;">It should also be noted that the APIP standard is focused on ensuring the proper exchange of accessibility information but does not specify all significant aspects of assessment delivery. This is true for both custom and defined (non-custom) interactions. Implementers may find, for example, that while the APIP specification defines the basic information needed for accessible drag-and-drop assessment items, it does not define all important issues that would be needed to make drag-and-drop assessment items usable by some people with disabilities. For example, implementers need to determine how to address the needs of individuals who cannot use a mouse (e.g., who are blind or have fine motor disabilities) or who may prefer other input modalities (e.g., keyboard).</span></p>
+
+<h2><a name="Solution_8"></a><span style="font-weight: 400;">2.8 Packaging</span></h2>
+<p><span style="font-weight: 400;">Packaging of portable custom interactions does not require any adjustments to IMS Global packaging specifications. The resource element defined by the specifications will suffice for linking artifacts. This is an excerpt from a manifest describing the packaging of a portable custom interaction:</span></p>
+        <table class="JSONSourceCodeTable" title="" summary="">
+        <caption></caption>
+            <tbody>
+                <tr>
+                    <td>
+<pre>
+&lt;resources&gt;
+  &lt;resource identifier="GI" type="imsqti_apipitem_xmlv2p2" href="items/graphItem.xml"&gt;
+    &lt;lom xmlns="http://ltsc.ieee.org/xsd/apipv1p0/LOM/resource"&gt;
+      &lt;general&gt;
+        &lt;identifier&gt;
+          &lt;entry&gt;GraphItem&lt;/entry&gt;
+        &lt;/identifier&gt;
+        &lt;title /&gt;
+      &lt;/general&gt;
+     &lt;lifeCycle&gt;
+       &lt;contribute /&gt;
+       &lt;version&gt;
+         &lt;string&gt;Final 1.89&lt;/string&gt;
+       &lt;/version&gt;
+     &lt;/lifeCycle&gt;
+     &lt;educational&gt;
+       &lt;description&gt;
+         &lt;string&gt;Graphing Question.&lt;/string&gt;
+       &lt;/description&gt;
+     &lt;/educational&gt;
+     &lt;qtiMetadata xmlns="http://www.imsglobal.org/xsd/apip/apipv1p0/qtimetadata/imsqti_v2p2"&gt;
+       &lt;interactionType&gt;customInteraction&lt;/interactionType&gt;
+       &lt;feedbackType&gt;none&lt;/feedbackType&gt;
+       &lt;solutionAvailable&gt;false&lt;/solutionAvailable&gt;
+     &lt;/qtiMetadata&gt;
+   &lt;/lom&gt;
+   &lt;file href="items/graphItem.xml" /&gt;
+   &lt;file href="items/graph.js" /&gt;
+   &lt;file href="items/graph.css" /&gt;
+ &lt;/resource&gt;
+&lt;/resources&gt;
+</pre>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+</section>
+</section>
+
+<section class="appendix normative" id="baseTypes">
+<h1><a name="AppendixA"></a>Base Types</h1>
+<p><span style="font-weight: 400;">The following is a list of examples showing QTI base types and cardinality represented by a JSON example. The representations are the expected format when dealing with response data.</span></p>
+<p><b>Table A.1 QTI Base Types to JSON Representation</b></p>
+<table>
+	<table border="0">
+	<tbody>
+		<tr bgcolor="darkblue">
+			<td>
+				<p><span style="font-weight: 400; color: white">QTI Base Type</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400; color: white">JSON Representation</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">NULL</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : null }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Boolean</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;boolean&quot; : true } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Integer</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;integer&quot; : 123 } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Float</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;float&quot; : 23.23 } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">String</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;string&quot; : &quot;string&quot; } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Point</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;point&quot; : [10, 20] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Pair</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;pair&quot; : [&quot;A&quot;, &quot;B&quot;] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Directed Pair</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;directedPair&quot; : [&quot;a&quot;, &quot;b&quot;] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Duration</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;duration&quot; : &quot;P10Y3M20DT4H30M25S&quot; } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">File</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;file&quot; : {&quot;data&quot;:&quot;cGxlYXN1cmUu&quot;,</span></p>
+				<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;mime&quot;:&quot;text/plain&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;name&quot;: &quot;helloworld.txt&quot; }</span></p>
+				<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">URI</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;uri&quot; : &quot;file:///somewhere.txt&quot; } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">IntOrIdentifier</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;intOrIdentifier&quot; : 123456 } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Identifier</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &quot;base&quot; : {&quot;identifier&quot; : &quot;_identifier&quot; } }</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p><span style="font-weight: 400;">Duration expresses the value using ISO 8601 durations to comply with JSON schema</span></p>
+<p><b>Table A.2 QTI Multiple and Ordered Cardinality to JSON Representation.</b></p>
+<table>
+	<table border="0">
+	<tbody>
+		<tr bgcolor="darkblue">
+			<td>
+				<p><span style="font-weight: 400; color: white">QTI Multiple / Ordered Cardinality</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400; color: white">JSON Representation</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Boolean</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">&quot;{ &quot;list&quot;: { &quot;boolean&quot; : [true, false, true, true] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Integer</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;integer&rdquo; : [2, 3, 5, 7, 11, 13] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Float</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;float&rdquo; : [3.1415926, 12.34, 98.76] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">String</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;string&rdquo; : [&ldquo;Another&rdquo;, &ldquo;And Another&rdquo;] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Point</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;point&rdquo; : [ [123, 456], [640, 480] ] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Pair</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;pair&rdquo; : [ [&ldquo;A&rdquo;, &rdquo;B&rdquo;], [&ldquo;D&rdquo;, &rdquo;C&rdquo;] ] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Directed Pair</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;directedPair&rdquo;: [ [&rdquo;A&rdquo;, &rdquo;B&rdquo;], [&rdquo;C&rdquo;, &rdquo;D&rdquo;] ] }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Duration</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;duration&rdquo; : [&quot;P10Y3M20DT4H30M25S&rdquo;] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">File</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;file&rdquo;:[{&ldquo;data&quot;:&rdquo;cGxlYXN1cmUu&rdquo;,&rdquo;mime&rdquo;:&rdquo;text/plain&rdquo;}]}}</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">URI</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;uri&rdquo; : [&ldquo;file:///aFile.txt&rdquo;, &ldquo;file:///abc.txt&rdquo;] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">IntOrIdentifier</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;intOrIdentifier&rdquo; : [2, &ldquo;_id&rdquo;] } }</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">Identifier</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400;">{ &ldquo;list&rdquo; : {&ldquo;identifier&rdquo; : [&ldquo;_id1&rdquo;, &ldquo;id2&rdquo;, &ldquo;ID3&rdquo;] } }</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p><b>Table A.3 QTI Record Cardinality to JSON Representation.</b></p>
+<table>
+	<table border="0">
+	<tbody>
+		<tr bgcolor="darkblue">
+			<td>
+				<p><span style="font-weight: 400; color: white">QTI Record Cardinality</span></p>
+			</td>
+			<td>
+				<p><span style="font-weight: 400; color: white">JSON Representation</span></p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<p><span style="font-weight: 400;">Record</span></p>
+			</td>
+			<td>
+				<pre>
+				<span style="font-weight: 400;">{</span><span style="font-weight: 400;">&quot;record&quot;: [</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;{</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;name&quot;: &quot;rock&quot;,</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;base&quot;: {</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;boolean&quot;: true</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;},</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;{</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;name&quot;: &quot;paper&quot;,</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;list&quot;: {</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;string&quot;: [&quot;p&quot;,&quot;a&quot;,&quot;p&quot;,&quot;e&quot;,&quot;r&quot;]</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;},</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;{</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;name&quot;: &quot;scissors&quot;,</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;list&quot;: {</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;integer&quot;: [1, 2, 3, 4]</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;},</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;{</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;name&quot;: null</span>
+				<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;}</span>
+					<span style="font-weight: 400;">]</span>
+				<span style="font-weight: 400;">}</span>
+				</pre>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</section>
+
+<section class="appendix normative" id="moduleResolution">
+<h1><a name="AppendixB"></a>Module Resolution Configuration Format</h1>
+<p>This config file is a JSON document like the following example:</p>
+<pre>
+<span style="font-weight: 400;">{ &quot;waitSeconds&quot;: 15, </span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&quot;paths&quot;: {</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;graph&quot;: &quot;</span>https://example.com/js/modules/graph1.01/graph.js<span style="font-weight: 400;">&quot;,</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;foo&quot;: &quot;</span><span style="font-weight: 400;">https://foobar.com/foo/bar1.2/foo.js</span></a><span style="font-weight: 400;">&quot;</span>
+	<span style="font-weight: 400;">&nbsp;&nbsp;}</span>
+	<span style="font-weight: 400;">} </span>
+</pre>
+<p>The waitSeconds property sets the timeout to use when attempting to download AMD Javascript modules. If not set the delivery engine may select the timeout to use.</p>
+<p>The paths property provides a simple mapping between module ids (e.g. &quot;graph&quot; and &quot;foo&quot;) and the URL to use to download the module.</p>
+</section>
+<!--
+<h1><span style="font-weight: 400;">Appendix C &ndash; JSON schema for QTI variable</span></h1>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<p><span style="font-weight: 400;">{</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;id&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;$schema&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;</span><a href="http://json-schema.org/draft-04/schema#"><span style="font-weight: 400;">http://json-schema.org/draft-04/schema#</span></a><span style="font-weight: 400;">&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;description&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;Portable Custom Interaction Base Types JSON Representation Schema by Michael Aumock (maumock@pacificmetrics.com), Jérôme Bogaerts (jerome@taotesting.com), Somsack Sipasseuth (</span><a href="mailto:sam@taotesting.com"><span style="font-weight: 400;">sam@taotesting.com</span></a><span style="font-weight: 400;">).&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;object&quot;,</span><br />
+					<br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;definitions&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;base&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;object&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;null&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">],</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;properties&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;boolean&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/boolean&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;integer&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/integer&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;float&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/float&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;string&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/string&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;uri&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/uri&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;identifier&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/identifier&quot;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;point&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/point&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pair&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/pair&quot;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;directedPair&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/pair&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;duration&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/duration&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;file&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/file&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;intOrIdentifier&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/integer&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/identifier&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;additionalProperties&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">false</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;list&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;object&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;properties&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;boolean&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/boolean&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;integer&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/integer&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;float&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/float&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;string&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/string&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;uri&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/uri&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;identifier&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/identifier&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;point&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/point&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pair&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/pair&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;directedPair&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/pair&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;duration&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/duration&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;file&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/file&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;intOrIdentifier&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;oneOf&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/integer&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/identifier&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;null&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;additionalProperties&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">false</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;record&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/recordRow&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;recordRow&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;object&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;properties&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;name&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;base&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/base&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;list&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/list&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;required&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;Name&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">],</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;additionalProperties&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">false</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;boolean&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;boolean&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;integer&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;integer&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;maximum&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">2147483647,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;minimum&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">-</span><span style="font-weight: 400;">2147483647</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;float&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;number&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;string&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;uri&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;format&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;uri&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;identifier&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pattern&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;^[_a-zA-Z][\\w-\\.#\\[\\]]*$&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;point&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;maxItems&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">2,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;minItems&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">2,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/integer&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pair&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;array&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;maxItems&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">2,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;minItems&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">2,</span></p>
+				<p><span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;items&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/identifier&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;duration&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pattern&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;^P([\\d]+([,\\.][\\d]+)?Y)?([\\d]+([,\\.][\\d]+)?M)?([\\d]+([,\\.][\\d]+)?W)?([\\d]+([,\\.][\\d]+)?D)?(T([\\d]+([,\\.][\\d]+)?H)?([\\d]+([,\\.][\\d]+)?M)?([\\d]+([,\\.][\\d]+)?S)?)?$&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;file&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;properties&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;data&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/base64&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;mime&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/mime&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;name&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/string&quot;</span> <span style="font-weight: 400;">}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;required&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> [</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;Data&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;Mime&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">],</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;additionalProperties&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">false</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;base64&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pattern&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;^[a-zA-Z0-9\\+/]+(?:[=]{0,2})$&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;mime&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;type&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;string&quot;,</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;pattern&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;^[a-zA-Z-]+/[-\\w\\+\\.]+$&quot;</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;properties&quot;</span><span style="font-weight: 400;">:</span><span style="font-weight: 400;"> {</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;base&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/base&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;list&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/list&quot;</span> <span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;record&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">{</span> <span style="font-weight: 400;">&quot;$ref&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">&quot;#/definitions/record&quot;</span><span style="font-weight: 400;"> }</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">},</span><br />
+					<span style="font-weight: 400;">&nbsp;&nbsp;</span><span style="font-weight: 400;">&quot;additionalProperties&quot;</span><span style="font-weight: 400;">:</span> <span style="font-weight: 400;">false</span><br />
+					<span style="font-weight: 400;">}</span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p><span style="font-weight: 400;">2.8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Registry</span></p>
+<p><span style="font-weight: 400;">IMS Global hosts a registry of custom interactions. The &ldquo;Question and Test Interoperability Registry for Custom Interactions and Operators&rdquo; service provides users the ability to share, filter, view, and download portable custom interactions.</span></p>
+<h3><span style="font-weight: 400;">2.8.1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewing Custom Interactions</span></h3>
+<p><span style="font-weight: 400;">The service is available to the general public and is accessible by the following URL:</span><a href="https://www.imsglobal.org/question/qtiinteractions/qtiregistry.cfm"> <span style="font-weight: 400;">http://www.imsglobal.org/question/qtiinteractions/qtiregistry.cfm</span></a><span style="font-weight: 400;">. The main interface of the registry, by default, displays the current interactions by type. Sorting may be applied to the table by clicking on &ldquo;Title&rdquo;, &ldquo;Description&rdquo;, or &ldquo;Author&rdquo;. The arrow next to the table header allows a user to sort descending or ascending. The &ldquo;First&rdquo;, &ldquo;Previous&rdquo;, &ldquo;Next&rdquo;, and &ldquo;Last&rdquo; links offer paging of results when the list is limited to 10 records. The link reading, &ldquo;Show 10 records&rdquo;, when clicked, toggles to a mode for displaying all results.</span></p>
+<p><span style="font-weight: 400;">Figure 2.4 Registry Filtering</span></p>
+<p><span style="font-weight: 400;">A user clicking on the title of a record, in figures 2.3 or 2.4, will be directed to the record&rsquo;s detail. Figure 2.5 displays the record detail for the &ldquo;awesome&rdquo; interaction created by Lisa. The record detail view provides users the opportunity to download or preview the interaction. The following are descriptions describing registry links.</span></p>
+<ul>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">APIP Package Row: A link is provided to download the interaction in APIP format</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Image Row</span><em><span style="font-weight: 400;">:</span></em><span style="font-weight: 400;"> Provides a link to preview a snapshot of the interaction.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Example Row: A configuration example may be downloaded.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Documentation Row: More documentation may exist for an interaction with a provided link.</span></li>
+</ul>
+<h3><span style="font-weight: 400;">2.8.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sharing Custom Interactions</span></h3>
+<p><span style="font-weight: 400;">Custom interactions can be shared by registering them at:</span><a href="https://www.imsglobal.org/question/qtiinteractions/qti.cfm"> <span style="font-weight: 400;">http://www.imsglobal.org/question/qtiinteractions/qti.cfm</span></a><span style="font-weight: 400;">. The registry form requires the submitter to specify details about custom interaction as follows:</span></p>
+<ul>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Type of Extension: Select whether you&rsquo;re submitting a custom interaction or a custom operator. &nbsp;</span></li>
+	<li style="font-weight: 400;"><a href="https://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_ftn1"><span style="font-weight: 400;">[1]</span></a> <span style="font-weight: 400;">QTI/APIP Package: Choose a local QTI or APIP package containing the desired custom interaction to upload.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Example (txt file): Choose a local text document that exemplifies the configuration of the custom interaction.</span></li>
+	<li style="font-weight: 400;"><a href="https://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_ftn1"><span style="font-weight: 400;">[1]</span></a> <span style="font-weight: 400;">Title of Interaction: Enter a title for the custom interaction.</span></li>
+	<li style="font-weight: 400;"><a href="https://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_ftn1"><span style="font-weight: 400;">[1]</span></a> <span style="font-weight: 400;">Short Description: Provide a short one-sentence description of the custom interaction.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Screenshot Image (gif, jpg): &nbsp;Choose a local screenshot providing a visual image of the custom interaction.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Schema (xsd, dtd, json): Select the type of schema the custom interaction uses: xsd, dtd, or json.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Long Description: Provide a more descriptive summary of the custom interaction, its purpose, and intended use.</span></li>
+	<li style="font-weight: 400;"><a href="https://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_ftn1"><span style="font-weight: 400;">[1]</span></a> <span style="font-weight: 400;">Author / Origin: Enter the name of the author or originating organization.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Documentation: Provide a link to any further details or applicable documentation.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Licensing: &nbsp;Select whether the license to reuse the custom interaction is open source or commercial.</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">Dependencies: Provide a brief description of what dependencies are required for this custom interaction.</span></li>
+	<li style="font-weight: 400;"><a href="https://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_ftn2"><span style="font-weight: 400;">[2]</span></a> <span style="font-weight: 400;">Submitter: Name of the individual submitting the custom interaction.</span></li>
+	<li style="font-weight: 400;"><a href="https://www.imsglobal.org/assessment/pciv1p0cf/imsPCIv1p0cf.html#_ftn2"><span style="font-weight: 400;">[2]</span></a> <span style="font-weight: 400;">Email: Email address of the individual submitting the custom interaction.</span></li>
+</ul>
+<p><span style="font-weight: 400;">Figure 2.6 Registry Submission</span></p>
+<p><span style="font-weight: 400;">Once the custom interaction form is completed and submitted, the process proceeds as follows:</span></p>
+<ol>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">A submission confirmation email is returned to the submitter of the custom interaction;</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The custom interaction is validated with respect to the registration process, i.e., technical correctness, valid submission schema and naming (this is to ensure that name clashes do not occur). If a valid custom interaction has been received it will be listed in the catalog for others to access. Validation is undertaken by the IMS Global core staff;</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">The corresponding validation response is returned to the submitter of the custom interaction;</span></li>
+	<li style="font-weight: 400;"><span style="font-weight: 400;">If and when there is a next revision of the QTI specification, the IMS QTI/APIP Assessment APMG (Accredited Profile Management Group) will automatically take the custom interaction into consideration for inclusion in the specification. In that case, the workgroup will contact the original submitter.</span></li>
+</ol>
+<p><span style="font-weight: 400;">In the cases where a vocabulary is rejected, an explanation will be given for the rejection. An amended custom interaction can be resubmitted and will be treated without prejudice.</span></p>
+-->
+
+
+    <section class="appendix informative" id="revisionhistory">
+      <h2>Revision History</h2>        
+      <section>
+        <h3>Version History</h3>
+        <table title="Revision History" 
+          summary="Publication history and revision details for this specification.">
+          <thead>
+            <tr><th>Version No.</th><th>Release Date</th><th>Comments</th></tr>
+          </thead>
+            <tbody>
+                <tr>
+                    <td>v1.0 Candidate Final</td>
+                    <td>April 2013</td>
+                    <td>Initial Draft of the PCI specification.</td>
+                </tr>
+                <tr>
+                    <td>v1.0 Member Candidate Final</td>
+                    <td>1 October 2017</td>
+                    <td>The first Member Candidate Final release.</td>
+                </tr>
+            </tbody>
+        </table>
+
+		</section>
+       <section>
+         <h3>Changes in this version</h3>
+         <p>TBC</p>
+       </section>   
+    </section> <!-- /revision history -->
+  
+  </body>
+</html

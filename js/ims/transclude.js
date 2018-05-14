@@ -36,14 +36,14 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
 
       if (!transclude.hasAttribute("data-id")) {
         (0, _pubsubhub.pub)("error", "transclude script element without data-id attribute");
-        continue;
+        break;
       }
 
       var str = window[transclude.getAttribute("data-id")];
 
       if (str === undefined || typeof str !== 'string') {
         (0, _pubsubhub.pub)("error", "no transclude variable named '" + str + "' found in global scope");
-        continue;
+        break;
       }
 
       var newNodes = (0, _utils.toHTMLNodes)(str);

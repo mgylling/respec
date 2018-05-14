@@ -12,7 +12,7 @@ export const name =  "ims/biblio";
 */
 
 export function run(conf, doc, cb) {
-  var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.js";  
+  var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.json";  
   if(conf.overrideIMSbiblioLocation) {
     imsBiblioURL = conf.overrideIMSbiblioLocation;
   }
@@ -26,8 +26,10 @@ export function run(conf, doc, cb) {
         }
         throw new Error(response.statusText);
       }).then(function(json) {       
+        //TODO invalid json should be caught here
+        //JSON.stringify(conf.localBiblio) --> throws error?
         //TODO we might want to worry about dupes and precedence
-        conf.localBiblio = Object.assign(conf.localBiblio, json);      
+        conf.localBiblio = Object.assign(conf.localBiblio, json);              
       }).catch(function(error) {
         console.log("imsbiblio error: " + error.toString());
         pub("warning", error.toString());

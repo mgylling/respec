@@ -11,7 +11,7 @@ export function run(conf, doc, cb) {
     if(!confH) {
       confH = doc.getElementById('conformance-statements'); 
     }  
-    console.log("==>" + confH.tagName);
+
     //if we are at the section, get the heading
     if(confH.tagName == 'SECTION') {    
      confH = confH.querySelector("h1, h2, h3, h4, h5, h6");  
@@ -73,6 +73,10 @@ function getNormativeText(conf) {
   var p4 = toHTMLNode(`<p>The <a href='#document-set'>Conformance and Certification Guide</a> for this 
   specification may introduce greater normative constraints than those defined 
   here for specific service or implementation categories.</p>`);
+  
+  if(conf.skipCertGuideConformanceRef || conf.specType == "cert") {
+    return [p3,p2,p1];  
+  }
       
   return [p4,p3,p2,p1];
 }
@@ -87,7 +91,7 @@ function getInformativeText(conf) {
   var p1 = document.createElement("p");
   p1.appendChild(document.createTextNode(
     "This document is an informative resource in the Document Set of the " +
-    conf.mainSpecTitle + " specification [[!" + conf.mainSpecBiblioKey + 
+    conf.mainSpecTitle + " specification [[" + conf.mainSpecBiblioKey + 
     "]]. As such, it does not " +
     "include any normative requirements. Occurrences in this document of terms " +
     "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " +

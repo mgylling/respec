@@ -31,14 +31,14 @@ export function run(conf, doc, cb) {
     
     if(!transclude.hasAttribute("data-id")) {
       pub("error", "transclude script element without data-id attribute");
-      continue;
+      break;
     }
     
     var str = window[transclude.getAttribute("data-id")];
     
     if (str === undefined || typeof str !== 'string') {
       pub("error", "no transclude variable named '" + str + "' found in global scope");
-      continue;
+      break;
     }
     
     var newNodes = toHTMLNodes(str);          

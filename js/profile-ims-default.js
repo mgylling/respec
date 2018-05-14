@@ -15,7 +15,7 @@ require.config({
     },
     beautify: {
       exports: "beautify",
-    },
+    },    
   },
   paths: {
     "beautify-css": "deps/beautify-css",
@@ -86,9 +86,10 @@ define(
     "ims/highlight",
     "core/webidl-clipboard",
     "core/data-tests",
-    "ims/boilerplate",
-    "ims/attach-fixup",
+    "ims/boilerplate",    
     "ims/cleanBody",
+    "ims/title-attrs",
+    "ims/attach-scripts",
     /*Linter must be the last thing to run*/
     "core/linter",
   ],

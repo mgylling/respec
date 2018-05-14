@@ -17,6 +17,9 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     conf.versionURL = `v${conf.specVersion}`.replace('.', 'p');
 
     conf.thisURL = `${base}${conf.versionURL}/`;
+
+    conf.errataURL = `${conf.thisURL}errata/`;
+
     if (conf.specType !== "spec") {
       conf.thisURL = `${conf.thisURL}${conf.specType}/`;
     }
@@ -25,8 +28,6 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     if (conf.specType !== "spec") {
       conf.latestURI = `${conf.latestURI}${conf.specType}/`;
     }
-
-    conf.errataURL = `${conf.thisURL}errata/`;
 
     //needed for aux docs that need to point back to main spec
     conf.mainSpecURL = `${base}${conf.versionURL}/`;

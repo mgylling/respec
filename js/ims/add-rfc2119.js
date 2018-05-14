@@ -16,7 +16,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
       if (!confH) {
         confH = doc.getElementById('conformance-statements');
       }
-      console.log("==>" + confH.tagName);
+
       //if we are at the section, get the heading
       if (confH.tagName == 'SECTION') {
         confH = confH.querySelector("h1, h2, h3, h4, h5, h6");
@@ -72,6 +72,10 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
   specification may introduce greater normative constraints than those defined 
   here for specific service or implementation categories.</p>`);
 
+    if (conf.skipCertGuideConformanceRef || conf.specType == "cert") {
+      return [p3, p2, p1];
+    }
+
     return [p4, p3, p2, p1];
   }
 
@@ -83,7 +87,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
       (0, _pubsubhub.pub)("warning", "No mainSpecBiblioKey property found in config')");
     }
     var p1 = document.createElement("p");
-    p1.appendChild(document.createTextNode("This document is an informative resource in the Document Set of the " + conf.mainSpecTitle + " specification [[!" + conf.mainSpecBiblioKey + "]]. As such, it does not " + "include any normative requirements. Occurrences in this document of terms " + "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " + "conformance critera for implementors of this specification."));
+    p1.appendChild(document.createTextNode("This document is an informative resource in the Document Set of the " + conf.mainSpecTitle + " specification [[" + conf.mainSpecBiblioKey + "]]. As such, it does not " + "include any normative requirements. Occurrences in this document of terms " + "such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no impact on the " + "conformance critera for implementors of this specification."));
 
     return [p1];
   }

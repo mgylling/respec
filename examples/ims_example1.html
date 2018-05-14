@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <script src='../js/deps/require.js' data-main='../js/profile-ims-default' async class='remove'></script>
+  <script src='./shared/local-biblio.js' class='remove'></script>
+  <script class='remove'>
+    var respecConfig = {
+      noSideBarTOC: false,
+      specTitle: "Example Specification",
+      shortName: "example",
+      specStatus: "IMS Candidate Final",
+      specDate: "November 16th, 2017",
+      specVersion: "1.1",
+      specNature: "normative",
+      specType: "spec",
+      //override the default online location of fixup.js: 
+      //overrideFixupLocation : "../js/fixup.js",        
+      //override the default online location of ims-base.css: 
+      overrideCSSLocation: "ims-base.css",
+      //override the default online location of ims-biblio.js: 
+      //overrideIMSbiblioLocation : "...";                        
+      //disable fetching of ims-biblio.js by setting to true:
+      //disableFetchIMSbiblio: true        
+      //remove body scripts and/or inline CSS 
+      cleanBodyScripts: true,
+      cleanBodyCSS: true,
+      contributors: [{
+          name: "First Last",
+          company: "Acme Co Inc (Sweden)",
+          companyURL: "www.example.com",
+          role: "Editor"
+        },
+        {
+          name: "Second Third",
+          company: "Acme Co Inc (UK)",
+          companyURL: "www.example.com",
+          role: "Editor"
+        },
+        {
+          name: "Fourth Fifth",
+          company: "Acme Co Inc (India)",
+          companyURL: "www.example.com",
+          role: "Working Group Co-chair"
+        },
+        {
+          name: "Sixth Seventh",
+          company: "Acme Co Inc (India)",
+          companyURL: "www.example.com"
+        }
+      ],
+      localBiblio: _localBiblio,
+    }
+  </script>
+</head>
+
+<body>
+  <script class="transclude" src="shared/abstract.js" data-id="t1"></script>
+
+  <section>
+    <h2>Overview</h2>
+    <section class="informative">
+      <h3>Design Goals and Rationale</h3>
+
+      <p>The Design Goals and Rationale describes in detail (as compared to the abstract) what the specification aims to accomplish, and functions as a prelude to the use cases section.</p>
+
+      <p>Ut mattis urna et tortor fermentum commodo. Sed vehicula enim at diam pulvinar suscipit. Fusce lobortis mollis purus, a fringilla purus congue non. Proin lectus lacus, accumsan nec malesuada id, blandit in erat. Aliquam blandit a tellus ac facilisis.
+        Sed mi neque, accumsan vulputate felis sed, facilisis hendrerit est. Nullam ultrices non libero sed tristique. Proin tempor, quam vitae consequat congue, est sapien pharetra odio, sed rhoncus metus sem in turpis.</p>
+
+      <figure class="graphic">
+        <img src="img/eTconceptual.jpg" alt="Diagram of the eT logical model, 
+              containing the following elements: ...">
+        <figcaption>Conceptual diagram of the Extended Transcript logical model
+        </figcaption>
+      </figure>
+
+      <p>The lefthand side of the diagram contains the Issuer (the educational institution or organization providing the eT), the Person (the learner), and Records that indicate status and outcome information, along with other relevant metadata about the
+        learner's achievements or progress.</p>
+
+      <p>The righthand side of the diagram are the academic and co-curricular entities, collectively known as the Transcript Entities. These entities describe the types of programs, courses, competencies, etc. that are relevant to the learner’s activities
+        at that institution.</p>
+
+    </section>
+    <section class="informative" id="usecases">
+      <h3>Use cases</h3>
+      <p>The following use cases are supported by this specification:</p>
+
+      <table class="usecase" id="uc02">
+        <thead>
+          <tr>
+            <th colspan="2">
+              <p>1. Setting Link Level Credentials (Basic Launch)</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <p>Description:</p>
+            </td>
+            <td>
+              <p>An instructor authors an LTI link and sets the key/password for that link.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Actors:</p>
+            </td>
+            <td>
+              <ul>
+                <li>Instructor</li>
+                <li>Tool Provider (TP)</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Preconditions:</p>
+            </td>
+            <td>
+              <p>None</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Basic Flow of Events:</p>
+            </td>
+            <td>
+              <ol>
+                <li><em>Exchange Link Level Credentials</em>. The Instructor contacts the <a>TP</a> to obtain access to a provider tool or content. The TP provides the Instructor with (1) an LTI launch URL or XML snippet for the content or tool, (2) a key
+                  that will be used to access this content/tool, and (3) a secret associated with the key. The LTI specification does not prescribe any mechanism for this exchange.&nbsp;</li>
+                <li><em>Persist Link Level Credentials in the <a>TC</a> system</em>. The Instructor enters the three values (URL or XML snippet, Key, Secret) into an LTI authoring dialog in the TC system.</li>
+              </ol>
+            </td>
+          </tr>
+          <tr>
+            <td>Success Conditions:</td>
+            <td>
+              <p>Mauris felis quam, volutpat non viverra eget, feugiat ac quam. Donec bibendum turpis vel ex mattis, at aliquam nunc malesuada. Ut fermentum scelerisque tortor ut auctor. Morbi elit dolor, hendrerit nec vehicula ut, faucibus et metus. </p>
+            </td>
+          </tr>
+          <tr>
+            <td>Exception Conditions:</td>
+            <td>
+              <ol>
+                <li>Suspendisse congue tortor at libero feugiat dignissim.</li>
+                <li>Sed eget nunc semper, efficitur nibh vel, sagittis felis.</li>
+                <li>Vestibulum imperdiet lacus sit amet risus porttitor ultricies.</li>
+              </ol>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="usecase" id="uc03">
+        <thead>
+          <tr>
+            <th colspan="2">
+              <p>2. Managing Credentials for LTI Links Imported from a Cartridge</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <p>Description:</p>
+            </td>
+            <td>
+              <p>An Instructor imports a Common Cartridge containing LTI link descriptors into their context, and users use the content.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Actors:</p>
+            </td>
+            <td>
+              <ul>
+                <li>Instructor</p>
+                  <li>TC User (typically a Student or Instructor)</p>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Preconditions:</p>
+            </td>
+            <td>
+              <p>A cartridge creator has authored a Common Cartridge that contains one or more LTI Link descriptors. These descriptors specify the launch URL(s) and other data associated with the links, but they do not contain keys or secrets.</p>
+              <p>In accordance with Use Case LTIv1p1-01, the TC Administrator has set the domain credentials to particular TP(s) that are referenced in the cartridge.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Basic Flow of Events:</p>
+            </td>
+            <td>
+              <ol>
+                <li><em>Import the cartridge</em>. The Instructor obtains the Common Cartridge and imports it into a learning context within the TC system.</p>
+                  <li><em>Use domain credentials during Tool Launch</em>. When a TC User launches an LTI link imported from the Common Cartridge, the TC signs the launch request using the pre-configured credentials associated with the TP address.&nbsp; In
+                    particular, as long as the TC-wide credentials are already installed, the Instructor does not need to take any further action to secure the launch request beyond importing a cartridge.</p>
+              </ol>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Alternative Flows:</p>
+            </td>
+            <td>
+              <p><strong>A. Domain Credentials are not predefined</strong></p>
+              <p>If the domain credentials are not predefined within the TC system (i.e., the preconditions to this use case are not satisfied) then at Step 2 the launch requests will not be signed. In this case, the TC may (at its discretion) refuse to
+                allow the Tool Launch to proceed. If an unsigned tool launch does occur, the TP may (at its discretion) refuse to honor the request. To correct such launch failures, it is possible to add domain or link level credentials (in accordance
+                with Use Cases LTIv1p1-01 and LTIv1p1-02 respectively) after the cartridge has been imported.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>Success Conditions:</td>
+            <td>
+              <p>Mauris felis quam, volutpat non viverra eget, feugiat ac quam. Donec bibendum turpis vel ex mattis, at aliquam nunc malesuada. Ut fermentum scelerisque tortor ut auctor. Morbi elit dolor, hendrerit nec vehicula ut, faucibus et metus. </p>
+            </td>
+          </tr>
+          <tr>
+            <td>Exception Conditions:</td>
+            <td>
+              <ol>
+                <li>Suspendisse congue tortor at libero feugiat dignissim.</li>
+                <li>Sed eget nunc semper, efficitur nibh vel, sagittis felis.</li>
+                <li>Vestibulum imperdiet lacus sit amet risus porttitor ultricies.</li>
+              </ol>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </section>
+    <section id="terminology">
+      <h3>Terminology</h3>
+      <!-- add each term as a dt/dd pair with attrs as below; then use <a> in when referencing back to a term -->
+      <!-- use data-sort to automatically sort the terms -->
+      <dl class="termlist" data-sort id="terms">
+        <dt><dfn data-lt="absolute IRIs">absolute IRI</dfn></dt>
+        <dd> An <a data-cite="RFC3987#section-1.3" class="externalDFN">absolute IRI</a> is defined in [[!RFC3987]] containing a <em>scheme</em> along with a <em>path</em> and optional <em>query</em> and fragment segments.</dd>
+        <dt><dfn data-lt="base
+                IRIs">base IRI</dfn></dt>
+        <dd> The <a>base IRI</a> is an <a>absolute IRI</a> established in the context, or is based on the JSON-LD document location. The <a>base IRI</a> is used to turn <a>relative IRIs</a> into
+          <a>absolute IRIs</a>.</dd>
+        <dt><dfn data-lt="relative IRIs">relative IRI</dfn></dt>
+        <dd>A relative IRI is an IRI that is relative to some other <a>absolute IRI</a>.</dd>
+
+        <dt><dfn data-lt="TC">Tool Consumer</dfn></dt>
+        <dd>What we traditionally think of as the "Learning Management System" (LMS) is referred to as the "Tool Consumer" (TC) as it "consumes" the tool.</dd>
+        <dt><dfn data-lt="TP">Tool Provider</dfn></dt>
+        <dd>The external tool or content is called the "Tool Provider" (TP) as it "provides" the tool for use in the <a>Tool Consumer</a>. Example Tool Providers might include an externally hosted testing system or a server that contains externally hosted
+          premium content. </dd>
+
+      </dl>
+    </section>
+    <section id="conformance">
+      <h3>Conformance Statements</h3>
+      <!-- RFC 2119 text is inserted at the top of this section.
+              If you want, add additional paragraphs below this comment.
+          -->
+      <p>Vivamus et nisi sit amet ipsum ultricies laoreet. Maecenas varius pulvinar tincidunt.</p>
+    </section>
+    <section id="documentset">
+      <h3>Document Set</h3>
+      <!-- a complete list of documents in the Specification document set. 
+          May include both normative and informative references. All documents 
+          referenced here also occur in the bibliography-->
+      <section>
+        <h4>Normative Documents</h4>
+        <dl>
+          <dt>Conformance and Certification guide</dt>
+          <dd>The conformance and certification guide that accompanies this specification [[!EXAMPLE-CERT]] defines the requirements for example service consumers and providers. Facilisis hendrerit est. Nullam ultrices non libero sed tristique. Proin tempor,
+            quam vitae consequat congue, est sapien pharetra odio, sed rhoncus metus sem in turpis. </dd>
+          <dt>JSON Schema</dt>
+          <dd>The JSON [[!EXAMPLE-JSONSCH]] schema is provided hendrerit est. Proin tempor, quam vitae consequat congue, est sapien pharetra odio, sed rhoncus metus sem in turpis. </dd>
+          <dt>Errata</dt>
+          <dd>The errata [[!EXAMPLE-ERRATA]] details any erratum registered for this version of this specification since its publication.</dd>
+        </dl>
+      </section>
+      <section class="informative">
+        <h4>Informative Documents</h4>
+        <dl>
+          <dt>Implementation Guide</dt>
+          <dd>The implementation guide that accompanies this specification [[EXAMPLE-IMPL]] contains informtative guidance on facilisis hendrerit est. Nullam ultrices non libero sed tristique. Proin tempor, quam vitae consequat congue, est sapien pharetra
+            odio, sed rhoncus metus sem in turpis. </dd>
+        </dl>
+        <dl>
+          <dt>OpenAPI Swagger View</dt>
+          <dd>A browseable view of the OpenAPI definition is available at...</dd>
+        </dl>
+      </section>
+    </section>
+  </section> <!-- /overview -->
+
+  <section>
+    <h2>Data Model</h2>
+    <section id="entity">
+      <h3>The Caliper Entity</h3>
+      <figure class="graphic">
+        <img src="img/caliper-entities-v2.png" alt="Diagram of the available
+                Caliper entities, containing the following elements: ...">
+        <figcaption>Caliper Entities and their subtypes</figcaption>
+      </figure>
+      <p>A Caliper Entity is a generic type that represents objects that participate in learning-related activities. A variety of Entity subtypes have been defined in order to better describe people, groups, organizations, digital content, courses, software
+        applications, and other objects that constitute the "stuff" of a Caliper Event. Each Entity is provisioned with a modest set of properties or attributes that support discovery and description.</p>
+      <section>
+        <h4>Properties</h4>
+        <p>Like an Event, an Entity is considered semi-structured data consisting of an unordered set of key:value pairs. The base set of Entity properties is listed below. Properties whose disposition is set to Required MUST be specified in the Entity payload.</p>
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Disposition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>id</td>
+              <td>IRI</td>
+              <td>A valid IRI [[!RFC3987]] MUST be specified. The IRI MUST be unique and persistent.
+                <td>Required</td>
+            </tr>
+            <tr>
+              <td>dateCreated</td>
+              <td>DateTime</td>
+              <td>An [[!ISO8601]] date and time value expressed with millisecond precision that describes when the
+                <a href="#entity">Entity</a> was created. The value MUST be expressed using the format YYYY-MM-DDTHH:mm:ss.SSSZ set to UTC with no offset specified.</td>
+              <td>Optional</td>
+            </tr>
+            <tbody>
+        </table>
+
+        <p>Custom attributes not described by the model MAY be included but MUST be added to the extensions property as a map of key:value pairs. Properties with a value of null or empty SHOULD be excluded prior to serialization.</p>
+      </section </section>
+    </section>
+  </section> <!-- /data model-->
+  
+  <section>
+    <h2>API</h2>
+
+  </section>
+  <section>
+    <h2>Properties</h2>
+    <p>This extension has a more deeply nested data structure than many other available extensions. At the top level is a very simple AssessmentExtension object that contains an overall description and one or more detailed assessment descriptors.</p>
+    <section>
+      <h3>Assessment Extension Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>@context</td>
+          <td>IRI</td>
+          <td><code>https://purl.imsglobal.org/spec/ob-assessment/v1p0/context/</code> (required)</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>JSON-LD Type Array</td>
+          <td><code>["Extension", "extensions:AssessmentExtension"]</code> (required)</td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>string</td>
+          <td>A short overall description of the assessment(s). (required)</td>
+        </tr>
+        <tr>
+          <td id="assessments">assessments</td>
+          <td><a href="#class-AssessmentObject">AssessmentObject</a></td>
+          <td>Detailed information about the assessment(s) that may be administered. (required, multiple allowed)</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="class-AssessmentObject">
+      <h3>AssessmentObject Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>string</td>
+          <td>Description of the single assessment. (required)</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>IRI</td>
+          <td>One of the following type identifiers defined in the extension context: Exam, Performance or Artifact. (required)</td>
+        </tr>
+        <tr>
+          <td id="assessmentOutput">assessmentOutput</td>
+          <td>string</td>
+          <td>This field provides additional details about assessment type. Values for assessmentOutput are expected to be words or phrases that describe the key features of the evidence that are produced in earning the badge. (required)</td>
+        </tr>
+        <tr>
+          <td id="assessmentHasGroupParticipation">hasGroupParticipation</td>
+          <td>boolean</td>
+          <td>Completing the assessment activity being referenced requires two or more participants. (required)</td>
+        </tr>
+        <tr>
+          <td id="assessmentHasGroupEvaluation">hasGroupEvaluation</td>
+          <td>boolean</td>
+          <td>Participants in the assessment activity being referenced are scored as a group. (required)</td>
+        </tr>
+        <tr>
+          <td id="assessmentEvaluationMethod">evaluationMethod</td>
+          <td>string</td>
+          <td>Information about how the assessment is scored. What do the scores represent in a range of scores? If a rubric was used, what are the score ranges for each criteria?</td>
+        </tr>
+        <tr>
+          <td id="assessmentExample">assessmentExample</td>
+          <td>string (URI)</td>
+          <td>An example based on the assessment type.</td>
+        </tr>
+        <tr>
+          <td id="scoringMethodExampleDescription">scoringMethodExampleDescription</td>
+          <td>string</td>
+          <td>The text of an example of the method or tool used to score the assessment.</td>
+        </tr>
+        <tr>
+          <td id="assessmentEvaluation">assessmentEvaluation</td>
+          <td>string (URI)</td>
+          <td>Link to studies or other information about research or calculations of reliability and validity for the assessment or the scoring methods.</td>
+        </tr>
+        <tr>
+          <td id="assessmentSections">sections</td>
+          <td><a href="#class-Section">Section</a></td>
+          <td>A listing of sections, each with questions, that make up the assessment. Typically included if the issuer wishes to make available applications for the badge. (multiple allowed)</td>
+        </tr>
+        <tr>
+          <td>rubrics</td>
+          <td><a href="#class-Rubric">Rubric</a></td>
+          <td>Rubrics associated with this badge that an issuer wishes to include, typically so they may be displayed across multiple platforms where the badges appear. A rubric included here may be referenced by sections or questions within those sections.
+            (multiple allowed)</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="class-Section">
+      <h3>Section Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>title</td>
+          <td>string</td>
+          <td>The name of the section.</td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>string</td>
+          <td>A short description of the section.</td>
+        </tr>
+        <tr>
+          <td id="assessmentQuestions">questions</td>
+          <td><a href="#class-Question">Question</a></td>
+          <td>The questions that make up this section. (multiple allowed)</td>
+        </tr>
+        <tr>
+          <td id="assessmentRequired">required</td>
+          <td>string</td>
+          <td>Indicates whether this section is considered to be required for completion of the assessment. Default: true.</td>
+        </tr>
+        <tr>
+          <td>url</td>
+          <td>string (URI)</td>
+          <td>An external URL that represents this section.</td>
+        </tr>
+        <tr>
+          <td>rubricId</td>
+          <td>string</td>
+          <td>A pointer to a Rubric or RubricCriterion related to this section, its UUID-formatted identifier. This should match the identifier property of a rubric defined elsewhere in the extension.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="class-Question">
+      <h3>Question Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>IRI</td>
+          <td>The type of question. One of the following type identifiers defined in the extension context: ExternalQuestion, FileQuestion or TextQuestion. (required)</td>
+        </tr>
+        <tr>
+          <td>text</td>
+          <td>string</td>
+          <td>The actual text of the question. (required)</td>
+        </tr>
+        <tr>
+          <td>required</td>
+          <td>string</td>
+          <td>Indicates whether this question is considered to be required for completion of the section. Default: true.</td>
+        </tr>
+        <tr>
+          <td id="assessmentWordLimit">wordLimit</td>
+          <td>number</td>
+          <td>For TextQuestions, specifies a maximum length in words that may be enforced as a suggestion or requirement, depending on the application.</td>
+        </tr>
+        <tr>
+          <td id="assessmentCharacterLimit">characterLimit</td>
+          <td>number</td>
+          <td>For TextQuestions, specifies a maximum length in characters that may be enforced as a suggestion or requirement, depending on the application.</td>
+        </tr>
+        <tr>
+          <td>url</td>
+          <td>string (URI)</td>
+          <td>An external URL that represents this question.</td>
+        </tr>
+        <tr>
+          <td>rubricId</td>
+          <td>string</td>
+          <td>A pointer to a Rubric related to this question, its UUID-formatted identifier. This should match the identifier property of a rubric defined elsewhere in the extension.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="class-Rubric">
+      <h3>Rubric Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>identifier</td>
+          <td>string (UUID)</td>
+          <td>A unique identifier for the Rubric. The form of the GUID is a Universally Unique Identifier (UUID) of 16 hexadecimal characters (lower case) in the format 8-4-4-4-12. All permitted versions (1-5) and variants (1-2) are supported. (required)</td>
+        </tr>
+        <tr>
+          <td>title</td>
+          <td>string</td>
+          <td>The name of the Rubric. (required)</td>
+        </tr>
+        <tr>
+          <td>rubricCriteria</td>
+          <td><a href="#class-RubricCriterion">RubricCriterion</a></td>
+          <td>The objective(s) to measure with the rubric. Usually represented as a table row. (required, multiple allowed)</td>
+        </tr>
+        <tr>
+          <td>caseUri</td>
+          <td>string (URI)</td>
+          <td>An unambiguous reference to this item using a network-resolvable URI that serves CASE-compliant data.</td>
+        </tr>
+        <tr>
+          <td>lastChangeDateTime</td>
+          <td>string (DateTime)</td>
+          <td>Timestamp of last revision. Open Badges DateTime rules should be observed, requiring full datetime with timezone or UTC indicator.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="class-RubricCriterion">
+      <h3>RubricCriterion Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>identifier</td>
+          <td>string (UUID)</td>
+          <td>A unique identifier for the RubricCriterion. The form of the GUID is a Universally Unique Identifier (UUID) of 16 hexadecimal characters (lower case) in the format 8-4-4-4-12. All permitted versions (1-5) and variants (1-2) are supported. (required)
+          </td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>string</td>
+          <td>A short description of the criterion.</td>
+        </tr>
+        <tr>
+          <td>criterionLevels</td>
+          <td><a href="#class-RubricCriterionLevel">RubricCriterionLevel</a></td>
+          <td>A level of achievement on a particular criterion. Usually represented as a cell in a table. (required, multiple allowed)</td>
+        </tr>
+        <tr>
+          <td>caseUri</td>
+          <td>string (URI)</td>
+          <td>An unambiguous reference to this item using a network-resolvable URI that serves CASE-compliant data.</td>
+        </tr>
+        <tr>
+          <td>lastChangeDateTime</td>
+          <td>string (DateTime)</td>
+          <td>Timestamp of last revision. Open Badges DateTime rules should be observed, requiring full datetime with timezone or UTC indicator.</td>
+        </tr>
+        <tr>
+          <td>category</td>
+          <td>string</td>
+          <td>A textual label for category by which criteria may be grouped.</td>
+        </tr>
+        <tr>
+          <td>weight</td>
+          <td>number</td>
+          <td>A numeric weight assigned to this criterion, used for scored rubrics.</td>
+        </tr>
+        <tr>
+          <td>position</td>
+          <td>number (Integer)</td>
+          <td>A numeric value representing this criterion's position in the criteria list for this rubric.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="class-RubricCriterionLevel">
+      <h3>RubricCriterionLevel Properties</h3>
+      <table class="data">
+        <tr>
+          <th>Property</th>
+          <th>Type</th>
+          <th>Value Description</th>
+        </tr>
+        <tr>
+          <td>identifier</td>
+          <td>string (UUID)</td>
+          <td>A unique identifier for the RubricCriterionLevel. The form of the GUID is a Universally Unique Identifier (UUID) of 16 hexadecimal characters (lower case) in the format 8-4-4-4-12. All permitted versions (1-5) and variants (1-2) are supported.
+            (required)
+          </td>
+        </tr>
+        <tr>
+          <td>quality</td>
+          <td>string</td>
+          <td>A qualitative description of this degree of achievement used for column headers or row labels in tabular rubrics. This typically matches exactly across multiple criteria in a rubric to enable rendering as a unified table.</td>
+        </tr>
+        <tr>
+          <td>description</td>
+          <td>string</td>
+          <td>A human readable description of the criterion level. Typically rendered as the content of a rubric cell. (required)</td>
+        </tr>
+        <tr>
+          <td>caseUri</td>
+          <td>string (URI)</td>
+          <td>An unambiguous reference to this item using a network-resolvable URI that serves CASE-compliant data.</td>
+        </tr>
+        <tr>
+          <td>lastChangeDateTime</td>
+          <td>string (DateTime)</td>
+          <td>Timestamp of last revision. Open Badges DateTime rules should be observed, requiring full datetime with timezone or UTC indicator.</td>
+        </tr>
+        <tr>
+          <td>score</td>
+          <td>number</td>
+          <td>The number of points awarded for achieving this level.</td>
+        </tr>
+        <tr>
+          <td>position</td>
+          <td>number (Integer)</td>
+          <td>A numeric value representing this level's position in the list of levels for this criterion. Integer.</td>
+        </tr>
+        <tr>
+          <td>feedback</td>
+          <td>string</td>
+          <td>Pre-defined feedback text to be relayed to the person or organization being evaluated. This may include guidance and suggestions for improvement or development.</td>
+        </tr>
+      </table>
+    </section>
+  </section>
+  
+  <section class="appendix informative">
+    <h2>Examples</h2>
+    <section>
+      <h3>Single Accreditor</h3>
+      <figure class="example">
+        <pre><code>
+  {
+    "extensions:IssuerAccreditation": {
+      "@context":"https://openbadgespec.org/extensions/issuerAccreditationExtension/context.json",
+      "type": ["Extension", "extensions:IssuerAccreditation"],
+      "name": "Higher Learning Commission",
+      "contactInstructions": "Visit website to request an institutional status and requirements report",
+      "url": "http://hlcommission.org",
+      "address": {
+        "streetAddress": "230 South LaSalle Street, Suite 7-500",
+        "addressLocality": "Chicago",
+        "addressRegion": "IL",
+        "postalCode": "60604-1411"
+      }
+  }              
+</code></pre>
+        <figcaption>Example of single accreditor</figcaption>
+      </figure>
+    </section>
+    <section>
+      <h3>Two Accreditors</h3>
+      <figure class="example">
+        <pre><code>
+  {
+    "extensions:IssuerAccreditation": [{
+      "@context":"https://openbadgespec.org/extensions/issuerAccreditationExtension/context.json",
+      "type": ["Extension", "extensions:IssuerAccreditation"],
+      "name": "Northwest Commission on Colleges and Universities",
+      "contactInstructions": "Call or email the Commission Office",
+      "url": "http://www.nwccu.org/index.htm",
+      "address": {
+        "streetAddress": "8060 165th Ave. NE, Suite 100",
+        "addressLocality": "Redmond",
+        "addressRegion": "WA",
+        "postalCode": "98052"
+  }
+</code></pre>
+        <figcaption>Example of multiple accreditors</figcaption>
+      </figure>
+    </section>
+    <section>
+      <h3>A Simple Single Assessment</h3>
+      <pre><code>
+    {
+      "extensions:assessmentExtension": {
+        "@context":"https://purl.imsglobal.org/spec/ob-assessment/v1p0/context/",
+        "type": ["Extension", "extensions:AssessmentExtension"],
+        "description": "A written evaluation based on a simulation of a medical procedure.",
+        "assessments": [
+          {
+            "description": "The assessment presents a hypertension scenario with simulated lab results. It is administered to pathophysiology students in an undergraduate nursing program. Completing the assessment requires analytical writing describing and justifying the diagnoses and eliminating alternative diagnoses. See the Pathology of High Blood Pressure assignment and the hypertension scenario used for this assessment.",
+            "type": "Artifact",
+            "assessmentOutput": "Written responses to the questions posed in the hypertension scenario",
+            "hasGroupParticipation": false,
+            "hasGroupEvaluation": false,
+            "evaluationMethod": "No studies have been done on reliability or validity but the hypertension scenario is consistent with scenarios encountered in nursing clinical practice.",
+            "assessmentExample": "http://placeholderurl.com",
+            "scoringMethodExampleDescription": "Placeholder text",
+            "assessmentEvaluation": "http://placeholderurl.com"
+          }
+        ]
+      }
+    }
+    </code></pre>
+    </section>
+
+    <section>
+      <h3>An Assessment with Questions and a Rubric</h3>
+      <pre><code>
+    {
+      "extensions:assessmentExtension": {
+        "@context": "https://purl.imsglobal.org/spec/ob-assessment/v1p0/context/",
+        "type": ["Extension", "extensions:AssessmentExtension"],
+        "description": "A rubric-based evaluation of Web Browser Skills",
+        "assessments": [{
+          "description": "An assessment of celerity with a web browser",
+          "type": "Artifact",
+          "evaluationMethod": "Rubric-based evaluation",
+          "assessmentOutput": "Written responses and screenshots",
+          "hasGroupParticipation": false,
+          "hasGroupEvaluation": false,
+          "sections": [{
+            "title": "Section One: Intro",
+            "description": "Show some knowledge of important facets of current web browsers.",
+            "questions": [{
+                "type": "TextQuestion",
+                "text": "What are two ways a user can see what URL a link is going to take them to when clicked?"
+              },
+              {
+                "type": "FileQuestion",
+                "text": "What is the 'browser chrome'? Take a screenshot cropped to just show some key components of the browser chrome.",
+                "rubricId": "04f28d86-994f-4469-9ad7-3bf9d703a286"
+              },
+              {
+                "type": "TextQuestion",
+                "text": "Extra credit: What are some important effects of competetition in the browser market? Why do they matter",
+                "characterLimit": 500,
+                "required": false
+              }
+            ]
+          }],
+          "rubrics": [{
+            "identifier": "04f28d86-994f-4469-9ad7-3bf9d703a286",
+            "lastChangeDateTime": "2018-01-31T16:54:00Z",
+            "title": "Image Quality Rubric",
+            "rubricCriteria": [{
+              "identifier": "ef324364-735c-443f-975f-9d76bd91f25a",
+              "description": "Resolution",
+              "criterionLevels": [{
+                  "identifier": "2b77179b-8b68-4fbe-9e76-d6d38a8131f3",
+                  "quality": "Great",
+                  "description": "There are enough pixels to experience the image content at the appropriate visual size but not too many.",
+                  "position": 0
+                },
+                {
+                  "identifier": "6ac9344f-21b6-4196-93f8-4decef0bb7c3",
+                  "quality": "OK",
+                  "description": "The content is readable or understandable but there may be significantly more pixels than necessary for the purpose or too few to be used for all intended experiences, such as printing.",
+                  "position": 1
+                },
+                {
+                  "identifier": "29011f65-6ac7-4645-bcac-09e7124aee1c",
+                  "quality": "Needs Work",
+                  "description": "The content is not understandable. Needs more pixels.",
+                  "position": 2
+                }
+              ]
+            }]
+          }]
+        }]
+      }
+    }
+    </code></pre>
+    </section>
+
+    <section class="appendix informative" id="revisionhistory">
+      <h2>Revision History</h2>
+
+      <section>
+        <h3>Version History</h3>
+        <table title="Revision History" class="data" summary="Publication history and revision details for this specification.">
+          <thead>
+            <tr>
+              <th>Version No.</th>
+              <th>Release Date</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>IMS Candidate Final 1.0 [[EXAMPLE10]]</td>
+              <td>January 20th, 2015</td>
+              <td>The original release. This declares the standard ready for public adoption.</td>
+            </tr>
+            <tr>
+              <td>IMS Candidate Final 1.1</td>
+              <td>November 16th, 2017</td>
+              <td>The second Final Release. This document.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h3>Changes in this version</h3>
+        <p>Changes in this version of Example Specification are detailed below.</p>
+
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Profile</th>
+              <th>Status</th>
+              <th>Disposition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AssessmentItem Profile</td>
+              <td>Removed</td>
+              <td>Considered redundant. <a href="#assessmentItemEvent">AssessmentItemEvent</a> has been relocated to the <a href="#assessmentProfile">Assessment Profile</a>.</td>
+            </tr>
+            <tr>
+              <td><a href="#basicProfile">Basic Profile</a></td>
+              <td>New</td>
+              <td>Utilize the generic <a href="#event">Event</a> for describing learning or supporting activities that have yet to be modeled by Caliper.</td>
+            </tr>
+            <tr>
+              <td><a href="#forumProfile">Forum Profile</a></td>
+              <td>New</td>
+              <td>Models learners and others participating in online forum communities.</td>
+            </tr>
+            <tr>
+              <td><a href="#gradingProfile">Grading Profile</a></td>
+              <td>New</td>
+              <td>Replaces <a href="#outcomeProfile">Outcome Profile</a>. Adds <a href="#score">Score</a>.</td>
+            </tr>
+            <tr>
+              <td>Outcome Profile</td>
+              <td>Removed</td>
+              <td>Replaced by <a href="#gradingProfile">Grading Profile</a>.</td>
+            </tr>
+            <tr>
+              <td><a href="#readingProfile">Reading Profile</a></td>
+              <td>Revised</td>
+              <td><a href="#readingEvent">ReadingEvent</a> has been deprecated and targeted for removal while <a href="#navigationEvent">NavigationEvent</a> and <a href="#viewEvent">ViewEvent</a> have been added to the profile. <a href="#epubChapter">EpubChapter</a>,
+                <a href="#epubPart">EpubPart</a>, <a href="#epubSubChapter">EpubSubChapter</a>, <a href="#epubVolume">EpubVolume</a> have been deprecated in favor of <a href="#document">Document</a>, <a href="#chapter">Chapter</a> and <a href="#page">Page</a>.</td>
+            </tr>
+            <tr>
+              <td><a href="#toolUseProfile">Tool Use Profile</a></td>
+              <td>New</td>
+              <td>A light-weight profile that models an intended interaction between a <a href="#person">Person</a> and a <a href="#softwareApplication">SoftwareApplication</a>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+</body>
+
+</html>

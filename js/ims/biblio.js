@@ -18,7 +18,7 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   */
 
   function run(conf, doc, cb) {
-    var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.js";
+    var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.json";
     if (conf.overrideIMSbiblioLocation) {
       imsBiblioURL = conf.overrideIMSbiblioLocation;
     }
@@ -32,6 +32,8 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
         }
         throw new Error(response.statusText);
       }).then(function (json) {
+        //TODO invalid json should be caught here
+        //JSON.stringify(conf.localBiblio) --> throws error?
         //TODO we might want to worry about dupes and precedence
         conf.localBiblio = Object.assign(conf.localBiblio, json);
       }).catch(function (error) {
