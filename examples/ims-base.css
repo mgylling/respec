@@ -278,7 +278,12 @@ td.pre, td code {
 		font-weight: bold;
 	}
 
+/** boxes *************************************************************/
 
+  .alert {
+    border: 2px solid red; 
+    padding: 0.3em;
+  }
 
 /** inlines *************************************************************/
 
@@ -664,6 +669,17 @@ dfn {
 		border-bottom-color: #BBB;
 	}
 
+  /** "Link here" for section headings  *****************************************/
+
+  a[href].hidden-reveal::before {
+    content: "›";
+  }
+
+  a[href].hidden-reveal, a[href].hidden-reveal:visited {
+    text-decoration: none; 
+    border-bottom: none;
+  }
+
 /******************************************************************************/
 /*                                    Images                                  */
 /******************************************************************************/
@@ -905,6 +921,8 @@ dfn {
 		margin-right: auto;
 	}
 
+  /*
+  mgy: commenting out for now. overlarge causes tables to align max left when not toc-inline
 	@media (min-width: 55em) {
 		.overlarge {
 			margin-left: calc(13px + 26.5rem - 50vw);
@@ -914,18 +932,17 @@ dfn {
 	}
 	@media screen and (min-width: 78em) {
 		body:not(.toc-inline) .overlarge {
-			/* 30.5em body padding 50em content area */
 			margin-left: calc(40em - 50vw) !important;
 			margin-right: calc(40em - 50vw) !important;
 		}
 	}
 	@media screen and (min-width: 90em) {
 		body:not(.toc-inline) .overlarge {
-			/* 4em html margin 30.5em body padding 50em content area */
 			margin-left: 0 !important;
 			margin-right: calc(84.5em - 100vw) !important;
 		}
 	}
+  */
 
 	@media not print {
 		.overlarge {

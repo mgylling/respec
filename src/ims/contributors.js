@@ -14,7 +14,7 @@ export function run(conf, doc, cb) {
       summary="The list of contributors to this work.">
       <thead>
         <th>Name</th>
-        <th>Company</th>
+        <th>Organization</th>
         ${useRoles ? `<th>Role</th>` : ``}
       </thead>
       <tbody>

@@ -89,6 +89,7 @@ define(
     "ims/boilerplate",    
     "ims/cleanBody",
     "ims/title-attrs",
+    "ims/link-here",
     "ims/attach-scripts",
     /*Linter must be the last thing to run*/
     "core/linter",

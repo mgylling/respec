@@ -4,27 +4,27 @@ var _spec=`
 
 <section class="informative">
 ### Purpose and Scope
-The EPUB Outcomes Specification provides a structured approach for supporting 
-the passing of state and outcome data between an <a>EPUB</a> and a <a>Reading System</a>.  
+The EPUB State and Results Specification provides a structured approach for supporting
+the passing of state and result data between an <a>EPUB</a> and a <a>Reading System</a>.  
 
-This standard based approach enabled EPUB content authors to create interactive 
-assessments and activities that can both save state and report outcomes back to 
-compliant Reading Systems. This is not meant to replace other reporting standards, 
+This standard based approach enabled EPUB content authors to create interactive
+assessments and activities that can both save state and report results back to
+compliant Reading Systems. This is not meant to replace other reporting standards,
 rather it provides a format for reporting granular results between an EPUB and a
-Reading System, as is common in the world of textbooks, in a way that can be 
-rolled up and transformed into other standards such as *LTI Assignment and Grade 
+Reading System, as is common in the world of textbooks, in a way that can be
+rolled up and transformed into other standards such as *LTI Assignment and Grade
 Services* [[LTI-AGS-20]] or *OneRoster Gradebook Services* [[ONEROSTER-11]].    
 
-This EPUB Outcomes Specification covers:
+This EPUB State and Results Specification covers:
 * Communication between an EPUB and a Reading System only
 * EPUB Saving and Retrieving state data to the Reading System
 * EPUB Sending and Retrieving result data to the Reading System
 * Organizing result data within an EPUB
 
-This EPUB Outcomes Specification does not cover:
+This EPUB State and Results Specification does not cover:
 * Transformation of data to other standards
 * Conformance of Reading Systems
-</section> 
+</section>
 
 <section class="informative">
 ### Use cases
@@ -53,13 +53,14 @@ This EPUB Outcomes Specification does not cover:
 <section>
 ### Terminology
 <dl class="termlist" data-sort id="terms">
-  
+
   <dt><dfn data-lt="EPUB|EPUBs">EPUB</dfn></dt>
-  <dd>Definition</dd> 
-  
+  <dd>An e-book publication format as defined in [[!EPUB-301]]</dd>
+
   <dt><dfn data-lt="Reading System|Reading Systems">Reading System</dfn></dt>
-  <dd>Definition</dd>                          
-  
+  <dd>A system that processes <a>EPUB</a> publications for presentation to a
+  user in a manner conformant with the EPUB specification [[!EPUB-301]].</dd>                          
+
 </dl>
 
 </section>
@@ -75,49 +76,49 @@ This EPUB Outcomes Specification does not cover:
 
 <dl>
 <dt>Conformance and Certification guide</dt>
-<dd>The conformance certification guide that accompanies this specification 
-[[!EPUB-OUTCOMES-10-CERT]] defines conformance certification requirements for 
+<dd>The conformance certification guide that accompanies this specification
+[[!EPUB-SR-10-CERT]] defines conformance certification requirements for
 EPUB content that adheres to this specification. This version of this specification
 does not define conformance certification for Reading Systems.</dd>
 <dt>Reporting Document XSD Schema</dt>
-<dd>The EPUB Outcomes Reporting XSD schema [[!EPUB-OUTCOMES-10-REP-XSD]] defines the
+<dd>The EPUB State and Results Reporting XSD schema [[!EPUB-SR-10-REP-XSD]] defines the
 XML content model constraints for the <a>Reporting Document</a>.</dd>
 <dt>Activities Document XSD Schema</dt>
-<dd>The EPUB Outcomes Activities XSD schema [[!EPUB-OUTCOMES-10-ACT-XSD]] defines the
+<dd>The EPUB State and Results Activities XSD schema [[!EPUB-SR-10-ACT-XSD]] defines the
 XML content model constraints for the <a>Activities Document</a>.</dd>
 
 <dt>Errata</dt>
-<dd>The errata [[!EPUB-OUTCOMES-10-ERRATA]] details any erratum registered for 
+<dd>The errata [[!EPUB-SR-10-ERRATA]] details any erratum registered for
 this version of this specification since its publication.</dd>
 </dl>
 
 #### Informative Documents
 <dl>
 <dt>Implementation Guide</dt>
-<dd>The Implementation Guide this specification [[EPUB-OUTCOMES-10-IMPL]] provides
+<dd>The Implementation Guide this specification [[EPUB-SR-10-IMPL]] provides
 implementation and deployment advice for EPUB content authors as well as Reading System
 implementors.</dd>
 </dl>
 </section>
-</section> 
+</section>
 
 ## Javascript API
 
-<a>Reading Systems</a> that support this specification MUST provide a Javascript API 
-[[!ECMASCRIPT]] that supports the <code>send()</code> and <code>retrieve()</code> functions 
-as defined in the subsections below. A variety of object types can be 
+<a>Reading Systems</a> that support this specification MUST provide a Javascript API
+[[!ECMASCRIPT]] that supports the <code>send()</code> and <code>retrieve()</code> functions
+as defined in the subsections below. A variety of object types can be
 sent or retrieved using these functions.
 
-An informative typescript schema can be found at 
+An informative typescript schema can be found at
 [https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/javascript/schema](https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/javascript/schema)
 
-A collection of informative javascript and typescript samples can be found at 
+A collection of informative javascript and typescript samples can be found at
 [https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/javascript/samples](https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/javascript/samples)
 
 ### Send API
 
-The <dfn>send API</dfn> is provided by the Reading System and provides a way to save 
-state and submit results. <code><a>ActivityAttempt</a></code> and <code><a>ActivityState</a></code> 
+The <dfn>send API</dfn> is provided by the Reading System and provides a way to save
+state and submit results. <code><a>ActivityAttempt</a></code> and <code><a>ActivityState</a></code>
 objects can be bundled and sent at the same time in a single call to the send API.
 
 <figure class="example">
@@ -136,11 +137,11 @@ The parameters passed with the send function are defined as follows.
 | Name     | Data&nbsp;Type                | Required | Description                                                              |
 |----------|--------------------------|----------|--------------------------------------------------------------------------|
 | request  | <a>SendEducationDataRequest</a> | Yes      | A JSON [[!ECMA-404]] object containing an array of <a>EducationData</a> objects               |
-| callback | <a>EducationDataCallback</a>    | No       | A callback function that @@@? MUST be ?@@@ called when the receiver's handling of the send invocation is complete |
+| callback | <a>EducationDataCallback</a>    | No       | A callback function that if provided MUST be invoked when the receiver's handling of the send invocation is complete |
 
 ### Retrieve API
 
-The <dfn>retrieve API</dfn> is provided by the Reading System and provides a way to 
+The <dfn>retrieve API</dfn> is provided by the Reading System and provides a way to
 retrieve state and results from previous sessions and attempts.
 
 **Example**
@@ -158,36 +159,41 @@ The parameters passed with the retrieve function are defined as follows.
 | Name     | Data&nbsp;Type                    | Required | Description                                                              |
 |----------|------------------------------|----------|--------------------------------------------------------------------------|
 | request  | <a>RetrieveEducationDataRequest</a> | Yes      | A JSON [[!ECMA-404]] object containing a <a>RetrieveEducationDataRequest</a> object           |
-| callback | <a>EducationDataCallback</a>        | No       | A callback function that @@@? MUST be ?@@@ called when the receiver's handling of the retrieve invocation is complete |
+| callback | <a>EducationDataCallback</a>        | No       | A callback function that if provided MUST be invoked when the receiver's handling of the send invocation is complete |
 
 ## Data Objects
 
-The Javascript API provides a method for sending and retrieving EducationData 
-objects to and from the Reading System. EducationData objects are both sent to 
-the server and later made available to the EPUB.@@@ should this say: The Reading System
-MUST support a method to persist the objects, and MUST support making them 
-available to the EPUB again. 
+The Javascript API provides a method for sending and retrieving EducationData
+objects to and from the Reading System. EducationData objects are both sent to
+the Reading System using the send API and later made available to the EPUB using
+the retrieve API.
 
 ### EducationData Objects
 
-There are multiple types of <dfn>EducationData</dfn> objects that can be generated.  
-Below is a list of each type:
+There are multiple types of <dfn>EducationData</dfn> objects: <code>ActivityState</code>,
+<code>ActivityAttempt</code>, <code>ActivityResult</code>, <code>ActivitySubmission</code> 
+and <code>ActivitySubmissionResult</code>. 
+
+Below follows the definitions of each type.
 
 #### ActivityState Object
 
-An <code><dfn>ActivityState</dfn></code> object is to be used by the EPUB to 
-store stateful information on behalf of the student.  Examples of stateful data 
-might be an incomplete multiple choice activity, an incomplete essay or a even 
-the current location in a streaming video.
+An <code><dfn>ActivityState</dfn></code> object is to be used by the EPUB to
+store stateful information on behalf of the student.
+
+Examples of stateful data might be an incomplete multiple choice activity, an 
+incomplete essay or a even the current location in a streaming video.
+
+The properties of the ActivityState object are defined below.
 
 | Name        | Data&nbsp;Type | Required | Description                                                                           |
 |-------------|-----------|----------|---------------------------------------------------------------------------------------|
-| type        | String    | yes      | MUST be set to ActivityState  @@@was: "should be"                                    |
-| createdTime | ISO 8601  | yes      | The date when the ActivityState object was created @@@full dateTime required? q applies globally                                  |
+| type        | String    | yes      | MUST be set to 'ActivityState'
+| createdTime | ISO 8601  | yes      | The date when the ActivityState object was created. The format MUST be <code>yyyy-MM-ddTHH:mm:ss.SSSZ</code> [[!ISO 8601]].
 | activityId  | String    | yes      | References the <code>data-activityId</code> value in the <a>EPUB markup</a>                                    |
-| data        | Object    | yes      | An object used to store data.  This object structure is defined by the EPUB activity.@@@reference? |
+| data        | Object    | yes      | An object used to store data.  The object structure is purposively arbitrary; the <code>format</code> and <code>meta</code> properties below can be used to inform Reading Systems of the objects format. |
 | format      | String    | no       | A string identifying the format of the state data.  This string should be used to identify the format of both the state and meta properties.  For example, "ims.qti_v2p1.choice" might be used to indicate that the state data and meta for a qti 2.1 Choice Activity.     |
-| meta        | Object    | no       | An object used to include other data relevant to the activity.  This data could be used along with the state to reconstruct the full activity by upstream reporting systems.  The format of this data should be defined by the EPUB activity.@@@reference?  This object might include: 1. a url pointing to an activity manifest 2. an actual activity manifest (like the contents of a QTI XML) 3. an object containing question number, direction line, list of choices, etc. |
+| meta        | Object    | no       | An object used to include other data relevant to the activity.  This data could be used along with the state to reconstruct the full activity by upstream reporting systems.  The format of this data is undefined by the specification, and MAY include: 1. a url pointing to an activity manifest 2. an actual activity manifest (like the contents of a QTI XML) 3. an object containing question number, direction line, list of choices, etc. |
 
 **Example**
 
@@ -203,17 +209,18 @@ the current location in a streaming video.
 
 #### ActivityAttempt Object
 
-An <code><dfn>ActivityAttempt</dfn></code> object is used when submitting results to the 
-Reading System.  The data submitted as part of an ActivityAttempt is both the 
-raw JSON State Data and one or more ActivityResults.  The JSON State Data is 
-intended to store enough data to reconstitute the activity and view student 
-work in upstream systems.  The results array should contain one or more result 
-that can be mapped to LineItems in the Reporting Document.
+An <code><dfn>ActivityAttempt</dfn></code> object is used when submitting results to the
+Reading System. The data submitted as part of an ActivityAttempt is both the
+raw JSON State Data and one or more ActivityResults. 
+
+The JSON State Data is intended to store enough data to reconstitute the activity 
+and view student work in upstream systems.  The results array should contain one 
+or more result that can be mapped to LineItems in the Reporting Document.
 
 | Name        | Data&nbsp;Type | Required | Description                                                                                    |
 |-------------|-----------|----------|------------------------------------------------------------------------------------------------|
 | type        | String    | yes      | MUST be set to 'ActivityAttempt'                                              |
-| createdTime | ISO 8601  | yes      | The date when the ActivityAttempt object was created                                           |
+| createdTime | ISO 8601  | yes      | The date when the ActivityAttempt object was created. The format MUST be <code>yyyy-MM-ddTHH:mm:ss.SSSZ</code> [[!ISO 8601]].                                           |
 | activityId  | String    | yes      | References the <code>data-activityId</code> value in the <a>EPUB markup</a>.                   |
 | state       | Object    | yes      | An object used to store data.  This JSONDATA object structure is defined by the EPUB activity. |
 | results     | Array     | yes      | An array of one or more ActivityResult objects                                                 |
@@ -243,12 +250,14 @@ that can be mapped to LineItems in the Reporting Document.
 
 #### ActivityResult Object
 
-An <code><dfn>ActivityResult</dfn></code> object outlines a single assessable result associated 
-with an element in an EPUB.  All properties are required.
+An <code><dfn>ActivityResult</dfn></code> object outlines a single assessable result associated
+with an element in an EPUB.
+
+All properties are required.
 
 | Name        | Data&nbsp;Type | Required | Description                                                  |
 |-------------|-----------|----------|--------------------------------------------------------------|
-| createdTime | ISO 8601  | yes      | The date when the result was created.                        |
+| createdTime | ISO 8601  | yes      | The date when the result was created. The format MUST be <code>yyyy-MM-ddTHH:mm:ss.SSSZ</code> [[!ISO 8601]].                       |
 | resultId    | String    | yes      | An associated <code>result.resultId</code> from the <a>Reporting Document</a> |
 | response    | String    | yes      | A human-readable version of the response                     |
 | duration    | Integer   | yes      | The number of seconds this "question" took to complete       |
@@ -273,21 +282,24 @@ with an element in an EPUB.  All properties are required.
 
 #### ActivitySubmission Object
 
-An <dfn>ActivitySubmission</dfn> Object is used to submit completed activities 
-to the Reading System that cannot be evaluated programatically.  Some examples 
-of activities that may not be evaluated programmatically could be essay or 
-journal questions, voice recordings or subjective questions.  The data submitted 
-as part of an ActivitySubmission is only the raw JSON State Data.  
-The JSON State Data is intended to store enough data to reconstitute the activity 
-and view student work in upstream systems.  The results array should contain one 
+An <dfn>ActivitySubmission</dfn> Object is used to submit completed activities
+to the Reading System that cannot be evaluated programatically.  
+
+Some examples of activities that may not be evaluated programmatically could be 
+essay or journal questions, voice recordings or subjective questions.  The data 
+submitted as part of an ActivitySubmission is only the raw JSON State Data.  
+
+The JSON State Data is intended to store enough data to reconstitute the activity
+and view student work in upstream systems.  The results array should contain one
 or more result that can be mapped to LineItems in the reporting.xml.
 
 | Name        | Data&nbsp;Type | Required | Description                                                                                    |
 |-------------|-----------|----------|------------------------------------------------------------------------------------------------|
-| type        | String    | yes      | MUST be set to ActivitySubmission                                           |
-| createdTime | ISO 8601  | yes      | The date when the ActivityAttempt object was created                                           |
-| activityId  | String    | yes      | References the <code>data-activityId</code> value in the <a>EPUB markup</a> |
+| type        | String    | yes      | MUST be set to 'ActivitySubmission'                                              |
+| createdTime | ISO 8601  | yes      | The date when the ActivitySubmission object was created. The format MUST be <code>yyyy-MM-ddTHH:mm:ss.SSSZ</code> [[!ISO 8601]].                                           |
+| activityId  | String    | yes      | References the <code>data-activityId</code> value in the <a>EPUB markup</a>.                   |
 | state       | Object    | yes      | An object used to store data.  This JSONDATA object structure is defined by the EPUB activity. |
+| results     | Array     | yes      | An array of one or more ActivityResult objects                                                 |
 | format      | String    | no       | A string identifying the format of the state data.  This string should be used to identify the format of both the state and meta properties.  For example ims.qti_v2p1.choice might be used to indicate that the state data and meta for a qti 2.1 Choice Activity.     |
 | meta        | Object    | no       | An object used to include other data relevant to the activity.  This data could be used along with the state to reconstruct the full activity by upstream reporting systems.  The format of this data should be defined by the EPUB activity.  This object might include: 1. a url pointing to an activity manifest 2. an actual activity manifest (like the contents of a QTI XML) 3. an object containing question number, direction line, list of choices, etc. |
 
@@ -301,6 +313,10 @@ or more result that can be mapped to LineItems in the reporting.xml.
       "createdTime": new Date().toISOString(),
       "activityId": "unit_1_activity_5",
       "state": {"data": JSONDATA },
+      "results":
+      [
+        // One or more ActivitySubmissionResult Objects
+      ],
       "format":"vst.mc_v1_p0",
       "meta":{"data": JSONDATA }
     },...
@@ -308,13 +324,46 @@ or more result that can be mapped to LineItems in the reporting.xml.
 }
 </code></pre><figcaption>Example of the ActivitySubmission object</figcaption></figure>
 
+#### ActivitySubmissionResult Object
+
+An <code><dfn>ActivitySubmissionResult</dfn></code> object outlines a single assessable result associated
+with an element in an EPUB.
+
+Not all properties are required.
+
+| Name        | Data&nbsp;Type | Required | Description                                                  |
+|-------------|-----------|----------|--------------------------------------------------------------|
+| createdTime | ISO 8601  | yes      | The date when the result was created. The format MUST be <code>yyyy-MM-ddTHH:mm:ss.SSSZ</code> [[!ISO 8601]].                       |
+| resultId    | String    | yes      | An associated <code>result.resultId</code> from the <a>Reporting Document</a> |
+| response    | String    | yes      | A human-readable version of the response                     |
+| duration    | Integer   | yes      | The number of seconds this "question" took to complete       |
+| progress    | Decimal   | no      | A value between 0.0 and 1.0 indicating the users progress    |
+| completion  | Boolean   | no      | A value indicating if the user has completed the result      |
+| score       | String    | no      | A value between 0.0 and 1.0 indicating the users score       |
+| success     | String    | no      | A value indicating if the result has succeeded in the result |
+
+**Example**
+
+<figure class="example"><pre><code>{
+    "createdTime": new Date().toISOString(),
+    "resultId": "ch1-mc1-q1",
+    "response": "",
+    "duration": 15,
+    "progress": null,
+    "completion": null,
+    "score": null,
+    "success": null
+}
+</code></pre><figcaption>Example of the ActivitySubmissionResult object</figcaption></figure>
+
 ### SendEducationDataRequest Object
 
-The <dfn>SendEducationDataRequest</dfn> object is used to send one or more 
-<a>EducationData</a> Objects to the server.  When a user performs an action that 
-requires saving state or the user submits an activity that should persist results, 
-the EPUB can create and transmit this data to the Reading System using a 
-SendEducationDataResult Object
+The <dfn>SendEducationDataRequest</dfn> object is used to send one or more
+<a>EducationData</a> Objects to the server. 
+
+When a user performs an action that requires saving state or the user submits an 
+activity that should persist results, the EPUB can create and transmit this data 
+to the Reading System using a SendEducationDataResult object. 
 
 <figure class="example"><pre><code>{
   "data":
@@ -326,12 +375,13 @@ SendEducationDataResult Object
 
 ### RetrieveEducationDataRequest Object
 
-The <dfn>RetrieveEducationDataRequest</dfn> object is used to send one or more 
-<a>EducationDataFilter</a> objects to the server.  When a user changes pages or returns 
-to a Reading System in a new session, activities on the page can retrieve previous 
-<a>ActivityState</a>, <a>ActivityResult</a> or <a>ActivityAttempt</a> objects 
-in order to re-populate the users work by sending <a>RetrieveEducationDataRequest</a> 
-objects.
+The <dfn>RetrieveEducationDataRequest</dfn> object is used to send one or more
+<a>EducationDataFilter</a> objects to the server.
+
+When a user changes pages or returns to a Reading System in a new session, 
+activities on the page can retrieve previous <a>ActivityState</a>, <a>ActivityResult</a> 
+or <a>ActivityAttempt</a> objects in order to re-populate the users work by sending 
+<a>RetrieveEducationDataRequest</a> objects.
 
 <figure class="example"><pre><code>{
   "filters":
@@ -343,12 +393,15 @@ objects.
 
 ### EducationDataFilter Objects
 
-There are multiple types of <dfn>EducationDataFilter</dfn> objects that can be 
-generated. Below is a list of each type:
+There are multiple types of <dfn>EducationDataFilter</dfn> objects: 
+<code>ActivityStateFilter</code>, <code>ActivityAttemptFilter</code>, 
+<code>ActivityResultFilter</code>, and <code>ActivitySubmissionFilter</code>.
+
+Below is a list of each type:
 
 #### ActivityStateFilter
 
-An <dfn>ActivityStateFilter</dfn> object is to be used by the EPUB to request 
+An <dfn>ActivityStateFilter</dfn> object is to be used by the EPUB to request
 previously submitted <a>EducationData</a> objects from the Reading System.
 
 | Name        | Data&nbsp;Type | Required | Description                                                                                                            |
@@ -359,19 +412,18 @@ previously submitted <a>EducationData</a> objects from the Reading System.
 | limit       | Integer   | no       | The number of objects to retrieve if available.  Values > 1 or "unbounded".  Defaults to 1.                           |
 
 **Example**
-@@@example wrong? 
 
 <figure class="example"><pre><code>{
     "type": "ActivityState",
-    "createdTime": new Date().toISOString(),
-    "activityId": "unit_1_activity_5"
-    "data": {"choice":5}
+    "extensions": "vnd.example.com",
+    "activityIds": ["unit_1_activity_5"],
+    "limit": 3
   }
 </code></pre><figcaption>Example of the ActivityStateFilter object.</figcaption></figure>
 
 #### ActivityAttemptFilter
 
-An <dfn>ActivityAttemptFilter</dfn> object is to be used by the EPUB to request 
+An <dfn>ActivityAttemptFilter</dfn> object is to be used by the EPUB to request
 previously submitted <a>ActivityAttempt</a> objects from the Reading System.
 
 | Name        | Data&nbsp;Type | Required |  Description                                                                                                           |
@@ -392,56 +444,59 @@ previously submitted <a>ActivityAttempt</a> objects from the Reading System.
 
 #### ActivityResultFilter
 
-An <dfn>ActivityResultFilter</dfn> object is to be used by the EPUB to request 
+An <dfn>ActivityResultFilter</dfn> object is to be used by the EPUB to request
 previously submitted <a>EducationData</a> objects from the Reading System.
 
 | Name        | Data&nbsp;Type | Required  | Description                                                                                                            |
 |-------------|-----------|----------|------------------------------------------------------------------------------------------------------------------------|
-| type        | String    | yes      | MUST be set to ActivityResult @@@ ActivityResultFilter??                                                                   |
+| type        | String    | yes      | MUST be set to ActivityResult |
 | extensions  | String    | no       | Arbitrary vendor-specific criteria. Keys should start with <code>vnd</code>. followed by the vendor name to avoid naming conflicts. |
-| activityIds | Array of String   | yes      | Limits returned data to those with an ActivityData.activityId in the specified array.                                  |
+| activityIds | Array of String   | no      | Limits returned data to those with an ActivityData.activityId in the specified array.                                  |
+| resultIds | Array of String   | no      |  Limits returned data to those with ActivityData.resultId in the specified array. |
 | limit       | Integer   | no       | The number of objects to retrieve if available.  Values > 1 or "unbounded".  Defaults to 1                             |
+
+Either the <code>activityIds</code> or <code>resultsIds</code> property MUST be specified.
 
 **Example**
 
-@@@ example seems wrong
-
 <figure class="example"><pre><code>{
-    "type": "ActivityState",
-    "createdTime": new Date().toISOString(),
-    "activityId": "unit_1_activity_5"
-    "data": {"choice":5}
+    "type": "ActivityResult",
+    "extensions": "vnd.example.com",    
+    "activityIds": ["unit_1_activity_5"],
+    "resultIds": ["unit_1_activity_5_question2"],
+    "limit": 3
   }
 </code></pre><figcaption>Example of the ActivityResultFilter object</figcaption></figure>
 
 #### ActivitySubmissionFilter
 
-An <dfn>ActivitySubmissionFilter</dfn> object is to be used by the EPUB to 
+An <dfn>ActivitySubmissionFilter</dfn> object is to be used by the EPUB to
 request previously submitted <a>EducationData</a> Objects from the Reading System.
 
 | Name        | Data&nbsp;Type | Required | Description                                                                                                            |
-|-------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------|
-| type        | String    | yes      | MUST be set to ActivitySubmission    @@@ ...Filter??                                                                 |
+|-------------|-----------|----------|------------------------------------------------------------------------------------------------------------------------|
+| type        | String    | yes      | MUST be set to ActivitySubmission  |
 | extensions  | String    | no       | Arbitrary vendor-specific criteria. Keys should start with <code>vnd</code>. followed by the vendor name to avoid naming conflicts. |
-| activityIds | Array&nbsp;of&nbsp;String  | yes      | Limits returned data to those with an <code>ActivityData.activityId</code> in the specified array.                                  |
-| limit       | Integer   | no       | The number of objects to retrieve if available.  Values > 1 or "unbounded".  Defaults to 1                             |
+| activityIds | Array&nbsp;of&nbsp;String  | yes   | Limits returned data to those with an ActivityData.activityId in the specified array.                                  |
+| resultIds | Array of String   | no      |  Limits returned data to those with ActivityData.resultId in the specified array. |
+| limit       | Integer   | no       | The number of objects to retrieve if available.  Values > 1 or "unbounded".  Defaults to 1.                           |
+
+Either the <code>activityIds</code> or <code>resultsIds</code> property MUST be specified.
 
 **Example**
 
-@@@ example seems wrong
-
-<figure class="example"><pre><code>
-  {
-    "type": "ActivityState",
-    "createdTime": new Date().toISOString(),
-    "activityId": "unit_1_activity_5"
-    "data": {"choice":5}
+<figure class="example"><pre><code>{
+    "type": "ActivitySubmission",
+    "extensions": "vnd.example.com",
+    "activityIds": ["unit_1_activity_5"],
+    "resultIds": ["unit_1_activity_5_question2"],
+    "limit": 3
   }
 </code></pre><figcaption>Example of the ActivitySubmissionFilter object.</figcaption></figure>
 
 ### EducationDataCallback Object
 
-The <dfn>EducationDataCallback</dfn> should be a function that supports a call with 
+The <dfn>EducationDataCallback</dfn> is a function that supports a call with
 a single <a>EducationDataResponse</a> object parameter.
 
 **Example**
@@ -455,13 +510,14 @@ function myEducationDataCallback(response: EducationDataResponse)
 
 #### EducationDataResponse
 
-An <dfn>EducationDataResponse</dfn> object is passed as callback parameter for both a send and retrieve call.
+An <dfn>EducationDataResponse</dfn> object is passed as callback parameter for 
+both a send and retrieve call.
 
-| Name        | Data&nbsp;Type                    | Required | Description                                                                           |
+| Name        | Data&nbsp;Type               | Required | Description                                                                           |
 |-------------|------------------------------|----------|---------------------------------------------------------------------------------------|
-| data        | EducationData[]              |          | <code>type<code> should be set to ActivityState   @@@wrong                                     |
-| errors      | EducationDataResponseError[] |          | The date when the ActivityState object was created @@@wrong                                   |
-| meta        | EducationDataResponseMeta    |          | Includes the EducationDataFilters if any were supplied in the request @@@wrong?                |
+| data        | EducationData[]              | yes      | An array of <a><code>EducationData</code></a> objects   |
+| errors      | EducationDataResponseError[] | no       | An array <a><code>EducationDataResponseError</code></a> objects  |
+| meta        | EducationDataResponseMeta    | no       | If this object is part of a retrieve callback, meta will include the <a><code>EducationDataFilter</code></a> objects sent in the original retrieve request |
 
 **Example**
 
@@ -486,8 +542,8 @@ An <dfn>EducationDataResponse</dfn> object is passed as callback parameter for b
 
 #### EducationDataResponseError
 
-The <dfn>EducationDataResponseError</dfn> is returned in the send() and retreive() 
-callback <code>response.errors</code> object.  In each callback the object will 
+The <dfn>EducationDataResponseError</dfn> is returned in the send and retreive
+callback <code>response.errors</code> object.  In each callback the object will
 either be absent or an array of JSON API Error Objects.
 
 | Name           | Data&nbsp;Type   | Required         | Description                                                                           |
@@ -534,11 +590,16 @@ either be absent or an array of JSON API Error Objects.
 
 ## Package Document
 
-In every EPUB Publication [[!EPUB-301]] that supports this specification, the 
-<dfn>Package Document</dfn> MUST contain metadata and manifest item properties 
+In every EPUB Publication [[!EPUB-301]] that supports this specification, the
+<dfn>Package Document</dfn> MUST contain metadata and manifest item properties
 as defined below.
 
 ### Package Document Metadata
+
+<p class="alert">
+NOTICE the term IRIs and term localnames below are subject to change. We will also
+change to use an IMS vocabulary IRI.
+</p>
 
 | Name                   |Value             | Required  | Description                                                                           |
 |------------------------|------------------|---------------------------------------------------------------------------------------|
@@ -548,14 +609,16 @@ as defined below.
 
 ### Package Document Manifest item properties
 
-An <code>item</code> element in the manifest MUST be included with an id of 'reporting' and a properties value of 'reporting'.
+An <code>item</code> element in the manifest MUST be included with an id of 
+'reporting' and a properties value of 'reporting'.
 
-An <code>item</code> element in the manifest MUST be included with an id of 'activities' and a properties value of 'activities'.
+An <code>item</code> element in the manifest MUST be included with an id of 
+'activities' and a properties value of 'activities'.
 
 **Example**
 <figure class="example"><pre><code>
 
-&lt;package ... prefix="epub: http://www.vitalsource.com/vocab/epub/1.0/">
+&lt;package ... prefix="epub:http://www.vitalsource.com/vocab/epub/1.0/">
   &lt;metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     &lt;dc:type>education&lt;/dc:type>
     &lt;meta property="epub:profiles">education-api&lt;/meta>
@@ -574,34 +637,32 @@ An <code>item</code> element in the manifest MUST be included with an id of 'act
 
 </code></pre><figcaption>Example of EPUB Package Document metadata and manifest item properties.</figcaption></figure>
 
-@@@ above uses http://www.vitalsource.com/vocab/epub/1.0/ ???
-
-A collection of informative sample OPF files can be found at 
+A collection of informative sample OPF files can be found at
 [https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/opf/samples](https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/opf/samples).
 
 
 ## Reporting Document
 
-The _<dfn>Reporting Document</dfn>_ is an XML document that must be included in 
-the EPUB (and flagged in the corresponding <a>Package Document</a>'s manifest 
-item with the <code>reporting</code> property) in order to support <a>Reading 
-System</a>s that implement compatible automated report generation, interoperation 
-with external grade books, etc.  The Reporting Document supports rolling up 
-multiple granular Results into LineItems, author time organization for LineItems 
+The _<dfn>Reporting Document</dfn>_ is an XML document that must be included in
+the EPUB (and flagged in the corresponding <a>Package Document</a>'s manifest
+item with the <code>reporting</code> property) in order to support <a>Reading
+System</a>s that implement compatible automated report generation, interoperation
+with external grade books, etc.  The Reporting Document supports rolling up
+multiple granular Results into LineItems, author time organization for LineItems
 and supports both flexible aggregation and sensible aggregation defaults.
 
-The structural constraints of the Reporting Document are defined in [[!EPUB-OUTCOMES-10-REP-XSD]].
+The structural constraints of the Reporting Document are defined in [[!EPUB-SR-10-REP-XSD]].
 
-A collection of informative sample Reporting Documents can be found at 
+A collection of informative sample Reporting Documents can be found at
 [https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/reporting/samples](https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/reporting/samples).
 
-#### The report element 
+#### The report element
 
-The Reporting Document holds one or more <code>report</code> elements.  Typically 
-this document will only contain a single report element, and will contain a 
+The Reporting Document holds one or more <code>report</code> elements.  Typically
+this document will only contain a single report element, and will contain a
 hierarchy of scores that align with the structure of the book.  
 
-Some examples where an EPUB author might need or want to include more than one 
+Some examples where an EPUB author might need or want to include more than one
 report node could be:
 
 * One report node that aligns with each state standard
@@ -617,15 +678,15 @@ The attributes of the report element are defined below.
 
 #### The displayPrefs element
 
-The <code>displayPrefs</code> element is a child of the report element, used for 
-suggesting user interface defaults. This element is optional, and takes 
-the <code><a>defaultResultProperty</a></code> and <code><a>defaultScoreFormat</a></code> 
-elements as its children. 
+The <code>displayPrefs</code> element is a child of the report element, used for
+suggesting user interface defaults. This element is optional, and takes
+the <code><a>defaultResultProperty</a></code> and <code><a>defaultScoreFormat</a></code>
+elements as its children.
 
 #### The defaultResultProperty element
 
-The <code><dfn>defaultResultProperty</dfn></code> element defines the preferred 
-property of ActivityResult to display in reporting user interfaces 
+The <code><dfn>defaultResultProperty</dfn></code> element defines the preferred
+property of ActivityResult to display in reporting user interfaces
 by default. This element is optional.
 
 * Default: 'score'
@@ -633,8 +694,8 @@ by default. This element is optional.
 
 #### The defaultScoreFormat element
 
-The <code><dfn>defaultScoreFormat</dfn></code> element defines the preferred 
-format in which to display ActivityResult.score data in reporting 
+The <code><dfn>defaultScoreFormat</dfn></code> element defines the preferred
+format in which to display ActivityResult.score data in reporting
 user interfaces by default.  This element is optional.
 
 * Default: 'percent'
@@ -642,8 +703,8 @@ user interfaces by default.  This element is optional.
 
 #### The resultDefaults element
 
-The <code><dfn>resultDefaults</dfn></code> element declares default field values 
-of result elements in the current scope. 
+The <code><dfn>resultDefaults</dfn></code> element declares default field values
+of result elements in the current scope.
 
 * A <code>report</code> element MUST contain zero or one <code>resultDefaults</code> element
 * A <code>section</code> element MUST contain zero or one <code>resultDefaults</code> elements
@@ -679,7 +740,7 @@ A label element defines a label for elements of the _Reporting Document_.
 
 #### The lineItem element
 
-LineItem elements are labeled elements used by reporting systems as rolled up 
+LineItem elements are labeled elements used by reporting systems as rolled up
 and sometime hierarchical view of the scores within the EPUB.
 
 * A <code>lineItem</code> element must contain one <code>label</code>
@@ -753,34 +814,33 @@ The attributes of the <code>result</code> element are defined below.
     &lt;/report>
   &lt;/reports>
 &lt;/reporting>
-</code></pre><figcaption>@@@ caption TODO</figcaption></figure>
+</code></pre><figcaption>Example Reporting Document</figcaption></figure>
 
 ## Activities Document
 
-The _<dfn>Activities Document</dfn>_ is an XML document that MUST be included in the EPUB 
-(and flagged in the corresponding <a>Package Document</a>'s manifest item with the 
-<code>activites</code> property). This document is a list of every activity in 
-the EPUB and the associated results. This file is used during EPUB validation 
-to ensure that there is a clear alignment between the <a>EPUB markup</a> and 
+The _<dfn>Activities Document</dfn>_ is an XML document that MUST be included in the EPUB
+(and flagged in the corresponding <a>Package Document</a>'s manifest item with the
+<code>activites</code> property). This document is a list of every activity in
+the EPUB and the associated results. This file is used during EPUB validation
+to ensure that there is a clear alignment between the <a>EPUB markup</a> and
 <a>Reporting Document</a>.
 
-### The activity element 
+### The activity element
 
 The Activities Document MUST contain an <code>activity</code> element for every associated activity in the <a>EPUB markup</a>.
 
-The <code>activity</code> element attributes are defined below. 
+The <code>activity</code> element attributes are defined below.
 
 | Name        | Data&nbsp;Type   | Required         | Description                                                                                            |
 |-------------|-------------|------------------|--------------------------------------------------------------------------------------------------------|
 | activityId  | String      | yes     	       | A unique identifier for the activity.  This id should be in the associated <a>EPUB markup</a> data-activityId |
 | href        | String      | yes     	       | A relative path to the EPUB xhtml document and activity id.  For example 'page001.xhtml#actid'                |
 
-### The result element 
+### The result element
 
-Each <code>activity</code> element in the Activities Document MAY/MUST contain... 
-@@@ under what circumstances must a result element be present??
+Each <code>activity</code> element in the Activities Document MUST contain at least one <code>result</code> child.
 
-The <code>result</code> nodes reference the <code>ActivityResult</code> objects by <code>resultId</code>. 
+The <code>result</code> elements reference the <code>ActivityResult</code> objects by <code>resultId</code>.
 
 The <code>result</code> element attributes are defined below.
 
@@ -793,8 +853,8 @@ The <code>result</code> element attributes are defined below.
 <figure class="example"><pre><code>
 &lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;?xml-model href="activities.xsd" type="application/xml"?>
-&lt;activities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.idpf.org/2017/ops/reporting" xsi:noNamespaceSchemaLocation="activities.xsd">
-  &lt;activity activityId"act1" href="ch1-screen1.xhtml#block1">
+&lt;activities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.idpf.org/2017/ops/activities" xsi:noNamespaceSchemaLocation="activities.xsd">
+  &lt;activity activityId="act1" href="ch1-screen1.xhtml#block1">
     &lt;result resultId="ch1-mc1-q1"/>
     &lt;result resultId="ch1-mc1-q2"/>
   &lt;/activity>
@@ -802,25 +862,23 @@ The <code>result</code> element attributes are defined below.
     &lt;result resultId="ch2-essay1"/>
   &lt;/activity>
 &lt;/activities>
-</code></pre><figcaption>@@@ caption TODO</figcaption></figure>
+</code></pre><figcaption>Example Activities Document.</figcaption></figure>
 
 ## EPUB markup
 
-<dfn>EPUB markup</dfn> must be provided to signal the presence in the content of 
-activities that can generate state or results. The markup can be used to link 
-users directly to specific activities, or by Reading Systems to pre-fetch activity 
+<dfn>EPUB markup</dfn> must be provided to signal the presence in the content of
+activities that can generate state or results. The markup can be used to link
+users directly to specific activities, or by Reading Systems to pre-fetch activity
 data.
 
 First, each element that can produce either <a>ActivityState</a> or <a>ActivityResult</a>s
 MUST be marked up with a <code>data-activityId</code> attribute and an <code>epub:type</code>
-attribute as per below. 
+attribute as per below.
 
 | Name        | Data&nbsp;Type   | Required         | Description                                                                                            |
 |-------------|-------------|------------------|--------------------------------------------------------------------------------------------------------|
 | data-activityId  | String      | yes     	   | A unique identifier for the activity.  |
 | epub:type   | String      | yes     	       | MUST be set to the value 'assessment' [EPUB-SSV].
-
-@@@must the element be a div?
 
 Second, each element that can produce only <a>ActivityState</a> must be marked up
 with a <code>data-activityId</code> attribute.
@@ -830,9 +888,8 @@ with a <code>data-activityId</code> attribute.
 | data-activityId  | String      | yes     	   | A unique identifier for the activity.  |
 
 
-@@@?? In both cases above, the ID provided in <code>data-activityID</code> MUST 
-be unique across all content documents in the EPUB, and MUST correspond to exactly
-one <code>activityId</code> in the <a>Activities Document</a>. ?@@@?? 
+In both cases above, the ID provided in <code>data-activityID</code> MUST
+correspond to exactly one <code>activityId</code> in the <a>Activities Document</a>.
 
 **Examples**
 
@@ -842,7 +899,7 @@ one <code>activityId</code> in the <a>Activities Document</a>. ?@@@??
       ...
 &lt;/div>  
 
-</code></pre><figcaption>Example of element markup for elements that can produce 
+</code></pre><figcaption>Example of element markup for elements that can produce
 either state or results.</figcaption></figure>
 
 <figure class="example"><code><pre>
@@ -850,17 +907,17 @@ either state or results.</figcaption></figure>
 &lt;div id="VIEWID" data-activityId="ACTIVITYID">
       ...
 &lt;/div>
-</pre></code><figcaption>Example of element markup for elements that can produce 
+</pre></code><figcaption>Example of element markup for elements that can produce
 state.</figcaption></figure>
 
 
-A collection of informative sample EPUB documents can be found at 
+A collection of informative sample EPUB documents can be found at
 [https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/page/samples](https://github.com/IMSGlobal/epub-for-education/tree/develop/resources/page/samples)
 
 <section class="appendix informative">
 ## Examples
 
-_@@@ TODO complete EPUB examples will be provided in the next draft version._
+<p class="alert">NOTICE complete EPUB examples will be provided in the next draft version.</p>
 
 </section>
 `;

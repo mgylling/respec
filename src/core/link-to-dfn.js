@@ -92,12 +92,15 @@ export function run(conf, doc, cb) {
     if (!foundDfn) {
       // ignore WebIDL
       if (
-        !$ant.parents(
+        (!$ant.parents(
           ".idl:not(.extAttr), dl.methods, dl.attributes, dl.constants, dl.constructors, dl.fields, dl.dictionary-members, span.idlMemberType, span.idlTypedefType, div.idlImplementsDesc"
-        ).length
+        ).length) 
       ) {
-        var link_for = linkTargets[0].for_;
-        var title = linkTargets[0].title;
+        //temp fix mgy
+        if(linkTargets[0]) {          
+          var link_for = linkTargets[0].for_;
+          var title = linkTargets[0].title;
+        }
         this.classList.add("respec-offending-element");
         this.title = "Linking error: not matching <dfn>";
         pub(
