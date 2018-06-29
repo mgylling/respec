@@ -47,7 +47,8 @@ export function run(conf, doc, cb) {
       }
     });
   });
-  $("a:not([href]):not([data-cite]):not(.logo)").each(function() {
+  //mgy add @name
+  $("a:not([href]):not([name]):not([data-cite]):not(.logo)").each(function() {
     var $ant = $(this);
     if ($ant.hasClass("externalDFN")) return;
     var linkTargets = $ant.linkTargets();
