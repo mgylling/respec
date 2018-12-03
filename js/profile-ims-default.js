@@ -1,6 +1,6 @@
 "use strict";
 // In case everything else fails, we want the error
-window.addEventListener("error", function(ev) {
+window.addEventListener("error", ev => {
   console.error(ev.error, ev.message, ev);
 });
 
@@ -13,105 +13,105 @@ require.config({
     highlight: {
       exports: "hljs",
     },
-    beautify: {
-      exports: "beautify",
-    },    
   },
   paths: {
-    "beautify-css": "deps/beautify-css",
-    "beautify-html": "deps/beautify-html",
     "handlebars.runtime": "deps/handlebars",
     "deps/highlight": "https://purl.imsglobal.org/spec/highlight.js",
   },
   deps: ["deps/hyperhtml", "deps/url-search-params"],
 });
 
-define(
-  [
-    // order is significant
-    "deps/domReady",
-    "core/base-runner",    
-    "core/ui",    
-    "core/l10n",
-    "ims/compute",
-    "ims/transclude",    
-    //"w3c/defaults",
-    "core/aria",
-    //"core/style",
-    //"w3c/style",        
-    "ims/style",        
-    "w3c/l10n",
-    "core/github",
-    "core/data-include",
-    "core/markdown",
-    "core/id-headers", //do after markdown to get heading id's early
-    //"w3c/
-    //"w3c/headers",    
-    //"w3c/abstract",
-    //"w3c/conformance",
-    "ims/biblio",
-    "ims/add-rfc2119",
-    "ims/strip-comments",
-    "core/data-transform",
-    "core/inlines",
-    "core/dfn",
-    "w3c/rfc2119",
-    "core/examples",
-    "core/issues-notes",
-    "core/requirements",
-    "core/best-practices",
-    "core/figures",
-    "core/webidl",
-    "core/data-cite",
-    "core/biblio",
-    "ims/contributors",
-    "core/webidl-index",
-    "core/link-to-dfn",
-    //"core/contrib",
-    "core/fix-headers",
-    "core/structure",
-    "w3c/informative",
-    "w3c/permalinks",
-    //"core/id-headers", moved up
-    "core/rdfa",
-    "w3c/aria",
-    "core/location-hash",
-    "ui/about-respec",
-    "ui/dfn-list",
-    "ui/save-html",
-    "ui/search-specref",
-    "core/seo",
-    "ims/seo",
-    //"core/highlight",
-    "ims/highlight",
-    "core/webidl-clipboard",
-    "core/data-tests",
-    "ims/boilerplate",    
-    "ims/cleanBody",
-    "ims/title-attrs",
-    "ims/link-here",
-    "ims/attach-scripts",
-    /*Linter must be the last thing to run*/
-    "core/linter",
-  ],
-  function(domReady, runner, ui) {
-    ui = ui.ui;
-    var args = Array.from(arguments).filter(function(item) {
-      return item;
-    });
-    ui.show();
-    domReady(function() {
-      runner
-        .runAll(args)
-        .then(document.respecIsReady)
-        .then(function() {
-          ui.enable();
-        })
-        .catch(function(err) {
-          console.error(err);
-          // even if things go critically bad, we should still try to show the UI
-          ui.enable();
-        });
-    });
+define([
+  // order is significant
+  "core/base-runner",
+  "core/ui",
+  "core/location-hash",
+  "core/l10n",
+  //"w3c/defaults",
+  //"core/style",
+  //"w3c/style",
+  "ims/config",
+  "ims/compute",
+  "ims/transclude",
+  "ims/style",
+  "w3c/l10n",
+  //"core/github",
+  "core/data-include",
+  "core/markdown",
+  "ims/post-markdown",
+  "core/id-headers", //do after markdown to get heading id's early
+  "ims/abstract",
+  //"w3c/headers",
+  //"w3c/abstract",
+  //"w3c/conformance",
+  "ims/biblio",
+  "ims/rfc2119",
+  "core/data-transform",
+  "core/inlines",
+  "core/dfn",
+  "core/pluralize",
+//  "w3c/rfc2119",
+  "core/examples",
+  "ims/admonitions",
+  //"core/issues-notes",
+  "core/requirements",
+  "core/best-practices",
+  "core/figures",
+  "core/webidl",
+  "core/data-cite",
+  "core/biblio",
+  "core/webidl-index",
+  "core/link-to-dfn",
+  "core/render-biblio",
+  //"core/contrib",
+  "ims/contributors",
+  "core/fix-headers",
+  "core/structure",
+  "w3c/informative",
+  "w3c/permalinks",
+  //"core/id-headers", moved up
+  "core/caniuse",
+  "ui/save-html",
+  "ui/search-specref",
+  "ui/dfn-list",
+  "ui/about-respec",
+  "core/seo",
+  //"w3c/seo",
+  "ims/seo",
+  //"core/highlight",
+  "ims/highlight",
+  "core/webidl-clipboard",
+  //"core/data-tests",
+  "core/list-sorter",
+  "core/highlight-vars",
+  "ims/boilerplate",
+  "ims/cleanBody",
+  "ims/title-attrs",
+  "ims/md-bugfix",
+  "ims/link-here",
+  "ims/scripts",
+  "ims/tooltips",
+  "ims/comments",
+  /*Linter must be the last thing to run*/
+  "core/linter",
+], (runner, { ui }, ...plugins) => {
+  ui.show();
+  domReady().then(async () => {
+    try {
+      await runner.runAll(plugins);
+      await document.respecIsReady;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      ui.enable();
+    }
+  });
+});
+
+async function domReady() {
+  if (document.readyState === "loading") {
+    await new Promise(resolve =>
+      document.addEventListener("DOMContentLoaded", resolve)
+    );
   }
-);
+}

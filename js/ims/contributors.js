@@ -9,13 +9,14 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
   const name = exports.name = "ims/contributors";
 
   function run(conf, doc, cb) {
+    if (!conf.contributors) return cb();
 
     if (conf.specType !== "errata") {
       var useRoles = hasRoles(conf.contributors);
       var contrib = (0, _utils.toHTMLNode)(`<section id='contributors' class="appendix">
     <h2>List of Contributors</h2>
     <p>The following individuals contributed to the development of this document:</p>
-    <table class="contributors" title="List of Contributors" 
+    <table class="contributors" title="List of Contributors"
       summary="The list of contributors to this work.">
       <thead>
         <th>Name</th>
@@ -25,7 +26,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
       <tbody>
           ${personsToTableRows(conf.contributors)}
       </tbody>
-    </table>   
+    </table>
     </section>`);
       doc.body.appendChild(contrib);
     }

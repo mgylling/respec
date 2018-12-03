@@ -25,7 +25,7 @@ define(["exports", "deps/text!core/css/github.css", "core/pubsubhub", "core/work
    *
    * IMS change: dont insert head style element (line 18). The hljs styles
    * are at the bottom of ims-base.css instead. This is since the head is discarded
-   * when publishing in Drupal. 
+   * when publishing in Drupal.
    *
    */
   const codeStyle = document.createElement("style");
@@ -37,6 +37,7 @@ define(["exports", "deps/text!core/css/github.css", "core/pubsubhub", "core/work
   }
 
   async function run(conf) {
+
     // Nothing to do
     if (conf.noHighlightCSS) {
       return;

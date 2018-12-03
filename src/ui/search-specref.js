@@ -123,7 +123,6 @@ function show() {
 
 const mast = hyperHTML.wire()`
   <header>
-    <h1>Specref</h1>
     <p>
       An Open-Source, Community-Maintained Database of
       Web Standards & Related References.
@@ -155,9 +154,9 @@ function render({ state, results, timeTaken, query } = { state: "" }) {
     <p class="state" hidden="${!state}">
       ${state}
     </p>
-    <section hidden="${!results}">${results
-    ? renderResults(results, query, timeTaken)
-    : []}</section>
+    <section hidden="${!results}">${
+    results ? renderResults(results, query, timeTaken) : []
+  }</section>
   `;
 }
 

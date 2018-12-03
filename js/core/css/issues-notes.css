@@ -32,6 +32,10 @@ span.note, span.ednote, span.issue, span.warning { padding: .1em .5em .15em; }
     border-color: #e05252;
     background: #fbe9e9;
 }
+.issue.closed span.issue-number {
+    text-decoration: line-through;
+}
+
 .note, .ednote {
     border-color: #52e052;
     background: #e9fbe9;
@@ -61,4 +65,26 @@ li.task-list-item {
 input.task-list-item-checkbox {
     margin: 0 0.35em 0.25em -1.6em;
     vertical-align: middle;
+}
+
+.issue a.respec-gh-label {
+  padding: 5px;
+  margin: 0 2px 0 2px;
+  font-size: 10px;
+  text-transform: none;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+  position: relative;
+  bottom: 2px;
+}
+
+.issue a.respec-label-dark {
+  color: #fff;
+  background-color: #000;
+}
+
+.issue a.respec-label-light {
+  color: #000;
+  background-color: #fff;
 }

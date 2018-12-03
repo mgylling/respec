@@ -1,7 +1,6 @@
 /*jshint
     forin: false
 */
-/*global hb*/
 
 // Module w3c/headers
 // Generate the headers material based on the provided configuration.
@@ -17,6 +16,7 @@
 //          - mailto: the person's email
 //          - note: a note on the person (e.g. former editor)
 //  - authors: an array of people who are contributing authors of the document.
+//  - formerEditors: an array of people that had earlier edited the document but no longer edit.
 //  - subtitle: a subtitle for the specification
 //  - publishDate: the date to use for the publication, default to document.lastModified, and
 //      failing that to now. The format is YYYY-MM-DD or a Date object.
@@ -92,183 +92,19 @@
 //      - "w3c-software-doc", the W3C Software and Document License
 //            https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
 import { concatDate, joinAnd, ISODate } from "core/utils";
-import hb from "handlebars.runtime";
 import { pub } from "core/pubsubhub";
-import tmpls from "templates";
+import cgbgSotdTmpl from "w3c/templates/cgbg-sotd";
+import sotdTmpl from "w3c/templates/sotd";
+import cgbgHeadersTmpl from "w3c/templates/cgbg-headers";
+import headersTmpl from "w3c/templates/headers";
 
 export const name = "w3c/headers";
-
-const cgbgHeadersTmpl = tmpls["cgbg-headers.html"];
-const headersTmpl = tmpls["headers.html"];
 
 const W3CDate = new Intl.DateTimeFormat(["en-AU"], {
   timeZone: "UTC",
   year: "numeric",
   month: "long",
   day: "2-digit",
-});
-
-hb.registerHelper("showPeople", function(name, items = []) {
-  // stuff to handle RDFa
-  var re = "",
-    rp = "",
-    rm = "",
-    rn = "",
-    rwu = "",
-    rpu = "",
-    bn = "",
-    editorid = "",
-    propSeeAlso = "";
-  if (this.doRDFa) {
-    if (name === "Editor") {
-      bn = "_:editor0";
-      re = " property='bibo:editor' resource='" + bn + "'";
-      rp = " property='rdf:first' typeof='foaf:Person'";
-    } else if (name === "Author") {
-      rp = " property='dc:contributor' typeof='foaf:Person'";
-    }
-    rn = " property='foaf:name'";
-    rm = " property='foaf:mbox'";
-    rwu = " property='foaf:workplaceHomepage'";
-    rpu = " property='foaf:homepage'";
-    propSeeAlso = " property='rdfs:seeAlso'";
-  }
-  var ret = "";
-  for (var i = 0, n = items.length; i < n; i++) {
-    var p = items[i];
-    if (p.w3cid) {
-      editorid = " data-editor-id='" + parseInt(p.w3cid, 10) + "'";
-    }
-    if (this.doRDFa) {
-      ret +=
-        "<dd class='p-author h-card vcard' " +
-        re +
-        editorid +
-        "><span" +
-        rp +
-        ">";
-      if (name === "Editor") {
-        // Update to next sequence in rdf:List
-        bn = i < n - 1 ? "_:editor" + (i + 1) : "rdf:nil";
-        re = " resource='" + bn + "'";
-      }
-    } else {
-      ret += "<dd class='p-author h-card vcard'" + editorid + ">";
-    }
-    if (p.url) {
-      if (this.doRDFa) {
-        ret +=
-          "<meta" +
-          rn +
-          " content='" +
-          p.name +
-          "'><a class='u-url url p-name fn' " +
-          rpu +
-          " href='" +
-          p.url +
-          "'>" +
-          p.name +
-          "</a>";
-      } else
-        ret +=
-          "<a class='u-url url p-name fn' href='" +
-          p.url +
-          "'>" +
-          p.name +
-          "</a>";
-    } else {
-      ret += "<span" + rn + " class='p-name fn'>" + p.name + "</span>";
-    }
-    if (p.company) {
-      ret += ", ";
-      if (p.companyURL)
-        ret +=
-          "<a" +
-          rwu +
-          " class='p-org org h-org h-card' href='" +
-          p.companyURL +
-          "'>" +
-          p.company +
-          "</a>";
-      else ret += p.company;
-    }
-    if (p.mailto) {
-      ret +=
-        ", <span class='ed_mailto'><a class='u-email email' " +
-        rm +
-        " href='mailto:" +
-        p.mailto +
-        "'>" +
-        p.mailto +
-        "</a></span>";
-    }
-    if (p.note) ret += " (" + p.note + ")";
-    if (p.extras) {
-      var self = this;
-      var resultHTML = p.extras
-        // Remove empty names
-        .filter(function(extra) {
-          return extra.name && extra.name.trim();
-        })
-        // Convert to HTML
-        .map(function(extra) {
-          var span = document.createElement("span");
-          var textContainer = span;
-          if (extra.class) {
-            span.className = extra.class;
-          }
-          if (extra.href) {
-            var a = document.createElement("a");
-            span.appendChild(a);
-            a.href = extra.href;
-            textContainer = a;
-            if (self.doRDFa) {
-              a.setAttribute("property", "rdfs:seeAlso");
-            }
-          }
-          textContainer.innerHTML = extra.name;
-          return span.outerHTML;
-        })
-        .join(", ");
-      ret += ", " + resultHTML;
-    }
-    if (this.doRDFa) {
-      ret += "</span>\n";
-      if (name === "Editor")
-        ret += "<span property='rdf:rest' resource='" + bn + "'></span>\n";
-    }
-    ret += "</dd>\n";
-  }
-  return new hb.SafeString(ret);
-});
-
-function toLogo(obj) {
-  const a = document.createElement("a");
-  if (!obj.alt) {
-    const msg = "Found spec logo without an `alt` attribute. See dev console.";
-    a.classList.add("respec-offending-element");
-    pub("warn", msg);
-    console.warn("warn", msg, a);
-  }
-  a.href = obj.href ? obj.href : "";
-  a.classList.add("logo");
-  hyperHTML.bind(a)`
-      <img
-        id="${obj.id}"
-        alt="${obj.alt}"
-        width="${obj.width}"
-        height="${obj.height}">
-  `;
-  // avoid triggering 404 requests from dynamically generated
-  // hyperHTML attribute values
-  a.querySelector("img").src = obj.src;
-  return a;
-}
-
-hb.registerHelper("showLogos", logos => {
-  const p = document.createElement("p");
-  hyperHTML.bind(p)`${logos.map(toLogo)}`;
-  return p.outerHTML;
 });
 
 const status2maturity = {
@@ -387,20 +223,14 @@ function validateDateAndRecover(conf, prop, fallbackDate = new Date()) {
   return new Date(ISODate.format(new Date()));
 }
 
-export function run(conf, doc, cb) {
-  // TODO: move to w3c defaults
-  if (!conf.logos) {
+export function run(conf) {
+  conf.isUnofficial = conf.specStatus === "unofficial";
+  if (conf.isUnofficial && !Array.isArray(conf.logos)) {
     conf.logos = [];
-  }
-  // Default include RDFa document metadata
-  if (conf.doRDFa === undefined) conf.doRDFa = true;
-  // validate configuration and derive new configuration values
-  if (!conf.license) {
-    conf.license = "w3c-software-doc";
   }
   conf.isCCBY = conf.license === "cc-by";
   conf.isW3CSoftAndDocLicense = conf.license === "w3c-software-doc";
-  if (["cc-by", "w3c"].includes(conf.license)) {
+  if (["cc-by"].includes(conf.license)) {
     let msg = `You cannot use license "\`${conf.license}\`" with W3C Specs. `;
     msg += `Please set \`respecConfig.license: "w3c-software-doc"\` instead.`;
     pub("error", msg);
@@ -416,12 +246,28 @@ export function run(conf, doc, cb) {
   if (conf.isRegular && !conf.shortName) {
     pub("error", "Missing required configuration: `shortName`");
   }
-  conf.title = doc.title || "No Title";
+  if (conf.testSuiteURI) {
+    const url = new URL(conf.testSuiteURI, document.location);
+    const { host, pathname } = url;
+    if (
+      host === "github.com" &&
+      pathname.startsWith("/w3c/web-platform-tests/")
+    ) {
+      const msg =
+        "Web Platform Tests have moved to a new Github Organization at https://github.com/web-platform-tests. " +
+        "Please update your [`testSuiteURI`](https://github.com/w3c/respec/wiki/testSuiteURI) to point to the " +
+        `new tests repository (e.g., https://github.com/web-platform-tests/${
+          conf.shortName
+        } ).`;
+      pub("warn", msg);
+    }
+  }
+  conf.title = document.title || "No Title";
   if (!conf.subtitle) conf.subtitle = "";
   conf.publishDate = validateDateAndRecover(
     conf,
     "publishDate",
-    doc.lastModified
+    document.lastModified
   );
   conf.publishYear = conf.publishDate.getUTCFullYear();
   conf.publishHumanDate = W3CDate.format(conf.publishDate);
@@ -461,7 +307,7 @@ export function run(conf, doc, cb) {
   conf.maturity = status2maturity[conf.specStatus]
     ? status2maturity[conf.specStatus]
     : conf.specStatus;
-  var publishSpace = "TR";
+  let publishSpace = "TR";
   if (conf.specStatus === "Member-SUBM") publishSpace = "Submission";
   else if (conf.specStatus === "Team-SUBM") publishSpace = "TeamSubmission";
   if (conf.isRegular)
@@ -496,7 +342,7 @@ export function run(conf, doc, cb) {
       "previousPublishDate"
     );
 
-    var pmat = status2maturity[conf.previousMaturity]
+    const pmat = status2maturity[conf.previousMaturity]
       ? status2maturity[conf.previousMaturity]
       : conf.previousMaturity;
     if (conf.isTagFinding) {
@@ -539,18 +385,23 @@ export function run(conf, doc, cb) {
     conf.prevRecURI = "https://www.w3.org/TR/" + conf.prevRecShortname;
   if (!conf.editors || conf.editors.length === 0)
     pub("error", "At least one editor is required");
-  var peopCheck = function(it) {
+  const peopCheck = function(it) {
     if (!it.name) pub("error", "All authors and editors must have a name.");
   };
   if (conf.editors) {
     conf.editors.forEach(peopCheck);
   }
+  if (conf.formerEditors) {
+    conf.formerEditors.forEach(peopCheck);
+  }
   if (conf.authors) {
     conf.authors.forEach(peopCheck);
   }
   conf.multipleEditors = conf.editors && conf.editors.length > 1;
+  conf.multipleFormerEditors =
+    Array.isArray(conf.formerEditors) && conf.formerEditors.length > 1;
   conf.multipleAuthors = conf.authors && conf.authors.length > 1;
-  $.each(conf.alternateFormats || [], function(i, it) {
+  $.each(conf.alternateFormats || [], (i, it) => {
     if (!it.uri || !it.label)
       pub("error", "All alternate formats must have a uri and a label.");
   });
@@ -558,8 +409,8 @@ export function run(conf, doc, cb) {
     conf.alternateFormats && conf.alternateFormats.length > 1;
   conf.alternatesHTML =
     conf.alternateFormats &&
-    joinAnd(conf.alternateFormats, function(alt) {
-      var optional =
+    joinAnd(conf.alternateFormats, alt => {
+      let optional =
         alt.hasOwnProperty("lang") && alt.lang
           ? " hreflang='" + alt.lang + "'"
           : "";
@@ -602,7 +453,7 @@ export function run(conf, doc, cb) {
   }
   if (conf.copyrightStart && conf.copyrightStart == conf.publishYear)
     conf.copyrightStart = "";
-  for (var k in status2text) {
+  for (const k in status2text) {
     if (status2long[k]) continue;
     status2long[k] = status2text[k];
   }
@@ -627,7 +478,6 @@ export function run(conf, doc, cb) {
   if (conf.isRec && !conf.errata)
     pub("error", "Recommendations must have an errata link.");
   conf.notRec = conf.specStatus !== "REC";
-  conf.isUnofficial = conf.specStatus === "unofficial";
   conf.prependW3C = !conf.isUnofficial;
   conf.isED = conf.specStatus === "ED";
   conf.isCR = conf.specStatus === "CR";
@@ -639,7 +489,6 @@ export function run(conf, doc, cb) {
   conf.dashDate = ISODate.format(conf.publishDate);
   conf.publishISODate = conf.publishDate.toISOString();
   conf.shortISODate = ISODate.format(conf.publishDate);
-  conf.processVersion = conf.processVersion || "2017";
   Object.defineProperty(conf, "wgId", {
     get() {
       if (!this.hasOwnProperty("wgPatentURI")) {
@@ -651,46 +500,23 @@ export function run(conf, doc, cb) {
       return urlParts[pos] || "";
     },
   });
-  if (conf.processVersion == "2014" || conf.processVersion == "2015") {
-    pub(
-      "warn",
-      "Process " + conf.processVersion + " has been superceded by Process 2017."
-    );
-    conf.processVersion = "2017";
-  }
-  conf.isNewProcess = conf.processVersion == "2017";
   // configuration done - yay!
 
-  // annotate html element with RFDa
-  if (conf.doRDFa) {
-    if (conf.rdfStatus)
-      $("html").attr("typeof", "bibo:Document " + conf.rdfStatus);
-    else $("html").attr("typeof", "bibo:Document ");
-    var prefixes =
-      "bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#";
-    $("html").attr("prefix", prefixes);
-    $("html>head").prepend(
-      $("<meta lang='' property='dc:language' content='en'>")
-    );
-  }
-  // insert into document and mark with microformat
-  var bp;
-  if (conf.isCGBG) bp = cgbgHeadersTmpl(conf);
-  else bp = headersTmpl(conf);
-  $("body", doc)
-    .prepend($(bp))
-    .addClass("h-entry");
+  // insert into document
+  const header = (conf.isCGBG ? cgbgHeadersTmpl : headersTmpl)(conf);
+  document.body.insertBefore(header, document.body.firstChild);
+  document.body.classList.add("h-entry");
 
   // handle SotD
-  var sotd =
-    document.body.querySelector("#sotd") || document.createElement("section");
+  const sotd =
+    document.getElementById("sotd") || document.createElement("section");
   if ((conf.isCGBG || !conf.isNoTrack || conf.isTagFinding) && !sotd.id) {
     pub(
       "error",
       "A custom SotD paragraph is required for your type of document."
     );
   }
-  sotd.id = sotd.id || "stod";
+  sotd.id = sotd.id || "sotd";
   sotd.classList.add("introductory");
   // NOTE:
   //  When arrays, wg and wgURI have to be the same length (and in the same order).
@@ -700,7 +526,7 @@ export function run(conf, doc, cb) {
   //  happens when one is foolish enough to do joint work with the TAG). In such cases,
   //  the groups whose patent policy applies need to be listed first, and wgPatentURI
   //  can be shorter — but it still needs to be an array.
-  var wgPotentialArray = [conf.wg, conf.wgURI, conf.wgPatentURI];
+  const wgPotentialArray = [conf.wg, conf.wgURI, conf.wgPatentURI];
   if (
     wgPotentialArray.some(item => Array.isArray(item)) &&
     !wgPotentialArray.every(item => Array.isArray(item))
@@ -710,13 +536,20 @@ export function run(conf, doc, cb) {
       "If one of '`wg`', '`wgURI`', or '`wgPatentURI`' is an array, they all have to be."
     );
   }
+  if (conf.isCGBG && !conf.wg) {
+    pub(
+      "error",
+      "[`wg`](https://github.com/w3c/respec/wiki/wg)" +
+        " configuration option is required for this kind of document."
+    );
+  }
   if (Array.isArray(conf.wg)) {
     conf.multipleWGs = conf.wg.length > 1;
-    conf.wgHTML = joinAnd(conf.wg, function(wg, idx) {
+    conf.wgHTML = joinAnd(conf.wg, (wg, idx) => {
       return "the <a href='" + conf.wgURI[idx] + "'>" + wg + "</a>";
     });
-    var pats = [];
-    for (var i = 0, n = conf.wg.length; i < n; i++) {
+    const pats = [];
+    for (let i = 0, n = conf.wg.length; i < n; i++) {
       pats.push(
         "a <a href='" +
           conf.wgPatentURI[i] +
@@ -773,14 +606,24 @@ export function run(conf, doc, cb) {
   if (conf.subjectPrefix !== "")
     conf.subjectPrefixEnc = encodeURIComponent(conf.subjectPrefix);
 
-  sotd.innerHTML = populateSoTD(conf, sotd);
+  hyperHTML.bind(sotd)`${populateSoTD(conf, sotd)}`;
 
-  if (!conf.implementationReportURI && (conf.isCR || conf.isPR || conf.isRec)) {
+  if (!conf.implementationReportURI && conf.isCR) {
     pub(
       "error",
-      "CR, PR, and REC documents need to have an `implementationReportURI` defined."
+      "CR documents must have an [`implementationReportURI`](https://github.com/w3c/respec/wiki/implementationReportURI) " +
+        "that describes [implementation experience](https://www.w3.org/2018/Process-20180201/#implementation-experience)."
     );
   }
+  if (!conf.implementationReportURI && conf.isPR) {
+    pub(
+      "warn",
+      "PR documents should include an " +
+        " [`implementationReportURI`](https://github.com/w3c/respec/wiki/implementationReportURI)" +
+        " that describes [implementation experience](https://www.w3.org/2018/Process-20180201/#implementation-experience)."
+    );
+  }
+
   if (conf.isTagFinding && !conf.additionalContent) {
     pub(
       "warn",
@@ -794,7 +637,6 @@ export function run(conf, doc, cb) {
     publishISODate: conf.publishISODate,
     generatedSubtitle: `${conf.longStatus} ${conf.publishHumanDate}`,
   });
-  cb();
 }
 
 function populateSoTD(conf, sotd) {
@@ -817,5 +659,5 @@ function populateSoTD(conf, sotd) {
   conf.additionalContent = additionalContent.innerHTML;
   // Whatever sections are left, we throw at the end.
   conf.additionalSections = sotdClone.innerHTML;
-  return tmpls[conf.isCGBG ? "cgbg-sotd.html" : "sotd.html"](conf);
+  return (conf.isCGBG ? cgbgSotdTmpl : sotdTmpl)(conf);
 }

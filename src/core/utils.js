@@ -12,9 +12,9 @@ marked.setOptions({
   gfm: true,
 });
 
-const spaceOrTab = /^[\ |\t]*/;
+const spaceOrTab = /^[ |\t]*/;
 const endsWithSpace = /\s+$/gm;
-const dashes = /\-/g;
+const dashes = /-/g;
 const gtEntity = /&gt;/gm;
 const ampEntity = /&amp;/gm;
 
@@ -131,7 +131,7 @@ export function calculateLeftPad(text) {
     throw new TypeError("Invalid input");
   }
   // Find smallest padding value
-  var leftPad = text
+  const leftPad = text
     .split("\n")
     .filter(item => item)
     .reduce((smallest, item) => {
@@ -205,8 +205,8 @@ export function normalizePadding(text = "") {
     return node !== null && node.nodeType === Node.TEXT_NODE;
   }
   // Force into body
-  var parserInput = "<body>" + text;
-  var doc = new DOMParser().parseFromString(parserInput, "text/html");
+  const parserInput = "<body>" + text;
+  const doc = new DOMParser().parseFromString(parserInput, "text/html");
   // Normalize block level elements children first
   Array.from(doc.body.children)
     .filter(elem => !inlineElems.has(elem.localName))
@@ -232,10 +232,10 @@ export function normalizePadding(text = "") {
   doc.normalize();
   // use the first space as an indicator of how much to chop off the front
   const firstSpace = doc.body.innerText
-    .replace(/^\ *\n/, "")
+    .replace(/^ *\n/, "")
     .split("\n")
     .filter(item => item && item.startsWith(" "))[0];
-  var chop = firstSpace ? firstSpace.match(/\ +/)[0].length : 0;
+  const chop = firstSpace ? firstSpace.match(/ +/)[0].length : 0;
   if (chop) {
     // Chop chop from start, but leave pre elem alone
     Array.from(doc.body.childNodes)
@@ -259,7 +259,7 @@ export function normalizePadding(text = "") {
         const nextTo = prevSib
           ? prevSib.localName
           : node.parentElement.localName;
-        if (/^[\t\ ]/.test(node.textContent) && inlineElems.has(nextTo)) {
+        if (/^[\t ]/.test(node.textContent) && inlineElems.has(nextTo)) {
           padding = node.textContent.match(/^\s+/)[0];
         }
         node.textContent = padding + node.textContent.replace(replacer, "");
@@ -286,13 +286,48 @@ export function normalizePadding(text = "") {
   return result;
 }
 
+/**
+ * Removes common indents across the IDL texts,
+ * so that indentation inside <pre> won't affect the rendered result.
+ * @param {string} text IDL text
+ */
+export function reindent(text) {
+  if (!text) {
+    return text;
+  }
+  // TODO: use trimEnd when Edge supports it
+  const lines = text.trimRight().split("\n");
+  while (lines.length && !lines[0].trim()) {
+    lines.shift();
+  }
+  const indents = lines.filter(s => s.trim()).map(s => s.search(/[^\s]/));
+  const leastIndent = Math.min(...indents);
+  return lines.map(s => s.slice(leastIndent)).join("\n");
+}
+
 // RESPEC STUFF
 export function removeReSpec(doc) {
-  Array.from(
-    doc.querySelectorAll(".remove, script[data-requiremodule]")
-  ).forEach(elem => {
+  doc.querySelectorAll(".remove, script[data-requiremodule]").forEach(elem => {
     elem.remove();
   });
+}
+
+/**
+ * Adds error class to each element while emitting a warning
+ * @param {Element|Array:Elements} elems
+ * @param {String} msg message to show in warning
+ * @param {String} title error message to add on each element
+ */
+export function showInlineError(elems, msg, title) {
+  if (!Array.isArray(elems)) elems = [elems];
+  if (!elems.length) return;
+  if (!title) title = msg;
+  elems.forEach(elem => {
+    elem.classList.add("respec-offending-element");
+    elem.setAttribute("title", title);
+  });
+  pub("warn", msg + " See developer console for details.");
+  console.warn(msg, elems);
 }
 
 // STRING HELPERS
@@ -307,11 +342,12 @@ export function joinAnd(array = [], mapper = item => item) {
       return items.toString();
     case 2: // x and y
       return items.join(" and ");
-    default:
+    default: {
       // x, y, and z
       const str = items.join(", ");
       const lastComma = str.lastIndexOf(",");
       return `${str.substr(0, lastComma + 1)} and ${str.slice(lastComma + 2)}`;
+    }
   }
 }
 
@@ -329,6 +365,22 @@ export function xmlEscape(s) {
 // Trims string at both ends and replaces all other white space with a single space
 export function norm(str) {
   return str.trim().replace(/\s+/g, " ");
+}
+
+// semverCompare
+// https://github.com/substack/semver-compare
+export function semverCompare(a, b) {
+  const pa = a.split(".");
+  const pb = b.split(".");
+  for (let i = 0; i < 3; i++) {
+    const na = Number(pa[i]);
+    const nb = Number(pb[i]);
+    if (na > nb) return 1;
+    if (nb > na) return -1;
+    if (!isNaN(na) && isNaN(nb)) return 1;
+    if (isNaN(na) && !isNaN(nb)) return -1;
+  }
+  return 0;
 }
 
 // --- DATE HELPERS -------------------------------------------------------------------------------
@@ -404,12 +456,12 @@ export function linkCSS(doc, styles) {
   const stylesArray = [].concat(styles);
   const frag = stylesArray
     .map(url => {
-      var link = doc.createElement("link");
+      const link = doc.createElement("link");
       link.rel = "stylesheet";
       link.href = url;
       return link;
     })
-    .reduce(function(elem, nextLink) {
+    .reduce((elem, nextLink) => {
       elem.appendChild(nextLink);
       return elem;
     }, doc.createDocumentFragment());
@@ -422,15 +474,15 @@ export function linkCSS(doc, styles) {
 // to maintain compatibility
 // with RSv1. It is therefore not tested and not actively supported.
 export function runTransforms(content, flist) {
-  var args = [this, content];
-  var funcArgs = Array.from(arguments);
+  let args = [this, content];
+  const funcArgs = Array.from(arguments);
   funcArgs.shift();
   funcArgs.shift();
   args = args.concat(funcArgs);
   if (flist) {
-    var methods = flist.split(/\s+/);
-    for (var j = 0; j < methods.length; j++) {
-      var meth = methods[j];
+    const methods = flist.split(/\s+/);
+    for (let j = 0; j < methods.length; j++) {
+      const meth = methods[j];
       if (window[meth]) {
         // the initial call passed |this| directly, so we keep it that way
         try {
@@ -446,4 +498,242 @@ export function runTransforms(content, flist) {
     }
   }
   return content;
+}
+
+/**
+ * Cached request handler
+ * @param {Request} request
+ * @param {Object} maxAge cache expiration duration in ms. defaults to 24 hours (86400000 ms)
+ * @return {Response}
+ *  if a cached response is available and it's not stale, return it
+ *  else: request from network, cache and return fresh response.
+ *    If network fails, return a stale cached version if exists (else throw)
+ */
+export async function fetchAndCache(request, maxAge = 86400000) {
+  if (typeof request === "string" || request instanceof URL) {
+    request = new Request(request);
+  }
+  const url = new URL(request.url);
+
+  // use data from cache data if valid and render
+  let cache;
+  let cachedResponse;
+  if ("caches" in window) {
+    try {
+      cache = await caches.open(url.origin);
+      cachedResponse = await cache.match(request);
+      if (
+        cachedResponse &&
+        new Date(cachedResponse.headers.get("Expires")) > new Date()
+      ) {
+        return cachedResponse;
+      }
+    } catch (err) {
+      console.error("Failed to use Cache API.", err);
+    }
+  }
+
+  // otherwise fetch new data and cache
+  const response = await fetch(request);
+  if (!response.ok) {
+    if (cachedResponse) {
+      // return stale version
+      console.warn(`Returning a stale cached response for ${url}`);
+      return cachedResponse;
+    }
+  }
+
+  // cache response
+  if (cache) {
+    const clonedResponse = response.clone();
+    const customHeaders = new Headers(response.headers);
+    const expiryDate = new Date(Date.now() + maxAge);
+    customHeaders.set("Expires", expiryDate);
+    const cacheResponse = new Response(await clonedResponse.blob(), {
+      headers: customHeaders,
+    });
+    // put in cache, and forget it (there is no recovery if it throws, but that's ok).
+    await cache.put(request, cacheResponse).catch(console.error);
+    return await cache.match(request);
+  }
+  return response;
+}
+
+// --- COLLECTION/ITERABLE HELPERS ---------------
+/**
+ * Spreads one iterable into another.
+ *
+ * @param {Iterable} collector
+ * @param {any|Iterable} item
+ * @returns {Array}
+ */
+export function flatten(collector, item) {
+  const isObject = typeof item === "object";
+  const isIterable =
+    Object(item)[Symbol.iterator] && typeof item.values === "function";
+  const items = !isObject
+    ? [item]
+    : isIterable
+      ? [...item.values()].reduce(flatten, [])
+      : Object.values(item);
+  return [...collector, ...items];
+}
+
+// --- DOM HELPERS -------------------------------
+
+/**
+ * Creates and sets an ID to an element (elem)
+ * using a specific prefix if provided, and a specific text if given.
+ * @param {Element} elem element
+ * @param {String} pfx prefix
+ * @param {String} txt text
+ * @param {Boolean} noLC
+ * @returns {String} generated (or existing) id for element
+ */
+export function addId(elem, pfx = "", txt = "", noLC = false) {
+  if (elem.id) {
+    return elem.id;
+  }
+  if (!txt) {
+    txt = (elem.title ? elem.title : elem.textContent).trim();
+  }
+  let id = noLC ? txt : txt.toLowerCase();
+  id = id
+    .replace(/[\W]+/gim, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+
+  if (!id) {
+    id = "generatedID";
+  } else if (/\.$/.test(id) || !/^[a-z]/i.test(id)) {
+    id = "x" + id; // trailing . doesn't play well with jQuery
+  }
+  if (pfx) {
+    id = `${pfx}-${id}`;
+  }
+  if (elem.ownerDocument.getElementById(id)) {
+    let i = 0;
+    let nextId = id + "-" + i;
+    while (elem.ownerDocument.getElementById(nextId)) {
+      nextId = id + "-" + i++;
+    }
+    id = nextId;
+  }
+  elem.id = id;
+  return id;
+}
+
+/**
+ * Returns all the descendant text nodes of an element.
+ * @param {Node} el
+ * @param {Array:String} exclusions node localName to exclude
+ * @returns {Array:String}
+ */
+export function getTextNodes(el, exclusions = []) {
+  const acceptNode = node => {
+    return exclusions.includes(node.parentElement.localName)
+      ? NodeFilter.FILTER_REJECT
+      : NodeFilter.FILTER_ACCEPT;
+  };
+  const nodeIterator = document.createNodeIterator(
+    el,
+    NodeFilter.SHOW_TEXT,
+    { acceptNode },
+    false
+  );
+  const textNodes = [];
+  let node;
+  while ((node = nodeIterator.nextNode())) {
+    textNodes.push(node);
+  }
+  return textNodes;
+}
+
+/**
+ * For any element, returns an array of title strings that applies
+ *   the algorithm used for determining the actual title of a
+ *   <dfn> element (but can apply to other as well).
+ * if args.isDefinition is true, then the element is a definition, not a
+ *   reference to a definition. Any @title or @lt will be replaced with
+ *   @data-lt to be consistent with Bikeshed / Shepherd.
+ * This method now *prefers* the data-lt attribute for the list of
+ *   titles. That attribute is added by this method to dfn elements, so
+ *   subsequent calls to this method will return the data-lt based list.
+ * @param {Element} elem
+ * @param {Object} args
+ * @returns {String[]} array of title strings
+ */
+export function getDfnTitles(elem, args) {
+  let titleString = "";
+  let normText = "";
+  //data-lt-noDefault avoid using the text content of a definition
+  //in the definition list.
+  if (!elem.hasAttribute("data-lt-noDefault")) {
+    normText = norm(elem.textContent).toLowerCase();
+  }
+  if (elem.dataset.lt) {
+    // prefer @data-lt for the list of title aliases
+    titleString = elem.dataset.lt.toLowerCase();
+    if (normText !== "" && !titleString.startsWith(`${normText}|`)) {
+      // Use the definition itself, so to avoid having to declare the definition twice.
+      titleString = titleString + "|" + normText;
+    }
+  } else if (
+    elem.childNodes.length === 1 &&
+    elem.getElementsByTagName("abbr").length === 1 &&
+    elem.children[0].title
+  ) {
+    titleString = elem.children[0].title;
+  } else {
+    titleString =
+      elem.textContent === '""' ? "the-empty-string" : elem.textContent;
+  }
+
+  // now we have a string of one or more titles
+  titleString = norm(titleString).toLowerCase();
+  if (args && args.isDefinition === true) {
+    if (elem.dataset.lt) {
+      elem.dataset.lt = titleString;
+    }
+    // if there is no pre-defined type, assume it is a 'dfn'
+    if (!elem.dataset.dfnType) elem.dataset.dfnType = "dfn";
+  }
+
+  const titles = titleString
+    .split("|")
+    .filter(item => item !== "")
+    .reduce((collector, item) => collector.add(item), new Set());
+  return [...titles];
+}
+
+/**
+ * For an element (usually <a>), returns an array of targets that
+ * element might refer to, of the form
+ * @typedef {for: 'interfacename', title: 'membername'} LinkTarget
+ *
+ * For an element like:
+ *  <p link-for="Int1"><a for="Int2">Int3.member</a></p>
+ * we'll return:
+ *  * {for: "int2", title: "int3.member"}
+ *  * {for: "int3", title: "member"}
+ *  * {for: "", title: "int3.member"}
+ * @param {Element} elem
+ * @returns {LinkTarget[]}
+ */
+export function getLinkTargets(elem) {
+  const linkForElem = elem.closest("[data-link-for]");
+  const linkFor = linkForElem ? linkForElem.dataset.linkFor.toLowerCase() : "";
+  const titles = getDfnTitles(elem);
+
+  return titles.reduce((result, title) => {
+    result.push({ for: linkFor, title });
+    const split = title.split(".");
+    if (split.length === 2) {
+      // If there are multiple '.'s, this won't match an
+      // Interface/member pair anyway.
+      result.push({ for: split[0], title: split[1] });
+    }
+    result.push({ for: "", title });
+    return result;
+  }, []);
 }

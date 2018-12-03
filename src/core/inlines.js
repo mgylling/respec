@@ -14,50 +14,44 @@
 //    key word was used.  NOTE: While each member is a counter, at this time
 //    the counter is not used.
 import { pub } from "core/pubsubhub";
+import "deps/hyperhtml";
+import { getTextNodes } from "core/utils";
 export const name = "core/inlines";
 
-export function run(conf, doc, cb) {
-  doc.normalize();
+export function run(conf) {
+  document.normalize();
   if (!conf.normativeReferences) conf.normativeReferences = new Set();
   if (!conf.informativeReferences) conf.informativeReferences = new Set();
   if (!conf.respecRFC2119) conf.respecRFC2119 = {};
 
   // PRE-PROCESSING
-  var abbrMap = {};
-  $("abbr[title]", doc).each(function() {
-    abbrMap[$(this).text()] = $(this).attr("title");
-  });
-  var aKeys = [];
-  for (var k in abbrMap) aKeys.push(k);
-  aKeys.sort(function(a, b) {
-    if (b.length < a.length) return -1;
-    if (a.length < b.length) return 1;
-    return 0;
-  });
-  var abbrRx = aKeys.length
-    ? "(?:\\b" + aKeys.join("\\b)|(?:\\b") + "\\b)"
-    : null;
+  const abbrMap = new Map();
+  for (const abbr of Array.from(document.querySelectorAll("abbr[title]"))) {
+    abbrMap.set(abbr.textContent, abbr.title);
+  }
+  const aKeys = [...abbrMap.keys()];
+  aKeys.sort((a, b) => b.length - a.length);
+  const abbrRx = aKeys.length ? `(?:\\b${aKeys.join("\\b)|(?:\\b")}\\b)` : null;
 
   // PROCESSING
-  var txts = $("body", doc).allTextNodes(["pre"]);
-  var rx = new RegExp(
+  const txts = getTextNodes(document.body, ["pre"]);
+  const rx = new RegExp(
     "(\\bMUST(?:\\s+NOT)?\\b|\\bSHOULD(?:\\s+NOT)?\\b|\\bSHALL(?:\\s+NOT)?\\b|" +
       "\\bMAY\\b|\\b(?:NOT\\s+)?REQUIRED\\b|\\b(?:NOT\\s+)?RECOMMENDED\\b|\\bOPTIONAL\\b|" +
       "(?:\\[\\[(?:!|\\\\)?[A-Za-z0-9\\.-]+\\]\\])" +
-      (abbrRx ? "|" + abbrRx : "") +
+      (abbrRx ? `|${abbrRx}` : "") +
       ")"
   );
-  for (var i = 0; i < txts.length; i++) {
-    var txt = txts[i];
-    var subtxt = txt.data.split(rx);
+  for (const txt of txts) {
+    const subtxt = txt.data.split(rx);
     if (subtxt.length === 1) continue;
 
-    var df = doc.createDocumentFragment();
+    const df = document.createDocumentFragment();
     while (subtxt.length) {
-      var t = subtxt.shift();
-      var matched = null;
+      const t = subtxt.shift();
+      let matched = null;
       if (subtxt.length) matched = subtxt.shift();
-      df.appendChild(doc.createTextNode(t));
+      df.appendChild(document.createTextNode(t));
       if (matched) {
         // RFC 2119
         if (
@@ -67,60 +61,51 @@ export function run(conf, doc, cb) {
         ) {
           matched = matched.split(/\s+/).join(" ");
           df.appendChild(
-            $("<em/>")
-              .attr({ class: "rfc2119", title: matched })
-              .text(matched)[0]
+            hyperHTML`<em class="rfc2119" title="${matched}">${matched}</em>`
           );
           // remember which ones were used
           conf.respecRFC2119[matched] = true;
-        } else if (/^\[\[/.test(matched)) {
+        } else if (matched.startsWith("[[")) {
           // BIBREF
-          var ref = matched;
+          let ref = matched;
           ref = ref.replace(/^\[\[/, "");
           ref = ref.replace(/\]\]$/, "");
-          if (ref.indexOf("\\") === 0) {
+          if (ref.startsWith("\\")) {
             df.appendChild(
-              doc.createTextNode("[[" + ref.replace(/^\\/, "") + "]]")
+              document.createTextNode(`[[${ref.replace(/^\\/, "")}]]`)
             );
           } else {
-            var norm = false;
-            if (ref.indexOf("!") === 0) {
+            let norm = false;
+            if (ref.startsWith("!")) {
               norm = true;
               ref = ref.replace(/^!/, "");
             }
             // contrary to before, we always insert the link
             if (norm) conf.normativeReferences.add(ref);
             else conf.informativeReferences.add(ref);
-            df.appendChild(doc.createTextNode("["));
+            df.appendChild(document.createTextNode("["));
+            const refHref = `#bib-${ref.toLowerCase()}`;
             df.appendChild(
-              $("<cite/>").wrapInner(
-                $("<a/>")
-                  .attr({ class: "bibref", href: "#bib-" + ref })
-                  .text(ref)
-              )[0]
+              hyperHTML`<cite><a class="bibref" href="${refHref}">${ref}</a></cite>`
             );
-            df.appendChild(doc.createTextNode("]"));
+            df.appendChild(document.createTextNode("]"));
           }
-        } else if (abbrMap[matched]) {
+        } else if (abbrMap.has(matched)) {
           // ABBR
-          if ($(txt).parents("abbr").length)
-            df.appendChild(doc.createTextNode(matched));
+          if (txt.parentNode.tagName === "ABBR")
+            df.appendChild(document.createTextNode(matched));
           else
-            df.appendChild(
-              $("<abbr/>").attr({ title: abbrMap[matched] }).text(matched)[0]
-            );
+            df.appendChild(hyperHTML`
+              <abbr title="${abbrMap.get(matched)}">${matched}</abbr>`);
         } else {
           // FAIL -- not sure that this can really happen
           pub(
             "error",
-            "Found token '" +
-              matched +
-              "' but it does not correspond to anything"
+            `Found token '${matched}' but it does not correspond to anything`
           );
         }
       }
     }
     txt.parentNode.replaceChild(df, txt);
   }
-  cb();
 }

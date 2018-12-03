@@ -10,15 +10,15 @@ import { pub, sub } from "core/pubsubhub";
 export const name = "w3c/style";
 function attachFixupScript(doc, version) {
   const script = doc.createElement("script");
-  script.addEventListener(
-    "load",
-    function() {
-      if (window.location.hash) {
-        window.location = window.location;
-      }
-    },
-    { once: true }
-  );
+  if (location.hash) {
+    script.addEventListener(
+      "load",
+      () => {
+        window.location = location.hash;
+      },
+      { once: true }
+    );
+  }
   script.src = `https://www.w3.org/scripts/TR/${version}/fixup.js`;
   doc.body.appendChild(script);
 }
@@ -36,7 +36,7 @@ function createMetaViewport() {
     "initial-scale": "1",
     "shrink-to-fit": "no",
   };
-  meta.content = toKeyValuePairs(contentProps).replace(/\"/g, "");
+  meta.content = toKeyValuePairs(contentProps).replace(/"/g, "");
   return meta;
 }
 
@@ -86,7 +86,7 @@ function createResourceHints() {
     },
   ]
     .map(createResourceHint)
-    .reduce(function(frag, link) {
+    .reduce((frag, link) => {
       frag.appendChild(link);
       return frag;
     }, document.createDocumentFragment());
@@ -149,7 +149,7 @@ export function run(conf, doc, cb) {
   if (version && !conf.noToc) {
     sub(
       "end-all",
-      function() {
+      () => {
         attachFixupScript(doc, version);
       },
       { once: true }

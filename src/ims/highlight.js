@@ -5,7 +5,7 @@
  *
  * IMS change: dont insert head style element (line 18). The hljs styles
  * are at the bottom of ims-base.css instead. This is since the head is discarded
- * when publishing in Drupal. 
+ * when publishing in Drupal.
  *
  */
 import ghCss from "deps/text!core/css/github.css";
@@ -26,6 +26,7 @@ function getLanguageHint(classList) {
 }
 
 export async function run(conf) {
+
   // Nothing to do
   if (conf.noHighlightCSS) {
     return;

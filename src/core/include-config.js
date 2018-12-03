@@ -9,9 +9,9 @@ const amendConfig = newValues => Object.assign(userConfig, newValues);
 sub("start-all", amendConfig);
 sub("amend-user-config", amendConfig);
 sub("end-all", () => {
-  // const script = document.createElement("script");
-  // script.id = "initialUserConfig";
-  // script.type = "application/json";
-  // script.innerHTML = JSON.stringify(userConfig, null, 2);
-  // document.head.appendChild(script);
+  const script = document.createElement("script");
+  script.id = "initialUserConfig";
+  script.type = "application/json";
+  script.innerHTML = JSON.stringify(userConfig, null, 2);
+  document.head.appendChild(script);
 });

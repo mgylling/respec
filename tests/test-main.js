@@ -1,3 +1,4 @@
+/*eslint-env node*/
 "use strict";
 // Get a list of all the test files to include
 const testFiles = Object.keys(window.__karma__.files)
@@ -24,6 +25,10 @@ require.config({
       "/base/js/core/linter-rules/no-headingless-sections",
     "core/linter-rules/no-http-props":
       "/base/js/core/linter-rules/no-http-props",
+    "core/linter-rules/check-punctuation":
+      "/base/js/core/linter-rules/check-punctuation",
+    "core/linter-rules/local-refs-exist":
+      "/base/js/core/linter-rules/local-refs-exist",
     "core/l10n": "/base/js/core/l10n",
     "w3c/linter-rules/privsec-section":
       "/base/js/w3c/linter-rules/privsec-section",
@@ -35,9 +40,8 @@ require.config({
     "core/utils": "/base/js/core/utils",
     "deps/jquery": "/base/js/deps/jquery",
     "deps/marked": "/base/js/deps/marked",
+    "deps/idb": "/base/js/deps/idb",
     "w3c/linter": "/base/js/w3c/linter",
+    "core/exporter": "/base/js/core/exporter",
   },
 });
-
-// Attempt to reduce timeout errors
-jasmine.DEFAULT_TIMEOUT_INTERVAL = jasmine.DEFAULT_TIMEOUT_INTERVAL;

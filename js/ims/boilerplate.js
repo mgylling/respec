@@ -27,11 +27,13 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
 
     header.appendChild(headerTop);
 
-    var release = (0, _utils.toHTMLNode)(`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`);
-    header.appendChild(release);
+    if (conf.specType !== "doc") {
+      var release = (0, _utils.toHTMLNode)(`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`);
+      header.appendChild(release);
 
-    var statusPD = (0, _utils.toHTMLNode)(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
-    header.appendChild(statusPD);
+      var statusPD = (0, _utils.toHTMLNode)(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
+      header.appendChild(statusPD);
+    }
 
     var versionTable = `<table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
   <tbody><tr>
@@ -47,7 +49,17 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     <td><a href='${conf.errataURL}'>${conf.errataURL}</a></td></tr>`;
     }
     versionTable += `</tbody></table>`;
-    header.appendChild((0, _utils.toHTMLNode)(versionTable));
+
+    if (conf.specType !== "doc") {
+      header.appendChild((0, _utils.toHTMLNode)(versionTable));
+    } else {
+      var genericDocTable = `<table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
+    <tbody><tr>
+    <td>Date Issued:</td><td>${conf.specDate}</td></tr>
+    <td>Status:</td><td>${getStatusString(conf)}</td></tr>
+    </tbody></table>`;
+      header.appendChild((0, _utils.toHTMLNode)(genericDocTable));
+    }
 
     var ipr = (0, _utils.toHTMLNode)(`<div id="ipr">
   <h2>IPR and Distribution Notices</h2>
@@ -62,8 +74,8 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
   </div>`);
     header.appendChild(ipr);
 
-    var copyRight = (0, _utils.toHTMLNode)(`<div id="cpr">      
-      <p>© ${new Date().getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>        
+    var copyRight = (0, _utils.toHTMLNode)(`<div id="cpr">
+      <p>© ${new Date().getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>
       <p>Trademark information: <a href="http://www.imsglobal.org/copyright.html">http://www.imsglobal.org/copyright.html</a></p>
     </div>`);
 
@@ -99,6 +111,10 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     //specStatusString: an override of the default descriptions
     if (conf.specStatusString) {
       return conf.specStatusString;
+    }
+    //for generic docs, have a generic desc
+    if (conf.specType === "doc") {
+      return "This is an informative IMS Global document that may be revised at any time.";
     }
     //specStatus: IMS Base Document, IMS Candidate Final (Public) or IMS Final Release
     switch (conf.specStatus) {

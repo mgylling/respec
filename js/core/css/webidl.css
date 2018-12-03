@@ -4,14 +4,6 @@ pre.idl {
   padding: 1em;
 }
 
-.respec-idl-separator {
-  padding: 0 0 0.4cm 0;
-}
-
-.respec-idl-separator:last-child {
-  padding: 0;
-}
-
 @media print {
   pre.idl {
     white-space: pre-wrap;
@@ -228,7 +220,7 @@ a.idlEnumItem {
   color: #c00;
 }
 
-.idlImplements a {
+.idlImplements a, .idlIncludes a {
   font-weight: bold;
 }
 

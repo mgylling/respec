@@ -13,7 +13,7 @@ module.exports = function(config) {
 
     // configuration
     detectBrowsers: {
-      enabled: true,
+      enabled: !config.browsers.length,
       usePhantomJS: false,
       postDetection(browsers) {
         return (
@@ -44,6 +44,11 @@ module.exports = function(config) {
       },
       {
         pattern: "tests/**/*-spec.js",
+        included: false,
+        served: true,
+      },
+      {
+        pattern: "tests/data/**/*",
         included: false,
         served: true,
       },
@@ -91,7 +96,7 @@ module.exports = function(config) {
     reporters: ["mocha"],
 
     // web server port
-    port: 9876,
+    port: config.port || 9876,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
@@ -115,6 +120,10 @@ module.exports = function(config) {
     concurrency: 1,
 
     browserNoActivityTimeout: 100000,
+
+    client: {
+      args: ["--grep", config.grep || ""],
+    },
   };
   if (process.env.TRAVIS) {
     options.detectBrowsers.enabled = false;
@@ -122,7 +131,7 @@ module.exports = function(config) {
     options.singleRun = true;
     options.concurrency = 1;
     options.reporters = ["mocha"];
-    options.browsers = ["Chrome"]; //"Firefox"
+    options.browsers = ["ChromeHeadless"]; //"Firefox"
   }
   config.set(options);
 };

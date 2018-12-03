@@ -1,4 +1,4 @@
-/* Base CSS for IMS Global specifications. This draws from the Respec CSS 
+/* Base CSS for IMS Global specifications. This draws from the Respec CSS
 (c) Robin Berjon and W3C. Cf. https://github.com/w3c/respec */
 
 @import url(https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Source+Code+Pro);
@@ -12,35 +12,35 @@
   --fgclr4:rgba(40, 100, 150, 1);
   --gray: rgba(200,200,200,0.9);
   --lightgray: rgba(240,240,240,0.9);
-  --lightestgray: rgba(250,250,250,0.8);  
-  --darkgray: rgba(180,180,180,1);    
+  --lightestgray: rgba(250,250,250,0.8);
+  --darkgray: rgba(180,180,180,1);
 }
 
 /** fonts **********************************************************************/
 
 body {
-  font-family: 'Roboto', Arial, Helvetica, sans-serif; 
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
 div#ipr, div#endWarranty, section#contributors, .condensed {
-  font-family: 'RobotoCondensed', Arial, Helvetica, sans-serif; 
+  font-family: 'RobotoCondensed', Arial, Helvetica, sans-serif;
 }
 
 pre, code, samp {
   font-family: 'Source Code Pro', monospace;
-}  
+}
 
 /** Header *********************************************************************/
-  
+
 header {
   border-bottom: 2px solid var(--gray);
-  padding-bottom: 2em;  
+  padding-bottom: 2em;
 }
 
 .header-top {
   display:flex;
   flex-flow: row nowrap;
-  justify-content: space-between;  
+  justify-content: space-between;
 }
 
 a#logo {
@@ -58,7 +58,7 @@ div.subtitle {
 }
 
 #cpr {
-  font-size: 80%;	
+  font-size: 80%;
 	margin-bottom: 1.5em;
 	margin-top: 2.5em;
 }
@@ -111,7 +111,7 @@ div.subtitle {
 	}
 
 	h1, h2, h3, h4 {
-		color: var(--fgclr4);    
+		color: var(--fgclr4);
 		background: transparent;
 	}
 
@@ -127,13 +127,13 @@ div.subtitle {
   a.bibref {
     font-style: normal;
   }
-  
+
   a[href].internalDFN {
-    color: var(--fgclr1);     
+    color: var(--fgclr1);
     text-decoration: none;
     border-bottom: 1px var(--fgclr2) dotted;
   }
-  
+
   a[href]:focus,
 	a[href]:hover {
 		background: var(--lightgray);
@@ -142,16 +142,21 @@ div.subtitle {
 		color: #C00;
 		border-color: #C00;
 	}
-  
-  
+
+
 /** Examples *******************************************************************/
 
 .example {
-  border: 1px solid var(--darkgray);; 
-	background: var(--lightgray);
-	counter-increment: example;
-	clear: both;
-  padding: 0em 0em .5em 0em; 
+  border: 1px solid var(--darkgray);;
+  background: var(--lightgray);
+  counter-increment: example;
+  clear: both;
+  padding: 0em 0em 0em 0em;
+}
+
+.example figcaption {
+    background-color: var(--fgclr3);
+    color: white;
 }
 
 .example pre {
@@ -159,6 +164,7 @@ div.subtitle {
   overflow: scroll;
   word-wrap: normal;
   overflow-wrap: normal;
+  padding: 1em 1em 0em 1em;
 }
 
 .example::before, .example > .marker {
@@ -167,7 +173,7 @@ div.subtitle {
 	min-width: 7.5em;
 	display: block;
 }
-      
+
 
 /** Footer ******************************************************************/
 
@@ -175,21 +181,21 @@ section#revisionhistory table {
 	margin-bottom: 3em;
 }
 
-div#ipr, div#endWarranty {  
+div#ipr, div#endWarranty {
   font-size: 80%;
 }
 
-div#endWarranty p {  
+div#endWarranty p {
   margin-top:0.3em;
   margin-bottom:0.3em;
 }
 
-div#endWarranty {  
+div#endWarranty {
   margin-top:6em;
   padding-top: 3em;
   border-top: 2px solid var(--gray);
   text-align: center;
-}  
+}
 
 
 /***********************************************************************/
@@ -202,8 +208,8 @@ table {
   border-collapse: collapse;
   word-wrap: normal;
   overflow-wrap: normal;
-  hyphens: manual;    
-  width:100%;  
+  hyphens: manual;
+  width:100%;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
   max-width: 50em;
@@ -215,7 +221,7 @@ td, th {
   padding-left:1em;
   padding-right:1em;
   padding-left:1em;
-  padding-right:1em;  
+  padding-right:1em;
   text-align: left;
   text-align: start;
   border: 1px solid var(--gray);
@@ -228,7 +234,11 @@ th {
   padding: 0.6em;
 }
 
-th > * {  
+td {
+  padding: 0.8em;
+}
+
+th > * {
   padding: 0;
   margin: 0;
 }
@@ -242,6 +252,10 @@ table#version-table, table#no-cell-borders {
 
 table#version-table td, table#no-cell-borders td  {
   border: none;
+}
+
+table#version-table td {
+    padding: 0.2em;
 }
 
 /* For when values are extra-complex and need formatting for readability */
@@ -281,7 +295,7 @@ td.pre, td code {
 /** boxes *************************************************************/
 
   .alert {
-    border: 2px solid red; 
+    border: 2px solid red;
     padding: 0.3em;
   }
 
@@ -294,6 +308,10 @@ td.pre, td code {
 dfn {
   font-style: normal;
   font-weight: normal;
+}
+
+dt > dfn {
+  font-weight: bold
 }
 
 /******************************************************************************/
@@ -602,7 +620,7 @@ dfn {
 /******************************************************************************/
 
 /** Terminology Markup ********************************************************/
-	
+
 	a > i { /* Instance of term */
 		font-style: normal;
 	}
@@ -676,7 +694,7 @@ dfn {
   }
 
   a[href].hidden-reveal, a[href].hidden-reveal:visited {
-    text-decoration: none; 
+    text-decoration: none;
     border-bottom: none;
   }
 
@@ -690,7 +708,7 @@ dfn {
 
 	figure, .figure, .sidefigure {
 		page-break-inside: avoid;
-		text-align: center;
+		text-align: left;
 		margin: 2.5em 0;
 	}
 	.figure img,    .sidefigure img,    figure img,
@@ -700,10 +718,11 @@ dfn {
 	}
 	.figure pre, .sidefigure pre, figure pre {
 		text-align: left;
-		display: table;
+		/* display: table;*/
 		margin: 1em auto;
 	}
-	.figure table, figure table {
+
+  .figure table, figure table {
 		margin: auto;
 	}
 	@media screen and (min-width: 20em) {
@@ -716,6 +735,8 @@ dfn {
 	.caption, figcaption, caption {
 		font-style: italic;
 		font-size: 90%;
+        display: block;
+        padding: 0.5em 0 0.5em 0.5em;
 	}
 	.caption::before, figcaption::before, figcaption > .marker {
 		font-weight: bold;
@@ -733,7 +754,7 @@ dfn {
 
 	.issue, .note, .example, .advisement, blockquote {
 		/* padding: .5em; */
-    padding-top: 0;
+        padding-top: 0;
 		border: .5em;
 		/* border-left-style: solid; */
 		page-break-inside: avoid;
@@ -766,7 +787,7 @@ dfn {
 	}
 
 /** Open issue ****************************************************************/
-
+/*
 	.issue {
 		border-color: #E05252;
 		background: #FBE9E9;
@@ -778,7 +799,7 @@ dfn {
 		padding-right: 1em;
 		text-transform: uppercase;
 	}
-
+*/
 /******************************************************************************/
 /*                                  Indices                                   */
 /******************************************************************************/
@@ -946,10 +967,74 @@ dfn {
 
 	@media not print {
 		.overlarge {
-			overflow-x: auto;	
+			overflow-x: auto;
 		}
 	}
-  
+
+
+  /* --- ADMONITIONS --- */
+  .admonition {
+      margin-top: 1em;
+      margin-bottom: 1em;
+      margin: 1em 0;
+      border-left-width: .5em;
+      border-left-style: solid;
+      padding: 0.5em 1.2em 0.5em;
+      position: relative;
+      clear: both;
+  }
+
+  .admonition .admon-top {
+      padding-right:  1em;
+      min-width: 7.5em;
+      color: #e05252;
+      text-transform: uppercase;
+  }
+
+  .admonition .note-title, .admonition .ednote-title  {
+      color: #2b2;
+  }
+
+  .admonition .warning-title, .admonition .ednote-title  {
+      color: #f22;
+  }
+
+  .admonition.issue {
+      border-color: #e05252;
+      background: #fbe9e9;
+      counter-increment: issue;
+      overflow: auto;
+  }
+
+  .admonition.note, .admonition.ednote {
+      border-color: #52e052;
+      background: #e9fbe9;
+  }
+
+  .admonition > p:first-child { margin-top: 0 }
+
+  .admonition.warning {
+      border-color: #f11;
+      border-width: .2em;
+      border-style: solid;
+      background: #fbe9e9;
+      padding-top: 1em;
+  }
+
+  .admonition .warning-title:before{
+      content: "⚠"; /*U+26A0 WARNING SIGN*/
+      font-size: 3em;
+      float: left;
+      height: 100%;
+      padding-right: .3em;
+      vertical-align: top;
+      margin-top: -0.5em;
+  }
+
+
+
+
+
 /* github.com style (c) Vasily Polovnyov <vast@whiteants.net> */
 
 .hljs {
