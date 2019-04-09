@@ -31,7 +31,7 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
       var release = (0, _utils.toHTMLNode)(`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`);
       header.appendChild(release);
 
-      var statusPD = (0, _utils.toHTMLNode)(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
+      var statusPD = (0, _utils.toHTMLNode)(`<span class='statusPD${getStatusToken(conf)}' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
       header.appendChild(statusPD);
     }
 
@@ -105,6 +105,16 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     doc.body.appendChild(footer);
 
     cb();
+  }
+
+  function getStatusToken(conf) {
+    //a status token for the class attribute. we only set a token when
+    //the spec is final (= green), all other states get no token
+
+    if (conf.specStatus === 'IMS Final Release') {
+      return ' final';
+    }
+    return '';
   }
 
   function getStatusString(conf) {

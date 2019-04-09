@@ -26,7 +26,7 @@ export function run(conf, doc, cb) {
     var release = toHTMLNode(`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`);
     header.appendChild(release);
 
-    var statusPD = toHTMLNode(`<span class='statusPD' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
+    var statusPD = toHTMLNode(`<span class='statusPD${getStatusToken(conf)}' data-content="${conf.specStatus}">${conf.specStatus}</span>`);
     header.appendChild(statusPD);
   }
 
@@ -100,6 +100,16 @@ export function run(conf, doc, cb) {
   doc.body.appendChild(footer);
 
   cb();
+}
+
+function getStatusToken(conf) {
+  //a status token for the class attribute. we only set a token when
+  //the spec is final (= green), all other states get no token
+
+  if(conf.specStatus === 'IMS Final Release') {
+    return ' final';
+  }
+  return '';
 }
 
 function getStatusString(conf) {
