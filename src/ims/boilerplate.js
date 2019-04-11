@@ -104,7 +104,7 @@ export function run(conf, doc, cb) {
 
 function getStatusToken(conf) {
   //a status token for the class attribute. we only set a token when
-  //the spec is final (= green), all other states get no token
+  //the spec is final (= blue), all other states get no token
 
   if(conf.specStatus === 'IMS Final Release') {
     return ' final';
