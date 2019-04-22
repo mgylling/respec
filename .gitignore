@@ -11,4 +11,5 @@ js/
 !js/profile-geonovum.js
 !js/profile-w3c.js
 !js/shortcut.js
+!js/profile-ims-default.js
 .vscode/
