@@ -9,7 +9,8 @@ bevy.json
 js/
 !js/profile-w3c-common.js
 !js/profile-geonovum.js
+!js/profile-ims-default.js
 !js/profile-w3c.js
 !js/shortcut.js
-!js/profile-ims-default.js
 .vscode/
+.vs/
