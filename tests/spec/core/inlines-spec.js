@@ -55,9 +55,9 @@ describe("Core - Inlines", () => {
     );
 
     const illegalCiteNoWarn = doc.querySelector("#illegal-no-warn cite");
-    expect(
-      illegalCiteNoWarn.classList.contains("respec-offending-element")
-    ).toBe(false);
+    expect(illegalCiteNoWarn.classList).not.toContain(
+      "respec-offending-element"
+    );
   });
 
   it("processes abbr and rfc2119 content", async () => {
@@ -87,60 +87,64 @@ describe("Core - Inlines", () => {
         <p id="a1">TEXT |variable: Type| TEXT</p>
         <p id="a2">TEXT |variable with spaces:Type| TEXT</p>
         <p id="a3">TEXT |with spaces :  Type| TEXT</p>
+        <p id="e">TEXT |p| TEXT </p>
+      </section>
+      <section>
         <p id="a4">TEXT |with spaces :  Type with spaces| TEXT</p>
         <p id="b">TEXT |variable| TEXT</p>
         <p id="c">TEXT | ignored | TEXT</p>
         <p id="d">TEXT|ignore: Ignore|TEXT</p>
-        <p id="e">TEXT |p| TEXT </p>
         <p id="f">TEXT |p: Type with spaces| TEXT </p>
         <p id="g"> |p: Type with spaces| and |var1| and |var2:Type| </p>
+      </section>
+      <section>
         <p id="h"> TEXT |var: Generic&lt;int&gt;| TEXT |var2: Generic&lt;unsigned short int&gt;| </p>
       </section>
     `;
     const doc = await makeRSDoc(makeStandardOps(null, body));
 
     const a1 = doc.querySelector("#a1 var");
-    expect(a1.textContent).toEqual("variable");
-    expect(a1.dataset.type).toEqual("Type");
+    expect(a1.textContent).toBe("variable");
+    expect(a1.dataset.type).toBe("Type");
 
     const a2 = doc.querySelector("#a2 var");
-    expect(a2.textContent).toEqual("variable with spaces");
-    expect(a2.dataset.type).toEqual("Type");
+    expect(a2.textContent).toBe("variable with spaces");
+    expect(a2.dataset.type).toBe("Type");
     const a3 = doc.querySelector("#a3 var");
-    expect(a3.textContent).toEqual("with spaces");
-    expect(a3.dataset.type).toEqual("Type");
+    expect(a3.textContent).toBe("with spaces");
+    expect(a3.dataset.type).toBe("Type");
 
     const a4 = doc.querySelector("#a4 var");
-    expect(a4.textContent).toEqual("with spaces");
-    expect(a4.dataset.type).toEqual("Type with spaces");
+    expect(a4.textContent).toBe("with spaces");
+    expect(a4.dataset.type).toBe("Type with spaces");
 
     const b = doc.querySelector("#b var");
-    expect(b.textContent).toEqual("variable");
+    expect(b.textContent).toBe("variable");
     expect(b.dataset.type).toBeUndefined();
 
     expect(doc.querySelector("#c var")).toBeFalsy();
     expect(doc.querySelector("#d var")).toBeFalsy();
 
     const e = doc.querySelector("#e var");
-    expect(e.textContent).toEqual("p");
+    expect(e.textContent).toBe("p");
     expect(e.dataset.type).toBeUndefined();
     const f = doc.querySelector("#f var");
-    expect(f.textContent).toEqual("p");
-    expect(f.dataset.type).toEqual("Type with spaces");
+    expect(f.textContent).toBe("p");
+    expect(f.dataset.type).toBe("Type with spaces");
 
     const g = doc.querySelectorAll("#g var");
-    expect(g[0].textContent).toEqual("p");
-    expect(g[0].dataset.type).toEqual("Type with spaces");
-    expect(g[1].textContent).toEqual("var1");
+    expect(g[0].textContent).toBe("p");
+    expect(g[0].dataset.type).toBe("Type with spaces");
+    expect(g[1].textContent).toBe("var1");
     expect(g[1].dataset.type).toBeUndefined();
-    expect(g[2].textContent).toEqual("var2");
-    expect(g[2].dataset.type).toEqual("Type");
+    expect(g[2].textContent).toBe("var2");
+    expect(g[2].dataset.type).toBe("Type");
 
     const h = doc.querySelectorAll("#h var");
-    expect(h[0].textContent).toEqual("var");
-    expect(h[0].dataset.type).toEqual("Generic<int>");
-    expect(h[1].textContent).toEqual("var2");
-    expect(h[1].dataset.type).toEqual("Generic<unsigned short int>");
+    expect(h[0].textContent).toBe("var");
+    expect(h[0].dataset.type).toBe("Generic<int>");
+    expect(h[1].textContent).toBe("var2");
+    expect(h[1].dataset.type).toBe("Generic<unsigned short int>");
   });
 
   it("expands inline references and they get classified as normative/informative correctly", async () => {
