@@ -1,14 +1,15 @@
-define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _pubsubhub) {
+define(["exports", "core/utils"], function (_exports, _utils) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/style";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/style";
+  _exports.name = name;
 
-  function attachMetaViewport(doc) {
+  async function attachMetaViewport() {
     const meta = document.createElement("meta");
     meta.name = "viewport";
     const contentProps = {
@@ -20,15 +21,16 @@ define(["exports", "core/utils", "core/pubsubhub"], function (exports, _utils, _
     document.head.insertBefore(meta, document.head.firstChild);
   }
 
-  function run(conf, doc, cb) {
-    attachMetaViewport(doc);
-    //IMS canonical location
+  async function run(conf) {
+    await attachMetaViewport(); //IMS canonical location
+
     var cssURL = "https://purl.imsglobal.org/spec/ims-base.css";
+
     if (conf.overrideCSSLocation) {
       cssURL = conf.overrideCSSLocation;
     }
-    (0, _utils.linkCSS)(doc, cssURL);
-    cb();
+
+    (0, _utils.linkCSS)(document, cssURL);
   }
 });
 //# sourceMappingURL=style.js.map

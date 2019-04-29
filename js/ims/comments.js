@@ -1,17 +1,17 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports"], function (_exports) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/comments";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/comments";
+  _exports.name = name;
 
-  function run(conf, doc, cb) {
+  async function run(conf) {
     //remove all document comment nodes
-
-    var nodeIterator = doc.createNodeIterator(doc.documentElement, NodeFilter.SHOW_COMMENT);
+    var nodeIterator = document.createNodeIterator(document.documentElement, NodeFilter.SHOW_COMMENT);
     var comments = [];
     var currentNode;
 
@@ -22,8 +22,6 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
     comments.forEach(function (comment) {
       comment.parentElement.removeChild(comment);
     });
-
-    cb();
   }
 });
 //# sourceMappingURL=comments.js.map

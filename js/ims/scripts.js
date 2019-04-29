@@ -1,41 +1,42 @@
-define(["exports", "core/utils", "core/pubsubhub", "ims/utils"], function (exports, _utils, _pubsubhub, _utils2) {
+define(["exports"], function (_exports) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/scripts";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/scripts";
+  _exports.name = name;
 
-  function attachScript(doc, dest, conf, url) {
-
-    const script = doc.createElement("script");
+  function attachScript(url) {
+    const script = document.createElement("script");
     script.type = 'text/javascript';
     script.addEventListener("load", function () {
       //console.log("loading " + url + content);
       if (window.location.hash) {
         window.location = window.location;
       }
-    }, { once: true });
+    }, {
+      once: true
+    });
     script.src = url;
-    dest.appendChild(script);
+    document.body.appendChild(script);
   }
 
-  function run(conf, doc, cb) {
-
+  async function run(conf) {
     if (!conf.noSideBarTOC) {
       //IMS canonical location
       var fixupURL = "https://purl.imsglobal.org/spec/fixup.js";
+
       if (conf.overrideFixupLocation) {
         fixupURL = conf.overrideFixupLocation;
       }
-      attachScript(doc, doc.body, conf, fixupURL);
-    } else {
-      doc.body.className += " toc-inline";
-    }
 
-    cb();
+      attachScript(fixupURL);
+    } else {
+      document.body.className += " toc-inline";
+    }
   }
 });
 //# sourceMappingURL=scripts.js.map

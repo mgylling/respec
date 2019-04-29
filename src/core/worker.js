@@ -14,7 +14,7 @@ import workerScript from "text!../../worker/respec-worker.js";
 // Opportunistically preload syntax highlighter
 const hint = {
   hint: "preload",
-  href: "https://purl.imsglobal.org/spec/highlight.js",
+  href: "https://www.w3.org/Tools/respec/respec-highlight.js",
   as: "script",
 };
 const link = createResourceHint(hint);

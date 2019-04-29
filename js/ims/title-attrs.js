@@ -1,40 +1,45 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/title-attrs";
-
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/title-attrs";
   /**
    * Add title attributes to relevant elements. 
    */
-  function run(conf, doc, cb) {
 
+  _exports.name = name;
+
+  async function run(conf) {
     if (conf.noTitleAttrs) {
-      return cb();
-    }
-    //for now we deal only with a.internalDFN, whose title attr value is 
+      return;
+    } //for now we deal only with a.internalDFN, whose title attr value is 
     //fetched from the destination link 
 
-    var anchors = doc.body.querySelectorAll("a[href].internalDFN");
+
+    var anchors = document.body.querySelectorAll("a[href].internalDFN");
     anchors.forEach(function (anchor) {
       var selector = anchor.getAttribute('href');
-      var dfn = doc.body.querySelector(selector);
+      var dfn = document.body.querySelector(selector);
+
       if (dfn && dfn.tagName === "DFN") {
         var text = "";
+
         if (hasAncestor(dfn, "dt")) {
           //get the text content of the dd
           var dt = dfn.closest("dt");
           var dd = dt.nextElementSibling;
+
           if (dd && dd.tagName === "DD") {
             text = dd.textContent;
           }
         } else {
           //get the text content of the neareset dfn block(?) parent
           var blockishParent = dfn.closest("p, td, li, div, aside");
+
           if (blockishParent) {
             //console.log("found blockish parent " + blockishParent);
             text = blockishParent.textContent;
@@ -52,8 +57,6 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
         }
       }
     });
-
-    cb();
   }
 
   function hasAncestor(element, ancestorName) {

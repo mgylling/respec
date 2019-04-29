@@ -1,15 +1,15 @@
-define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
+define(["exports", "core/pubsubhub", "ims/utils"], function (_exports, _pubsubhub, _utils) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/transclude";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/transclude";
+  _exports.name = name;
 
-  function run(conf, doc, cb) {
-
+  async function run(conf) {
     /*
     Filesystem transclusion is done using script elements with a class 
     of 'transclude'. If the script element has a data-id attribute equal to the 
@@ -26,9 +26,8 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
     Note the use of template literals to allow easy authoring and maintenance
     of multi-line strings in the js files referenced. 
     */
-
     while (true) {
-      var transclude = doc.querySelector('script.transclude');
+      var transclude = document.querySelector('script.transclude');
 
       if (transclude == null) {
         break;
@@ -55,8 +54,6 @@ define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub
 
       transclude.parentNode.removeChild(transclude);
     }
-
-    cb();
   }
 });
 //# sourceMappingURL=transclude.js.map

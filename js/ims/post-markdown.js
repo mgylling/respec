@@ -1,29 +1,31 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/post-markdown";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/post-markdown";
+  _exports.name = name;
 
-  function run(conf, doc, cb) {
+  async function run(conf) {
     //post processing of markdown transcludes
+    if (conf.format !== "markdown") return; //remove <md-only> elements
 
-    if (conf.format !== "markdown") return cb();
+    var mdOnlies = document.body.querySelectorAll("md-only");
 
-    //remove <md-only> elements
-    var mdOnlies = doc.body.querySelectorAll("md-only");
     for (var i = 0; i < mdOnlies.length; i++) {
       mdOnlies[i].parentNode.removeChild(mdOnlies[i]);
-    }
+    } //find abstract and add class introductory
 
-    //find abstract and add class introductory
-    var abstract = doc.body.querySelector("#abstract");
+
+    var abstract = document.body.querySelector("#abstract");
+
     if (abstract) {
       if (abstract.tagName.startsWith("H")) {
         abstract = abstract.parentNode;
+
         if (abstract.tagName === "SECTION") {
           if (!abstract.classList.contains("introductory")) {
             abstract.classList.add("introductory");
@@ -31,8 +33,6 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
         }
       }
     }
-
-    cb();
   }
 });
 //# sourceMappingURL=post-markdown.js.map

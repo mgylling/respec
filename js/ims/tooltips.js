@@ -1,19 +1,17 @@
-define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
+define(["exports", "ims/utils"], function (_exports, _utils) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/tooltips";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/tooltips";
+  _exports.name = name;
 
-  function run(conf, doc, cb) {
-
-    doc.body.appendChild((0, _utils.toHTMLNode)(`<script src='https://unpkg.com/tippy.js@2.5.4/dist/tippy.all.min.js'></script>`));
-    doc.body.appendChild((0, _utils.toHTMLNode)(`<script>tippy('[title]')</script>`));
-
-    cb();
+  async function run(conf) {
+    document.body.appendChild((0, _utils.toHTMLNode)("<script src='https://unpkg.com/tippy.js@2.5.4/dist/tippy.all.min.js'></script>"));
+    document.body.appendChild((0, _utils.toHTMLNode)("<script>tippy('[title]')</script>"));
   }
 });
 //# sourceMappingURL=tooltips.js.map

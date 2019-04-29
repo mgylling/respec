@@ -1,37 +1,22 @@
-define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
+define(["exports", "ims/utils"], function (_exports, _utils) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/contributors";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/contributors";
+  _exports.name = name;
 
-  function run(conf, doc, cb) {
-    if (!conf.contributors) return cb();
+  async function run(conf) {
+    if (!conf.contributors) return;
 
     if (conf.specType !== "errata") {
       var useRoles = hasRoles(conf.contributors);
-      var contrib = (0, _utils.toHTMLNode)(`<section id='contributors' class="appendix">
-    <h2>List of Contributors</h2>
-    <p>The following individuals contributed to the development of this document:</p>
-    <table class="contributors" title="List of Contributors"
-      summary="The list of contributors to this work.">
-      <thead>
-        <th>Name</th>
-        <th>Organization</th>
-        ${useRoles ? `<th>Role</th>` : ``}
-      </thead>
-      <tbody>
-          ${personsToTableRows(conf.contributors)}
-      </tbody>
-    </table>
-    </section>`);
-      doc.body.appendChild(contrib);
+      var contrib = (0, _utils.toHTMLNode)("<section id='contributors' class=\"appendix\">\n    <h2>List of Contributors</h2>\n    <p>The following individuals contributed to the development of this document:</p>\n    <table class=\"contributors\" title=\"List of Contributors\"\n      summary=\"The list of contributors to this work.\">\n      <thead>\n        <th>Name</th>\n        <th>Organization</th>\n        ".concat(useRoles ? "<th>Role</th>" : "", "\n      </thead>\n      <tbody>\n          ").concat(personsToTableRows(conf.contributors), "\n      </tbody>\n    </table>\n    </section>"));
+      document.body.appendChild(contrib);
     }
-
-    cb();
   }
 
   function personsToTableRows(arr) {

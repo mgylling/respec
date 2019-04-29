@@ -1,13 +1,12 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/biblio";
-
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/biblio";
   /* 
   * Fetch the online ims-biblio json and append the data to conf.localBiblio.
   * This approach allows us to reuse the W3C biblio logic & implementation untouched. 
@@ -17,19 +16,24 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
   * - specref.org
   */
 
-  function run(conf, doc, cb) {
+  _exports.name = name;
+
+  async function run(conf) {
     var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.json";
+
     if (conf.overrideIMSbiblioLocation) {
       imsBiblioURL = conf.overrideIMSbiblioLocation;
     }
 
     if (!conf.disableFetchIMSbiblio) {
       //console.log("fetching ims biblio...");
-      fetch(imsBiblioURL, { mode: 'cors'
+      fetch(imsBiblioURL, {
+        mode: 'cors'
       }).then(function (response) {
         if (response.ok) {
           return response.json();
         }
+
         throw new Error(response.statusText);
       }).then(function (json) {
         //TODO invalid json should be caught here
@@ -41,7 +45,6 @@ define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
         (0, _pubsubhub.pub)("warning", error.toString());
       });
     }
-    cb();
   }
 });
 //# sourceMappingURL=biblio.js.map

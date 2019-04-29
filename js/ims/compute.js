@@ -1,38 +1,34 @@
-define(["exports", "core/pubsubhub", "ims/utils"], function (exports, _pubsubhub, _utils) {
+define(["exports"], function (_exports) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/compute";
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/compute";
+  _exports.name = name;
 
-  function run(conf, doc, cb) {
+  async function run(conf) {
     //compute misc variables used by multiple other modules and store them back in conf.
+    var base = "https://www.imsglobal.org/spec/".concat(conf.shortName, "/"); //v1p2-style reformat for use in path segments
 
-    var base = `https://www.imsglobal.org/spec/${conf.shortName}/`;
-
-    //v1p2-style reformat for use in path segments
-    conf.versionURL = `v${conf.specVersion}`.replace('.', 'p');
-
-    conf.thisURL = `${base}${conf.versionURL}/`;
-
-    conf.errataURL = `${conf.thisURL}errata/`;
+    conf.versionURL = "v".concat(conf.specVersion).replace('.', 'p');
+    conf.thisURL = "".concat(base).concat(conf.versionURL, "/");
+    conf.errataURL = "".concat(conf.thisURL, "errata/");
 
     if (conf.specType !== "spec") {
-      conf.thisURL = `${conf.thisURL}${conf.specType}/`;
+      conf.thisURL = "".concat(conf.thisURL).concat(conf.specType, "/");
     }
 
-    conf.latestURI = `${base}latest/`;
+    conf.latestURI = "".concat(base, "latest/");
+
     if (conf.specType !== "spec") {
-      conf.latestURI = `${conf.latestURI}${conf.specType}/`;
-    }
+      conf.latestURI = "".concat(conf.latestURI).concat(conf.specType, "/");
+    } //needed for aux docs that need to point back to main spec
 
-    //needed for aux docs that need to point back to main spec
-    conf.mainSpecURL = `${base}${conf.versionURL}/`;
 
-    cb();
+    conf.mainSpecURL = "".concat(base).concat(conf.versionURL, "/");
   }
 });
 //# sourceMappingURL=compute.js.map

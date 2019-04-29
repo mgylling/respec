@@ -1,35 +1,34 @@
-define(["exports", "core/pubsubhub"], function (exports, _pubsubhub) {
+define(["exports"], function (_exports) {
   "use strict";
 
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  exports.name = undefined;
-  exports.run = run;
-  const name = exports.name = "ims/cleanBody";
-
+  _exports.run = run;
+  _exports.name = void 0;
+  const name = "ims/cleanBody";
   /**
    * A snapshot-time body merciless script and inline css remover. Intended to
    * be used only by admins. The activators are conf.cleanBodyScripts, 
    * conf.cleanBodyCSS, alternatively conf.cleanBodyAll
    */
-  function run(conf, doc, cb) {
 
+  _exports.name = name;
+
+  async function run(conf) {
     if (conf.cleanBodyAll || conf.cleanBodyScripts) {
-      var scripts = doc.body.querySelectorAll("script");
+      var scripts = document.body.querySelectorAll("script");
       scripts.forEach(function (script) {
         script.parentNode.removeChild(script);
       });
     }
 
     if (conf.cleanBodyAll || conf.cleanBodyCSS) {
-      var styleElems = doc.querySelectorAll("*[style]");
+      var styleElems = document.querySelectorAll("*[style]");
       styleElems.forEach(function (styleElem) {
         styleElem.removeAttribute("style");
       });
     }
-
-    cb();
   }
 });
 //# sourceMappingURL=cleanBody.js.map
