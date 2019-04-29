@@ -1,19 +1,26 @@
-/*exported pickRandomsFromList, makeRSDoc, flushIframes,
- makeStandardOps, makeDefaultBody, makeBasicConfig*/
 "use strict";
 const iframes = [];
 
-function makeRSDoc(opts = {}, src = "about-blank.html", style = "") {
-  return new Promise((resove, reject) => {
+/**
+ * @return {Promise<Document>}
+ */
+export function makeRSDoc(opts, src, style = "") {
+  opts = { profile: "w3c", ...opts };
+  return new Promise((resolve, reject) => {
     const ifr = document.createElement("iframe");
-    opts = opts || {};
     // reject when DEFAULT_TIMEOUT_INTERVAL passes
     const timeoutId = setTimeout(() => {
-      reject(new Error("Timed out waiting on " + src));
+      reject(new Error(`Timed out waiting on ${src}`));
     }, jasmine.DEFAULT_TIMEOUT_INTERVAL);
-    ifr.addEventListener("load", function() {
-      const doc = this.contentDocument;
-      decorateDocument(doc, opts);
+    ifr.addEventListener("load", async () => {
+      const doc = ifr.contentDocument;
+      if (src) {
+        decorateDocument(doc, opts);
+      }
+      if (doc.respecIsReady) {
+        await doc.respecIsReady;
+        resolve(doc);
+      }
       window.addEventListener("message", function msgHandler(ev) {
         if (
           !doc ||
@@ -24,7 +31,7 @@ function makeRSDoc(opts = {}, src = "about-blank.html", style = "") {
           return;
         }
         window.removeEventListener("message", msgHandler);
-        resove(doc);
+        resolve(doc);
         clearTimeout(timeoutId);
       });
     });
@@ -33,11 +40,16 @@ function makeRSDoc(opts = {}, src = "about-blank.html", style = "") {
       try {
         ifr.style = style;
       } catch ({ message }) {
+        // eslint-disable-next-line no-console
         console.warn(`Could not override iframe style: ${style} (${message})`);
       }
     }
     if (src) {
       ifr.src = src;
+    } else {
+      const doc = document.implementation.createHTMLDocument();
+      decorateDocument(doc, opts);
+      ifr.srcdoc = doc.documentElement.outerHTML;
     }
     // trigger load
     document.body.appendChild(ifr);
@@ -51,49 +63,46 @@ function decorateDocument(doc, opts) {
     return element;
   }
 
-  function decorateHead(opts) {
-    const path = opts.jsPath || "../js/";
-    const loader = this.ownerDocument.createElement("script");
-    const config = this.ownerDocument.createElement("script");
-    switch (Math.round(Math.random() * 2)) {
-      case 2:
-        loader.defer = true;
-        break;
-      case 1:
-        loader.async = true;
-        break;
-    }
-    let configText = "";
-    if (opts.config) {
-      configText =
-        "var respecConfig = " + JSON.stringify(opts.config || {}) + ";";
-    }
-    config.classList.add("remove");
-    config.innerText = configText;
+  function addRespecLoader(opts) {
+    const { jsPath, profile } = { jsPath: "../js/", ...opts };
+    const loader = doc.createElement("script");
     const isKarma = !!window.__karma__;
     const loadAttr = {
       src: isKarma
-        ? new URL("/base/builds/respec-w3c-common.js", location).href
+        ? new URL(`/base/builds/respec-${profile}.js`, location).href
         : "/js/deps/require.js",
-      "data-main": isKarma ? "" : path + (opts.profile || "profile-w3c-common"),
+      "data-main": isKarma ? "" : `${jsPath}/profile-${profile}`,
     };
     Object.keys(loadAttr)
       .reduce(intoAttributes.bind(loadAttr), loader)
       .classList.add("remove");
-    this.appendChild(config);
-    this.appendChild(loader);
+    doc.head.appendChild(loader);
   }
 
-  function decorateBody(opts) {
-    let bodyText = `
-      <section id='abstract'>
-        ${opts.abstract === undefined ? "<p>test abstract</p>" : opts.abstract}
-      </section>
-    `;
-    if (opts.body) {
-      bodyText = bodyText.concat(opts.body);
+  function addRespecConfig(opts) {
+    const config = doc.createElement("script");
+    const configText = opts.config
+      ? `var respecConfig = ${JSON.stringify(opts.config || {})};`
+      : "";
+    config.classList.add("remove");
+    config.textContent = configText;
+    doc.head.appendChild(config);
+    // "preProcess" gets destroyed by JSON.stringify above... so we need to recreate it
+    if (opts.config && Array.isArray(opts.config.preProcess)) {
+      const window = config.ownerDocument.defaultView;
+      window.respecConfig.preProcess = opts.config.preProcess;
     }
-    this.innerHTML = this.innerHTML.concat(bodyText);
+  }
+
+  function decorateBody({
+    abstract = "<p>test abstract</p>",
+    body = "",
+    bodyAttrs = {},
+  }) {
+    doc.body.innerHTML += `<section id='abstract'>${abstract}</section>${body}`;
+    Object.entries(bodyAttrs).forEach(([key, value]) => {
+      doc.body.setAttribute(key, value);
+    });
   }
 
   if (opts.htmlAttrs) {
@@ -105,18 +114,21 @@ function decorateDocument(doc, opts) {
   if (opts.title) {
     doc.title = opts.title;
   }
-  decorateBody.call(doc.body, opts);
-  decorateHead.call(doc.head, opts);
+  decorateBody(opts);
+  addRespecConfig(opts);
+  if (!doc.querySelector("script[src]")) {
+    addRespecLoader(opts);
+  }
 }
 
-function flushIframes() {
+export function flushIframes() {
   while (iframes.length) {
     // Popping them from the list prevents memory leaks.
     iframes.pop().remove();
   }
 }
 
-function pickRandomsFromList(list, howMany) {
+export function pickRandomsFromList(list, howMany) {
   // Get at least half by default.
   if (!howMany) {
     howMany = Math.floor(list.length / 2);
@@ -142,27 +154,41 @@ function pickRandomsFromList(list, howMany) {
   }, []);
 }
 
-function makeBasicConfig() {
-  return {
-    editors: [
-      {
-        name: "Person Name",
-      },
-    ],
-    specStatus: "ED",
-    edDraftURI: "https://foo.com",
-    shortName: "Foo",
-    previousMaturity: "CR",
-    previousPublishDate: "1999-01-01",
-    errata: "https://github.com/tabatkins/bikeshed",
-    implementationReportURI: "https://example.com/implementationReportURI",
-    perEnd: "1999-01-01",
-    lint: false,
-    definitionMap: {},
-  };
+export function makeBasicConfig(profile = "w3c") {
+  switch (profile) {
+    case "w3c":
+      return {
+        editors: [
+          {
+            name: "Person Name",
+          },
+        ],
+        specStatus: "ED",
+        edDraftURI: "https://foo.com",
+        shortName: "Foo",
+        previousMaturity: "CR",
+        previousPublishDate: "1999-01-01",
+        errata: "https://github.com/tabatkins/bikeshed",
+        implementationReportURI: "https://example.com/implementationReportURI",
+        perEnd: "1999-01-01",
+        lint: false,
+        definitionMap: {},
+      };
+    case "geonovum":
+      return {
+        editors: [
+          {
+            name: "Person Name",
+          },
+        ],
+        specStatus: "GN-BASIS",
+        edDraftURI: "https://foo.com",
+        shortName: "Foo",
+      };
+  }
 }
 
-function makeDefaultBody() {
+export function makeDefaultBody() {
   return "<section id='sotd'><p>foo</p></section><section id='toc'></section>";
 }
 
@@ -173,9 +199,20 @@ function makeDefaultBody() {
  * @returns {{config: {editors, specStatus, edDraftURI, shortName, previousMaturity, previousPublishDate, errata, implementationReportURI, perEnd, lint} & any, body: string}}
  */
 
-function makeStandardOps(config = {}, body = makeDefaultBody()) {
+export function makeStandardOps(config = {}, body = makeDefaultBody()) {
   return {
     body,
     config: { ...makeBasicConfig(), ...config },
   };
+}
+
+export function makeStandardGeoOps(config = {}, body = makeDefaultBody()) {
+  return {
+    body,
+    config: { ...makeBasicConfig("geonovum"), ...config },
+  };
+}
+
+export function xrefTestUrl(id) {
+  return `${location.origin}/tests/data/xref/${id}.json`;
 }

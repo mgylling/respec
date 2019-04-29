@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * module: core/exporter
  * Exports a ReSpec document, based on mime type, so it can be saved, etc.
@@ -5,9 +6,10 @@
  * That is, elements that have a "removeOnSave" css class.
  */
 
-import { removeReSpec } from "core/utils";
-import { pub } from "core/pubsubhub";
-import "deps/hyperhtml";
+import { expose } from "./expose-modules.js";
+import hyperHTML from "hyperhtml";
+import { pub } from "./pubsubhub.js";
+import { removeReSpec } from "./utils.js";
 
 const mimeTypes = new Map([["text/html", "html"], ["application/xml", "xml"]]);
 
@@ -83,13 +85,15 @@ function cleanup(cloneDoc) {
   `;
 
   insertions.appendChild(metaGenerator);
-  head.insertBefore(insertions, head.firstChild);
+  head.prepend(insertions);
   pub("beforesave", documentElement);
 }
 
 function cleanupHyper({ documentElement: node }) {
   // collect first, or walker will cease too early
-  const filter = comment => comment.textContent.startsWith("_hyper");
+  /** @param {Comment} comment */
+  const filter = comment =>
+    comment.textContent.startsWith("-") && comment.textContent.endsWith("%");
   const walker = document.createTreeWalker(
     node,
     NodeFilter.SHOW_COMMENT,
@@ -100,8 +104,15 @@ function cleanupHyper({ documentElement: node }) {
   }
 }
 
+/**
+ * @template {Node} T
+ * @param {TreeWalker<T>} walker
+ * @return {IterableIterator<T>}
+ */
 function* walkTree(walker) {
   while (walker.nextNode()) {
-    yield walker.currentNode;
+    yield /** @type {T} */ (walker.currentNode);
   }
 }
+
+expose("core/exporter", { rsDocToDataURL });

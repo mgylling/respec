@@ -1,10 +1,14 @@
+// @ts-check
 /**
  * Module core/linter
  *
  * Core linter module. Exports a linter object.
  */
-import { pub } from "core/pubsubhub";
+import { pub } from "./pubsubhub.js";
+import { showInlineWarning } from "./utils.js";
 export const name = "core/linter";
+
+/** @type {WeakMap<Linter, { rules: Set<import("./LinterRule").default> }>} */
 const privates = new WeakMap();
 
 class Linter {
@@ -16,6 +20,9 @@ class Linter {
   get rules() {
     return privates.get(this).rules;
   }
+  /**
+   * @param  {...import("./LinterRule").default} newRules
+   */
   register(...newRules) {
     newRules.reduce((rules, newRule) => rules.add(newRule), this.rules);
   }
@@ -39,41 +46,43 @@ const baseResult = {
   help: "", // where to get help
 };
 
-async function toLinterWarning(promiseToLint) {
-  const results = await promiseToLint;
-  results
-    .map(async resultPromise => {
-      const result = await resultPromise;
-      const output = { ...baseResult, ...result };
-      const {
-        description,
-        help,
-        howToFix,
-        name,
-        occurrences,
-        offendingElements,
-      } = output;
-      const msg = `${description} ${howToFix} ${help} ("${name}" x ${occurrences})`;
-      offendingElements.forEach(elem => {
-        elem.classList.add("respec-offending-element");
-      });
-      console.warn(`Linter (${name}):`, description, ...offendingElements);
-      return msg;
-    })
-    .forEach(async msgPromise => {
-      pub("warn", await msgPromise);
-    });
+/**
+ * @typedef {import("./LinterRule").LinterResult} LinterResult
+ * @param {LinterResult | Promise<LinterResult>} [resultPromise]
+ */
+async function toLinterWarning(resultPromise) {
+  const result = await resultPromise;
+  if (!result) {
+    return;
+  }
+  const output = { ...baseResult, ...result };
+  const {
+    description,
+    help,
+    howToFix,
+    name,
+    occurrences,
+    offendingElements,
+  } = output;
+  const message = `Linter (${name}): ${description} ${howToFix} ${help}`;
+  if (offendingElements.length) {
+    showInlineWarning(offendingElements, `${message} Occured`);
+  } else {
+    pub("warn", `${message} (Count: ${occurrences})`);
+  }
 }
 
-export async function run(conf, doc, cb) {
-  cb(); // return early, continue processing other things
+export function run(conf) {
   if (conf.lint === false) {
     return; // nothing to do
   }
-  await document.respecReady;
-  try {
-    await linter.lint(conf, doc);
-  } catch (err) {
-    console.error("Error ocurred while running the linter", err);
-  }
+  // return early, continue processing other things
+  (async () => {
+    await document.respecIsReady;
+    try {
+      await linter.lint(conf, document);
+    } catch (err) {
+      console.error("Error ocurred while running the linter", err);
+    }
+  })();
 }

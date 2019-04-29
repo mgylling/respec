@@ -9,7 +9,6 @@
  *
  */
 import ghCss from "deps/text!core/css/github.css";
-import { pub, sub } from "core/pubsubhub";
 import { worker } from "core/worker";
 
 export const name = "ims/highlight";

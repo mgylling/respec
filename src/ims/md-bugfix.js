@@ -1,24 +1,22 @@
-import { pub } from "core/pubsubhub";
-
 export const name =  "ims/md-bugfix";
 
 /**
  * Fix markdown bugs. Temp workaround, remove once migrated to 2018 version
  */
-export function run(conf, doc, cb) {
+export async function run(conf) {
 
   //replace :::ASTERISK::: with *
-  var arr = textNodesUnder(doc.body);
+  var arr = textNodesUnder(document.body);
   for (var i = 0; i < arr.length; i++) {
     var textNode = arr[i];
     if(textNode.textContent.includes(":::asterisk:::")) {
-      var newNode = doc.createTextNode(textNode.textContent.replace(":::asterisk:::", '*'));
+      var newNode = document.createTextNode(textNode.textContent.replace(":::asterisk:::", '*'));
       textNode.parentNode.replaceChild(newNode, textNode);
     }
   }
 
   //kill double br's before a table
-  var brs = doc.body.querySelectorAll("br");
+  var brs = document.body.querySelectorAll("br");
   for (var i = 0; i < brs.length; i++) {
     var br = brs[i];
 
@@ -37,8 +35,6 @@ export function run(conf, doc, cb) {
       nextSibling.classList.add("remove");
     }
   }
-
-  cb();
 }
 
 function textNodesUnder(elem){

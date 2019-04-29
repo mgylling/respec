@@ -11,7 +11,7 @@ export const name =  "ims/biblio";
 * - specref.org
 */
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
   var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.json";  
   if(conf.overrideIMSbiblioLocation) {
     imsBiblioURL = conf.overrideIMSbiblioLocation;
@@ -35,5 +35,4 @@ export function run(conf, doc, cb) {
         pub("warning", error.toString());
     });
   }  
-  cb();
 }

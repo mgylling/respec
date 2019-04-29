@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/highlight-vars
  * Highlights occurrences of a <var> within a section on click.
@@ -6,8 +7,8 @@
  * All is done while keeping in mind that exported html stays clean
  * on export.
  */
-import { sub } from "core/pubsubhub";
-import hlVars from "deps/text!core/css/var.css";
+import hlVars from "text!../../assets/var.css";
+import { sub } from "./pubsubhub.js";
 
 export const name = "core/highlight-vars";
 
@@ -75,7 +76,8 @@ function highlightVars(varElem) {
   const highlightColor = getHighlightColor(varElem);
 
   const varsToHighlight = [...parent.querySelectorAll("var")].filter(
-    el => el.textContent.trim() === textContent
+    el =>
+      el.textContent.trim() === textContent && el.closest("section") === parent
   );
 
   // update availability of highlight color

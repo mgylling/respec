@@ -18,10 +18,10 @@ export const name =  "ims/admonitions";
 * because of our non-open repos.
 */
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
 
   //check and warn for issue admons in late process stages
-  var issues = doc.body.querySelectorAll("aside.issue, div.aside.issue");
+  var issues = document.body.querySelectorAll("aside.issue, div.aside.issue");
   if (issues.length > 0) {
     if(conf.specStatus == "IMS Final Release") {
         pub("error", "Issue asides must not be present when the status is 'IMS Final Release'");
@@ -32,7 +32,7 @@ export function run(conf, doc, cb) {
     }
 
   //prep the output element
-  var admons = doc.body.querySelectorAll("aside.note, aside.ednote, aside.warning, aside.issue, "
+  var admons = document.body.querySelectorAll("aside.note, aside.ednote, aside.warning, aside.issue, "
   +" div.aside.note, div.aside.ednote div.aside.warning, div.aside.issue");
 
   //console.log("admons length: " + admons.length);
@@ -48,8 +48,6 @@ export function run(conf, doc, cb) {
       topBar.classList.add(type + "-title");
       aside.insertAdjacentElement('afterbegin', topBar);
   });
-
-  cb();
 }
 
 function getAdmonType(aside) {

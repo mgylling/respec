@@ -11,11 +11,12 @@
  * that is preferred.
  */
 export const name = "core/webidl-index";
+import { nonNormativeSelector } from "./utils.js";
 
-export function run(conf, doc, cb) {
-  const idlIndexSec = doc.querySelector("section#idl-index");
+export function run() {
+  const idlIndexSec = document.querySelector("section#idl-index");
   if (!idlIndexSec) {
-    return cb();
+    return;
   }
   // Query for decedents headings, e.g., "h2:first-child, etc.."
   const query = [2, 3, 4, 5, 6].map(level => `h${level}:first-child`).join(",");
@@ -27,18 +28,25 @@ export function run(conf, doc, cb) {
     } else {
       header.innerHTML = "IDL Index";
     }
-    idlIndexSec.insertAdjacentElement("afterbegin", header);
+    idlIndexSec.prepend(header);
   }
-  if (!document.querySelector("pre.idl")) {
+
+  // filter out the IDL marked with class="exclude" and the IDL in non-normative sections
+  const idlIndex = Array.from(
+    document.querySelectorAll("pre.def.idl:not(.exclude)")
+  ).filter(idl => !idl.closest(nonNormativeSelector));
+
+  if (idlIndex.length === 0) {
     const text = "This specification doesn't declare any Web IDL.";
     const noIDLFound = document.createTextNode(text);
     idlIndexSec.appendChild(noIDLFound);
-    return cb();
+    return;
   }
+
   const pre = document.createElement("pre");
   pre.classList.add("idl", "def");
   pre.id = "actual-idl-index";
-  Array.from(document.querySelectorAll("pre.def.idl"))
+  idlIndex
     .map(elem => {
       const fragment = document.createDocumentFragment();
       for (const child of elem.children) {
@@ -56,5 +64,4 @@ export function run(conf, doc, cb) {
   // Remove duplicate IDs
   pre.querySelectorAll("*[id]").forEach(elem => elem.removeAttribute("id"));
   idlIndexSec.appendChild(pre);
-  cb();
 }

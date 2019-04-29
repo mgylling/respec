@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/data-tests
  *
@@ -8,8 +9,10 @@
  *
  * Docs: https://github.com/w3c/respec/wiki/data-tests
  */
-import { pub } from "core/pubsubhub";
-import { lang as defaultLang } from "core/l10n";
+import { lang as defaultLang } from "./l10n.js";
+import hyperHTML from "hyperhtml";
+import { pub } from "./pubsubhub.js";
+import { showInlineWarning } from "./utils.js";
 const l10n = {
   en: {
     missing_test_suite_uri:
@@ -69,6 +72,7 @@ function toListItem(href) {
 }
 
 export function run(conf) {
+  /** @type {NodeListOf<HTMLElement>} */
   const testables = document.querySelectorAll("[data-tests]");
   if (!testables.length) {
     return;
@@ -90,22 +94,35 @@ export function run(conf) {
           let href = "";
           try {
             href = new URL(url, conf.testSuiteURI).href;
-          } catch (err) {
+          } catch {
             pub("warn", `${l10n[lang].bad_uri}: ${url}`);
           }
           return href;
         });
+      const duplicates = testURLs.filter(
+        (links, i, self) => self.indexOf(links) !== i
+      );
+      if (duplicates.length) {
+        showInlineWarning(
+          elem,
+          `Duplicate tests found`,
+          `To fix, remove duplicates from "data-tests": ${duplicates
+            .map(url => new URL(url).pathname)
+            .join(", ")}`
+        );
+      }
       details.classList.add("respec-tests-details", "removeOnSave");
+      const uniqueList = [...new Set(testURLs)];
       renderer`
         <summary>
-          tests: ${testURLs.length}
+          tests: ${uniqueList.length}
         </summary>
-        <ul>${testURLs.map(toListItem)}</ul>
+        <ul>${uniqueList.map(toListItem)}</ul>
       `;
       return { elem, details };
     })
     .forEach(({ elem, details }) => {
       delete elem.dataset.tests;
-      elem.insertAdjacentElement("beforeend", details);
+      elem.append(details);
     });
 }

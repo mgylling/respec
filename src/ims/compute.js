@@ -1,9 +1,6 @@
-import { pub } from "core/pubsubhub";
-import { toHTMLNode } from "ims/utils";
-
 export const name =  "ims/compute";
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
     //compute misc variables used by multiple other modules and store them back in conf.
   
     var base = `https://www.imsglobal.org/spec/${conf.shortName}/`
@@ -26,6 +23,4 @@ export function run(conf, doc, cb) {
     
     //needed for aux docs that need to point back to main spec
     conf.mainSpecURL = `${base}${conf.versionURL}/`;
-
-    cb();
 }

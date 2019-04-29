@@ -1,12 +1,8 @@
+import { rule } from "../../../../src/core/linter-rules/check-punctuation.js";
+
 describe("Core Linter Rule - 'check-punctuation'", () => {
   const ruleName = "check-punctuation";
   const config = { lint: { [ruleName]: true } };
-  let rule;
-  beforeAll(async () => {
-    rule = await new Promise(resolve => {
-      require([`core/linter-rules/${ruleName}`], ({ rule }) => resolve(rule));
-    });
-  });
   it("checks p ending without a punctuation", async () => {
     const doc = document.implementation.createHTMLDocument("test doc");
     doc.body.innerHTML = `
@@ -30,9 +26,8 @@ describe("Core Linter Rule - 'check-punctuation'", () => {
         </section>
     `;
 
-    const results = await rule.lint(config, doc);
-    const [result] = results;
-    expect(result.offendingElements.length).toEqual(4);
+    const result = await rule.lint(config, doc);
+    expect(result.offendingElements.length).toBe(4);
   });
   it("checks error message for p ending without a punctuation", async () => {
     const doc = document.implementation.createHTMLDocument("test doc");
@@ -57,13 +52,12 @@ describe("Core Linter Rule - 'check-punctuation'", () => {
         </section>
     `;
 
-    const results = await rule.lint(config, doc);
-    const [result] = results;
+    const result = await rule.lint(config, doc);
 
-    expect(result.name).toEqual(ruleName);
-    expect(result.occurrences).toEqual(4);
+    expect(result.name).toBe(ruleName);
+    expect(result.occurrences).toBe(4);
     expect(result.description).toBeTruthy();
     expect(result.howToFix).toBeTruthy();
-    expect(result.offendingElements.length).toEqual(4);
+    expect(result.offendingElements.length).toBe(4);
   });
 });

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/webidl-clipboard
  *
@@ -5,8 +6,7 @@
  * well-formatted IDL to the clipboard.
  *
  */
-import svgClipboard from "deps/text!core/images/clipboard.svg";
-import Clipboard from "deps/clipboard";
+import svgClipboard from "text!../../assets/clipboard.svg";
 export const name = "core/webidl-clipboard";
 
 // This button serves a prototype that we clone as needed.
@@ -15,45 +15,35 @@ copyButton.innerHTML = svgClipboard;
 copyButton.title = "Copy IDL to clipboard";
 copyButton.classList.add("respec-button-copy-paste", "removeOnSave");
 
-const clipboardOps = {
-  text: trigger => {
-    return document
-      .querySelector(trigger.dataset.clipboardTarget)
-      .textContent.replace(/ +/gm, " ")
-      .replace(/^ /gm, "  ")
-      .replace(/^};\n/gm, "};\n")
-      .trim();
-  },
-};
-
-export async function run(conf, doc, cb) {
-  Array.from(doc.querySelectorAll("pre.idl"))
-    .map(elem => {
-      const button = copyButton.cloneNode(true);
-      const definition = elem.querySelector(
-        `span[id^="idl-def-"], span[id^="dom-"]`
-      );
-      let target = "#";
-      if (definition === null && elem.id === "") {
-        if (elem.parentElement.id === "idl-index") {
-          target += "actual-idl-index";
-        } else {
-          elem.id = `idl-${String(Math.random()).substr(2)}`;
-          target += elem.id;
-        }
-      } else {
-        target += elem.id || definition.id;
-      }
-      return { button, elem, target };
-    })
-    .forEach(({ elem, button, target }) => {
-      const wrapper = doc.createElement("div");
-      button.dataset.clipboardTarget = target;
-      elem.parentElement.replaceChild(wrapper, elem);
-      wrapper.appendChild(button);
-      wrapper.appendChild(elem);
+export async function run() {
+  for (const pre of document.querySelectorAll("pre.idl")) {
+    const button = copyButton.cloneNode(true);
+    const wrapper = document.createElement("div");
+    button.addEventListener("click", () => {
+      clipboardWriteText(pre.textContent);
     });
-  const clipboard = new Clipboard(".respec-button-copy-paste", clipboardOps);
-  clipboard.on("success", e => e.clearSelection());
-  cb();
+    pre.replaceWith(wrapper);
+    wrapper.append(button, pre);
+  }
+}
+
+/**
+ * Mocks navigator.clipboard.writeText()
+ * @param {string} text
+ */
+function clipboardWriteText(text) {
+  if (navigator.clipboard) {
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise(resolve => {
+    document.addEventListener(
+      "copy",
+      ev => {
+        ev.clipboardData.setData("text/plain", text);
+        resolve();
+      },
+      { once: true }
+    );
+    document.execCommand("copy");
+  });
 }

@@ -1,7 +1,7 @@
 // Module w3c/l10n
 // Looks at the lang attribute on the root element and uses it to manage the config.l10n object so
 // that other parts of the system can localise their text
-import { l10n } from "core/l10n";
+import { l10n } from "../core/l10n.js";
 export const name = "w3c/l10n";
 const additions = {
   en: {
@@ -23,6 +23,10 @@ const additions = {
   nl: {
     status_at_publication:
       "This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href='https://www.w3.org/TR/'>W3C technical reports index</a> at https://www.w3.org/TR/.",
+  },
+  es: {
+    status_at_publication:
+      "Esta sección describe el estado del presente documento al momento de su publicación. El presente documento puede ser remplazado por otros. Una lista de las publicaciones actuales del W3C y la última revisión del presente informe técnico puede hallarse en http://www.w3.org/TR/ <a href='https://www.w3.org/TR/'>el índice de informes técnicos</a> del W3C.",
   },
 };
 

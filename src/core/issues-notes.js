@@ -1,3 +1,4 @@
+// @ts-check
 // Module core/issues-notes
 // Manages issues and notes, including marking them up, numbering, inserting the title,
 // and injecting the style sheet.
@@ -10,209 +11,219 @@
 // numbered to avoid involuntary clashes.
 // If the configuration has issueBase set to a non-empty string, and issues are
 // manually numbered, a link to the issue is created using issueBase and the issue number
-import { pub } from "core/pubsubhub";
-import css from "deps/text!core/css/issues-notes.css";
-import "deps/hyperhtml";
-import { fetchAndCache } from "core/utils";
+import { addId, joinAnd, parents } from "./utils.js";
+import css from "text!../../assets/issues-notes.css";
+import { lang as defaultLang } from "../core/l10n.js";
+import { fetchAndStoreGithubIssues } from "./github-api.js";
+import hyperHTML from "hyperhtml";
+import { pub } from "./pubsubhub.js";
+
+/**
+ * @typedef {import("./github-api").GitHubIssue} GitHubIssue
+ * @typedef {import("./github-api").GitHubLabel} GitHubLabel
+ */
+
 export const name = "core/issues-notes";
 
-const MAX_GITHUB_REQUESTS = 60;
+const localizationStrings = {
+  en: {
+    issue_summary: "Issue Summary",
+    no_issues_in_spec: "There are no issues listed in this specification.",
+  },
+  nl: {
+    issue_summary: "Lijst met issues",
+    no_issues_in_spec: "Er zijn geen problemen vermeld in deze specificatie.",
+  },
+  es: {
+    issue_summary: "Resumen de la cuestión",
+    no_issues_in_spec: "No hay problemas enumerados en esta especificación.",
+  },
+};
 
+const lang = defaultLang in localizationStrings ? defaultLang : "en";
+
+const l10n = localizationStrings[lang];
+
+/**
+ * @typedef {{ type: string, inline: boolean, number: number, title: string }} Report
+ *
+ * @param {NodeListOf<HTMLElement>} ins
+ * @param {Map<number, GitHubIssue>} ghIssues
+ * @param {*} conf
+ */
 function handleIssues(ins, ghIssues, conf) {
-  const $ins = $(ins);
-  const { issueBase, githubAPI } = conf;
   const hasDataNum = !!document.querySelector(".issue[data-number]");
   let issueNum = 0;
-  const $issueSummary = $(
-    "<div><h2>" + conf.l10n.issue_summary + "</h2><ul></ul></div>"
-  );
-  const $issueList = $issueSummary.find("ul");
-  $ins.filter((i, issue) => issue.parentNode).each((i, inno) => {
-    const $inno = $(inno);
-    const isIssue = $inno.hasClass("issue");
-    const isWarning = $inno.hasClass("warning");
-    const isEdNote = $inno.hasClass("ednote");
-    const isFeatureAtRisk = $inno.hasClass("atrisk");
-    const isInline = $inno[0].localName === "span";
-    const dataNum = $inno.attr("data-number");
+  const issueList = document.createElement("ul");
+  ins.forEach(inno => {
+    const { type, displayType, isFeatureAtRisk } = getIssueType(inno, conf);
+    const isIssue = type === "issue";
+    const isInline = inno.localName === "span";
+    const { number: dataNum } = inno.dataset;
+    /** @type {Partial<Report>} */
     const report = {
+      type,
       inline: isInline,
+      title: inno.title,
     };
-    report.type = isIssue
-      ? "issue"
-      : isWarning
-        ? "warning"
-        : isEdNote
-          ? "ednote"
-          : "note";
     if (isIssue && !isInline && !hasDataNum) {
       issueNum++;
       report.number = issueNum;
     } else if (dataNum) {
-      report.number = dataNum;
+      report.number = Number(dataNum);
     }
     // wrap
     if (!isInline) {
-      const $div = $(
-        "<div class='" +
-          report.type +
-          (isFeatureAtRisk ? " atrisk" : "") +
-          "'></div>"
-      );
-      const $tit = $(
-        "<div role='heading' class='" +
-          report.type +
-          "-title'><span></span></div>"
-      );
-      let text = isIssue
-        ? isFeatureAtRisk
-          ? conf.l10n.feature_at_risk
-          : conf.l10n.issue
-        : isWarning
-          ? conf.l10n.warning
-          : isEdNote
-            ? conf.l10n.editors_note
-            : conf.l10n.note;
-      let ghIssue;
+      const cssClass = isFeatureAtRisk ? `${type} atrisk` : type;
+      const ariaRole = type === "note" ? "note" : null;
+      const div = hyperHTML`<div class="${cssClass}" role="${ariaRole}"></div>`;
+      const title = document.createElement("span");
+      const titleParent = hyperHTML`
+        <div role='heading' class='${`${type}-title marker`}'>${title}</div>`;
+      addId(titleParent, "h", type);
+      let text = displayType;
       if (inno.id) {
-        $div[0].id = inno.id;
+        div.id = inno.id;
         inno.removeAttribute("id");
       } else {
-        $div.makeID(
+        addId(
+          div,
           "issue-container",
           report.number ? `number-${report.number}` : ""
         );
       }
-      $tit.makeID("h", report.type);
-      report.title = $inno.attr("title");
+      /** @type {GitHubIssue} */
+      let ghIssue;
       if (isIssue) {
-        if (hasDataNum) {
-          if (dataNum) {
-            text += " " + dataNum;
-            // Set issueBase to cause issue to be linked to the external issue tracker
-            if (!isFeatureAtRisk && issueBase) {
-              $tit
-                .find("span")
-                .wrap($("<a href='" + issueBase + dataNum + "'/>"));
-            } else if (isFeatureAtRisk && conf.atRiskBase) {
-              $tit
-                .find("span")
-                .wrap($("<a href='" + conf.atRiskBase + dataNum + "'/>"));
-            }
-            $tit.find("span")[0].classList.add("issue-number");
-            ghIssue = ghIssues.get(Number(dataNum));
-            if (ghIssue && !report.title) {
-              report.title = ghIssue.title;
-            }
+        if (!hasDataNum) {
+          text += ` ${issueNum}`;
+        } else if (dataNum) {
+          text += ` ${dataNum}`;
+          const link = linkToIssueTracker(dataNum, conf, { isFeatureAtRisk });
+          if (link) {
+            title.before(link);
+            link.append(title);
           }
-        } else {
-          text += " " + issueNum;
+          title.classList.add("issue-number");
+          ghIssue = ghIssues.get(Number(dataNum));
+          if (ghIssue && !report.title) {
+            report.title = ghIssue.title;
+          }
         }
         if (report.number !== undefined) {
           // Add entry to #issue-summary.
-          const $li = $("<li><a></a></li>");
-          const $a = $li.find("a");
-          $a.attr("href", "#" + $div[0].id).text(
-            conf.l10n.issue + " " + report.number
+          issueList.append(
+            createIssueSummaryEntry(conf.l10n.issue, report, div.id)
           );
-          if (report.title) {
-            $li.append(
-              $(
-                "<span style='text-transform: none'>: " +
-                  report.title +
-                  "</span>"
-              )
-            );
-          }
-          $issueList.append($li);
         }
       }
-      $tit.find("span").text(text);
-      if (ghIssue && report.title && githubAPI) {
-        if (ghIssue.state === "closed") $div[0].classList.add("closed");
-        const labelsGroup = Array.from(ghIssue.labels || [])
-          .map(label => {
-            const issuesURL = new URL("issues/", conf.github.repoURL + "/");
-            issuesURL.searchParams.set(
-              "q",
-              `is:issue is:open label:"${label.name}"`
-            );
-            return {
-              ...label,
-              href: issuesURL.href,
-            };
-          })
-          .map(createLabel)
-          .reduce((frag, labelElem) => {
-            frag.appendChild(labelElem);
-            return frag;
-          }, document.createDocumentFragment());
-        $tit.append(
-          $(
-            "<span style='text-transform: none'>: " + report.title + "</span>"
-          ).append(labelsGroup)
-        );
-        $inno.removeAttr("title");
-      } else if (report.title) {
-        $tit.append(
-          $("<span style='text-transform: none'>: " + report.title + "</span>")
-        );
-        $inno.removeAttr("title");
+      title.textContent = text;
+      if (report.title) {
+        inno.removeAttribute("title");
+        const { repoURL = "" } = conf.github || {};
+        const labels = ghIssue ? ghIssue.labels : [];
+        if (ghIssue && ghIssue.state === "closed") {
+          div.classList.add("closed");
+        }
+        titleParent.append(createLabelsGroup(labels, report.title, repoURL));
       }
-      $tit.addClass("marker");
-      $div.append($tit);
-      $inno.replaceWith($div);
-      let body = $inno.removeClass(report.type).removeAttr("data-number");
-      if (ghIssue && !body.text().trim()) {
-        body = ghIssue.body_html;
+      /** @type {HTMLElement | DocumentFragment} */
+      let body = inno;
+      inno.replaceWith(div);
+      body.classList.remove(type);
+      body.removeAttribute("data-number");
+      if (ghIssue && !body.innerHTML.trim()) {
+        body = document
+          .createRange()
+          .createContextualFragment(ghIssue.body_html);
       }
-      $div.append(body);
-      const level = $tit.parents("section").length + 2;
-      $tit.attr("aria-level", level);
+      div.append(titleParent, body);
+      const level = parents(titleParent, "section").length + 2;
+      titleParent.setAttribute("aria-level", level);
     }
     pub(report.type, report);
   });
-  if ($(".issue").length) {
-    if ($("#issue-summary"))
-      $("#issue-summary").append($issueSummary.contents());
-  } else if ($("#issue-summary").length) {
-    pub("warn", "Using issue summary (#issue-summary) but no issues found.");
-    $("#issue-summary").remove();
+  makeIssueSectionSummary(issueList);
+}
+
+/**
+ * @typedef {{ type: string, displayType: string, isFeatureAtRisk: boolean }} IssueType
+ *
+ * @param {HTMLElement} inno
+ * @return {IssueType}
+ */
+function getIssueType(inno, conf) {
+  const isIssue = inno.classList.contains("issue");
+  const isWarning = inno.classList.contains("warning");
+  const isEdNote = inno.classList.contains("ednote");
+  const isFeatureAtRisk = inno.classList.contains("atrisk");
+  const type = isIssue
+    ? "issue"
+    : isWarning
+    ? "warning"
+    : isEdNote
+    ? "ednote"
+    : "note";
+  const displayType = isIssue
+    ? isFeatureAtRisk
+      ? conf.l10n.feature_at_risk
+      : conf.l10n.issue
+    : isWarning
+    ? conf.l10n.warning
+    : isEdNote
+    ? conf.l10n.editors_note
+    : conf.l10n.note;
+  return { type, displayType, isFeatureAtRisk };
+}
+
+/**
+ * @param {string} dataNum
+ * @param {*} conf
+ */
+function linkToIssueTracker(dataNum, conf, { isFeatureAtRisk = false } = {}) {
+  // Set issueBase to cause issue to be linked to the external issue tracker
+  if (!isFeatureAtRisk && conf.issueBase) {
+    return hyperHTML`<a href='${conf.issueBase + dataNum}'/>`;
+  } else if (isFeatureAtRisk && conf.atRiskBase) {
+    return hyperHTML`<a href='${conf.atRiskBase + dataNum}'/>`;
   }
 }
 
-async function fetchAndStoreGithubIssues(conf) {
-  const { githubAPI, githubUser, githubToken } = conf;
-  const specIssues = document.querySelectorAll(".issue[data-number]");
-  if (specIssues.length > MAX_GITHUB_REQUESTS) {
-    const msg =
-      `Your spec contains ${specIssues.length} Github issues, ` +
-      `but GitHub only allows ${MAX_GITHUB_REQUESTS} requests. Some issues might not show up.`;
-    pub("warning", msg);
+/**
+ * @param {string} l10nIssue
+ * @param {Partial<Report>} report
+ */
+function createIssueSummaryEntry(l10nIssue, report, id) {
+  const issueNumberText = `${l10nIssue} ${report.number}`;
+  const title = report.title
+    ? hyperHTML`<span style="text-transform: none">: ${report.title}</span>`
+    : "";
+  return hyperHTML`
+    <li><a href="${`#${id}`}">${issueNumberText}</a>${title}</li>
+  `;
+}
+
+/**
+ *
+ * @param {HTMLUListElement} issueList
+ */
+function makeIssueSectionSummary(issueList) {
+  const issueSummaryElement = document.getElementById("issue-summary");
+  if (!issueSummaryElement) return;
+  const heading = issueSummaryElement.querySelector("h2, h3, h4, h5, h6");
+
+  issueList.hasChildNodes()
+    ? issueSummaryElement.append(issueList)
+    : issueSummaryElement.append(hyperHTML`<p>${l10n.no_issues_in_spec}</p>`);
+  if (
+    !heading ||
+    (heading && heading !== issueSummaryElement.firstElementChild)
+  ) {
+    issueSummaryElement.insertAdjacentHTML(
+      "afterbegin",
+      `<h2>${l10n.issue_summary}</h2>`
+    );
   }
-  const issuePromises = [...specIssues]
-    .map(elem => Number.parseInt(elem.dataset.number, 10))
-    .filter(issueNumber => issueNumber)
-    .map(async issueNumber => {
-      const issueURL = `${githubAPI}/issues/${issueNumber}`;
-      const headers = {
-        // Get back HTML content instead of markdown
-        // See: https://developer.github.com/v3/media/
-        Accept: "application/vnd.github.v3.html+json",
-      };
-      if (githubUser && githubToken) {
-        const credentials = btoa(`${githubUser}:${githubToken}`);
-        const Authorization = `Basic ${credentials}`;
-        Object.assign(headers, { Authorization });
-      }
-      const request = new Request(issueURL, {
-        headers,
-      });
-      const response = await fetchAndCache(request);
-      return processResponse(response, issueNumber);
-    });
-  const issues = await Promise.all(issuePromises);
-  return new Map(issues);
 }
 
 function isLight(rgb) {
@@ -223,8 +234,35 @@ function isLight(rgb) {
   return illumination > 140;
 }
 
-function createLabel(label) {
-  const { color, href, name } = label;
+/**
+ * @param {GitHubLabel[]} labels
+ * @param {string} title
+ * @param {string} repoURL
+ */
+function createLabelsGroup(labels, title, repoURL) {
+  const labelsGroup = labels.map(label => createLabel(label, repoURL));
+  const labelNames = labels.map(label => label.name);
+  const joinedNames = joinAnd(labelNames);
+  if (labelsGroup.length) {
+    labelsGroup.unshift(document.createTextNode(" "));
+  }
+  if (labelNames.length) {
+    const ariaLabel = `This issue is labelled as ${joinedNames}.`;
+    return hyperHTML`<span
+      class="issue-label"
+      aria-label="${ariaLabel}">: ${title}${labelsGroup}</span>`;
+  }
+  return hyperHTML`<span class="issue-label">: ${title}${labelsGroup}</span>`;
+}
+
+/**
+ * @param {GitHubLabel} label
+ * @param {string} repoURL
+ */
+function createLabel(label, repoURL) {
+  const { color, name } = label;
+  const issuesURL = new URL("./issues/", repoURL);
+  issuesURL.searchParams.set("q", `is:issue is:open label:"${label.name}"`);
   const rgb = parseInt(color, 16);
   const textColorClass = isNaN(rgb) || isLight(rgb) ? "light" : "dark";
   const cssClasses = `respec-gh-label respec-label-${textColorClass}`;
@@ -232,33 +270,17 @@ function createLabel(label) {
   return hyperHTML`<a
     class="${cssClasses}"
     style="${style}"
-    href="${href}">${name}</a>`;
-}
-
-async function processResponse(response, issueNumber) {
-  // "message" is always error message from GitHub
-  const issue = { title: "", number: issueNumber, state: "", message: "" };
-  try {
-    const json = await response.json();
-    Object.assign(issue, json);
-  } catch (err) {
-    issue.message = `Error JSON parsing issue #${issueNumber} from GitHub.`;
-  }
-  if (!response.ok || issue.message) {
-    const msg = `Error fetching issue #${issueNumber} from GitHub. ${
-      issue.message
-    } (HTTP Status ${response.status}).`;
-    pub("error", msg);
-  }
-  return [issueNumber, issue];
+    href="${issuesURL.href}">${name}</a>`;
 }
 
 export async function run(conf) {
   const query = ".issue, .note, .warning, .ednote";
-  if (!document.querySelector(query)) {
+  /** @type {NodeListOf<HTMLElement>} */
+  const issuesAndNotes = document.querySelectorAll(query);
+  if (!issuesAndNotes.length) {
     return; // nothing to do.
   }
-  const issuesAndNotes = document.querySelectorAll(query);
+  /** @type {Map<number, GitHubIssue>} */
   const ghIssues = conf.githubAPI
     ? await fetchAndStoreGithubIssues(conf)
     : new Map();
@@ -268,4 +290,9 @@ export async function run(conf) {
     headElem.querySelector("link")
   );
   handleIssues(issuesAndNotes, ghIssues, conf);
+  const ednotes = document.querySelectorAll(".ednote");
+  ednotes.forEach(ednote => {
+    ednote.classList.remove("ednote");
+    ednote.classList.add("note");
+  });
 }

@@ -2,19 +2,19 @@ import { pub } from "core/pubsubhub";
 
 export const name = "ims/post-markdown";
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
   //post processing of markdown transcludes
 
-  if(conf.format !== "markdown") return cb();
+  if(conf.format !== "markdown") return;
 
   //remove <md-only> elements
-  var mdOnlies = doc.body.querySelectorAll("md-only");
+  var mdOnlies = document.body.querySelectorAll("md-only");
   for (var i = 0; i < mdOnlies.length; i++) {
 	  mdOnlies[i].parentNode.removeChild(mdOnlies[i]);
 	}
 
   //find abstract and add class introductory
-  var abstract = doc.body.querySelector("#abstract");
+  var abstract = document.body.querySelector("#abstract");
   if(abstract) {
     if(abstract.tagName.startsWith("H")) {
       abstract = abstract.parentNode;
@@ -25,6 +25,4 @@ export function run(conf, doc, cb) {
       }
     }
   }
-
-  cb();
 }

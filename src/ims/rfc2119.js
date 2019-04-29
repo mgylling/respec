@@ -3,18 +3,17 @@ import { toHTMLNode } from "ims/utils";
 
 export const name =  "ims/rfc2119";
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
 
   if(conf.specType !== "errata") {
 
-    var confH = doc.getElementById('conformance');
+    var confH = document.getElementById('conformance');
     if(!confH) {
-      confH = doc.getElementById('conformance-statements');
+      confH = document.getElementById('conformance-statements');
     }
 
     if(!confH) {
       pub("error", "No section found with id 'conformance' or 'conformance-statements'");
-      cb();
       return;
     }
 
@@ -49,7 +48,6 @@ export function run(conf, doc, cb) {
       }
     });
   }
-  cb();
 }
 
 function getNormativeText(conf) {

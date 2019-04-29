@@ -1,12 +1,10 @@
-import { pub } from "core/pubsubhub";
-
 export const name = "ims/comments";
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
   //remove all document comment nodes
 
-  var nodeIterator = doc.createNodeIterator(
-      doc.documentElement,
+  var nodeIterator = document.createNodeIterator(
+      document.documentElement,
       NodeFilter.SHOW_COMMENT
   );
   var comments = [];
@@ -20,5 +18,4 @@ export function run(conf, doc, cb) {
     comment.parentElement.removeChild(comment);
   });
 
-  cb();
 }

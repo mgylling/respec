@@ -5,19 +5,20 @@ export const name =  "ims/title-attrs";
 /**
  * Add title attributes to relevant elements. 
  */
-export function run(conf, doc, cb) {
+export async function run(conf) {
     
   if(conf.noTitleAttrs) {
-      return cb();
+      return;
       
   } 
+
   //for now we deal only with a.internalDFN, whose title attr value is 
   //fetched from the destination link 
   
-  var anchors = doc.body.querySelectorAll("a[href].internalDFN");
+  var anchors = document.body.querySelectorAll("a[href].internalDFN");
   anchors.forEach(function(anchor) {
       var selector = anchor.getAttribute('href');      
-      var dfn = doc.body.querySelector(selector);
+      var dfn = document.body.querySelector(selector);
       if(dfn && dfn.tagName === "DFN") {
         var text = "";
         if(hasAncestor(dfn, "dt")) {
@@ -48,8 +49,6 @@ export function run(conf, doc, cb) {
         
       }
   });
-      
-  cb();
 }
 
 function hasAncestor(element, ancestorName) {

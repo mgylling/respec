@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-/*jshint node: true, browser: false*/
+/* jshint node: true, browser: false */
 "use strict";
-const { URL } = require("url");
 const colors = require("colors");
 const fetchAndWrite = require("./respecDocWriter").fetchAndWrite;
 colors.setTheme({
@@ -72,6 +71,12 @@ const optionList = [
     name: "disable-sandbox",
     type: Boolean,
   },
+  {
+    default: false,
+    description: "Enable debugging and show Chrome's DevTools.",
+    name: "debug",
+    type: Boolean,
+  },
 ];
 
 const usageSections = [
@@ -131,6 +136,7 @@ const usageSections = [
     await fetchAndWrite(src, out, whenToHalt, {
       timeout: parsedArgs.timeout * 1000,
       disableSandbox: parsedArgs["disable-sandbox"],
+      debug: parsedArgs.debug,
     });
   } catch (err) {
     console.error(colors.error(err.stack));

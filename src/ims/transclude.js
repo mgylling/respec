@@ -3,7 +3,7 @@ import { toHTMLNodes } from "ims/utils";
 
 export const name = "ims/transclude";
 
-export function run(conf, doc, cb) {  
+export async function run(conf) {  
   
   /*
   Filesystem transclusion is done using script elements with a class 
@@ -23,7 +23,7 @@ export function run(conf, doc, cb) {
   */
   
   while(true) {
-    var transclude = doc.querySelector('script.transclude');
+    var transclude = document.querySelector('script.transclude');
     
     if (transclude == null) { 
       break; 
@@ -51,7 +51,5 @@ export function run(conf, doc, cb) {
     transclude.parentNode.removeChild(transclude);
     
   }
-  
-  cb();
 }
 

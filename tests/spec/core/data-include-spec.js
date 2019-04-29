@@ -1,4 +1,12 @@
 "use strict";
+
+import {
+  flushIframes,
+  makeBasicConfig,
+  makeDefaultBody,
+  makeRSDoc,
+} from "../SpecHelper.js";
+
 describe("Core — Data Include", () => {
   afterAll(flushIframes);
   // this does not test much, someone for whom this is
@@ -13,7 +21,7 @@ describe("Core — Data Include", () => {
     const doc = await makeRSDoc(ops, url);
     const p = doc.querySelector("#includes > div > p");
     expect(p).toBeTruthy();
-    expect(p.textContent).toEqual("INCLUDED");
+    expect(p.textContent).toBe("INCLUDED");
     const div = doc.querySelector("#includes > div");
     expect(div.dataset.include).toBe(undefined);
     expect(div.dataset.includeFormat).toBe(undefined);
@@ -27,7 +35,7 @@ describe("Core — Data Include", () => {
     };
     const doc = await makeRSDoc(ops, url);
     const missing = doc.getElementById("this-should-be-missing");
-    expect(missing).toEqual(null);
+    expect(missing).toBe(null);
     const included = doc.getElementById("replacement-test");
     expect(included).toBeTruthy();
     const heading = doc.querySelector("#replacement-test > h3");
@@ -58,12 +66,10 @@ describe("Core — Data Include", () => {
   });
 
   it("includes a URL and processes it as markdown", async () => {
-    //Data URI encoding of: "## PASS", which markdown converts to a H2 element.
+    // Data URI encoding of: "## PASS", which markdown converts to a H2 element.
     const ops = {
       config: makeBasicConfig(),
-      body:
-        makeDefaultBody() +
-        `<section
+      body: `${makeDefaultBody()}<section
           id="includes"
           data-include="data:text/plain;charset=utf-8,%23%23%20PASS">
         </section>`,
@@ -72,7 +78,7 @@ describe("Core — Data Include", () => {
     const doc = await makeRSDoc(ops);
     const h2 = doc.querySelector("#includes > h2");
     expect(h2).toBeTruthy();
-    expect(h2.textContent).toEqual("1. PASS");
+    expect(h2.textContent).toBe("1. PASS");
     expect(doc.querySelectorAll("*[data-include]").length).toBe(0);
   });
 });

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/markdown
  * Handles the optional markdown processing.
@@ -41,10 +42,171 @@
  *     </section>
  *
  * The whitespace of pre elements are left alone.
- **/
+ */
 
-import { markdownToHtml } from "core/utils";
+import marked from "marked";
 export const name = "core/markdown";
+
+const gtEntity = /&gt;/gm;
+const ampEntity = /&amp;/gm;
+const endsWithSpace = /\s+$/gm;
+
+const inlineElems = new Set([
+  "a",
+  "abbr",
+  "acronym",
+  "b",
+  "bdo",
+  "big",
+  "br",
+  "button",
+  "cite",
+  "code",
+  "dfn",
+  "em",
+  "i",
+  "img",
+  "input",
+  "kbd",
+  "label",
+  "map",
+  "object",
+  "q",
+  "samp",
+  "script",
+  "select",
+  "small",
+  "span",
+  "strong",
+  "sub",
+  "sup",
+  "textarea",
+  "time",
+  "tt",
+  "var",
+]);
+
+/**
+ * @param {string} text
+ */
+function normalizePadding(text) {
+  if (!text) {
+    return "";
+  }
+  if (typeof text !== "string") {
+    throw TypeError("Invalid input");
+  }
+  if (text === "\n") {
+    return "\n";
+  }
+
+  /**
+   * @param {Node} node
+   * @return {node is Text}
+   */
+  function isTextNode(node) {
+    return node !== null && node.nodeType === Node.TEXT_NODE;
+  }
+  /**
+   * @param {Node} node
+   * @return {node is Element}
+   */
+  function isElementNode(node) {
+    return node !== null && node.nodeType === Node.ELEMENT_NODE;
+  }
+  const doc = document.createRange().createContextualFragment(text);
+  // Normalize block level elements children first
+  Array.from(doc.children)
+    .filter(elem => !inlineElems.has(elem.localName))
+    .filter(elem => elem.localName !== "pre")
+    .filter(elem => elem.localName !== "table")
+    .forEach(elem => {
+      elem.innerHTML = normalizePadding(elem.innerHTML);
+    });
+  // Normalize root level now
+  Array.from(doc.childNodes)
+    .filter(node => isTextNode(node) && node.textContent.trim() === "")
+    .forEach(node => node.replaceWith("\n"));
+  // Normalize text node
+  if (isElementNode(doc.firstChild)) {
+    Array.from(doc.firstChild.children)
+      .filter(child => child.localName !== "table")
+      .forEach(child => {
+        child.innerHTML = normalizePadding(child.innerHTML);
+      });
+  }
+  doc.normalize();
+  // use the first space as an indicator of how much to chop off the front
+  const firstSpace = doc.textContent
+    .replace(/^ *\n/, "")
+    .split("\n")
+    .filter(item => item && item.startsWith(" "))[0];
+  const chop = firstSpace ? firstSpace.match(/ +/)[0].length : 0;
+  if (chop) {
+    // Chop chop from start, but leave pre elem alone
+    Array.from(doc.childNodes)
+      .filter(node => node.nodeName !== "PRE")
+      .filter(isTextNode)
+      .filter(node => {
+        // we care about text next to a block level element
+        const prevSib = node.previousElementSibling;
+        const nextTo = prevSib && prevSib.localName;
+        // and we care about text elements that finish on a new line
+        return (
+          !inlineElems.has(nextTo) || node.textContent.trim().includes("\n")
+        );
+      })
+      .reduce((replacer, node) => {
+        // We need to retain white space if the text Node is next to an in-line element
+        let padding = "";
+        const prevSib = node.previousElementSibling;
+        const nextTo = prevSib && prevSib.localName;
+        if (/^[\t ]/.test(node.textContent) && inlineElems.has(nextTo)) {
+          padding = node.textContent.match(/^\s+/)[0];
+        }
+        node.textContent = padding + node.textContent.replace(replacer, "");
+        return replacer;
+      }, new RegExp(`^ {1,${chop}}`, "gm"));
+    // deal with pre elements... we can chop whitespace from their siblings
+    const endsWithSpace = new RegExp(`\\ {${chop}}$`, "gm");
+    Array.from(doc.querySelectorAll("pre"))
+      .map(elem => elem.previousSibling)
+      .filter(isTextNode)
+      .reduce((chop, node) => {
+        if (endsWithSpace.test(node.textContent)) {
+          node.textContent = node.textContent.substr(
+            0,
+            node.textContent.length - chop
+          );
+        }
+        return chop;
+      }, chop);
+  }
+  const wrap = document.createElement("body");
+  wrap.append(doc);
+  const result = endsWithSpace.test(wrap.innerHTML)
+    ? `${wrap.innerHTML.trimRight()}\n`
+    : wrap.innerHTML;
+  return result;
+}
+
+/**
+ * @param {string} text
+ */
+export function markdownToHtml(text) {
+  const normalizedLeftPad = normalizePadding(text);
+  // As markdown is pulled from HTML, > and & are already escaped and
+  // so blockquotes aren't picked up by the parser. This fixes it.
+  const potentialMarkdown = normalizedLeftPad
+    .replace(gtEntity, ">")
+    .replace(ampEntity, "&");
+  const result = marked(potentialMarkdown, {
+    sanitize: false,
+    gfm: true,
+    headerIds: false,
+  });
+  return result;
+}
 
 function processElements(selector) {
   return element => {
@@ -107,7 +269,7 @@ class Builder {
     node.appendChild(process(node));
 
     if (header) {
-      node.insertBefore(header, node.firstChild);
+      node.prepend(header);
     }
 
     parent.appendChild(node);
@@ -149,10 +311,13 @@ function structure(fragment, doc) {
   return process(fragment);
 }
 
+/**
+ * @param {Iterable<Element>} elements
+ */
 function substituteWithTextNodes(elements) {
   Array.from(elements).forEach(element => {
     const textNode = element.ownerDocument.createTextNode(element.textContent);
-    element.parentElement.replaceChild(textNode, element);
+    element.replaceWith(textNode);
   });
 }
 
@@ -161,15 +326,17 @@ const processBlockLevelElements = processElements(
   "[data-format=markdown]:not(body), section, div, address, article, aside, figure, header, main, body"
 );
 
-export function run(conf, doc, cb) {
-  const hasMDSections = !!doc.querySelector("[data-format=markdown]:not(body)");
+export function run(conf) {
+  const hasMDSections = !!document.querySelector(
+    "[data-format=markdown]:not(body)"
+  );
   const isMDFormat = conf.format === "markdown";
   if (!isMDFormat && !hasMDSections) {
-    return cb(); // Nothing to be done
+    return; // Nothing to be done
   }
   // Only has markdown-format sections
   if (!isMDFormat) {
-    processMDSections(doc.body)
+    processMDSections(document.body)
       .map(elem => {
         const structuredInternals = structure(elem, elem.ownerDocument);
         return {
@@ -185,24 +352,22 @@ export function run(conf, doc, cb) {
         ) {
           const section = structuredInternals.firstElementChild;
           section.remove();
-          while (section.hasChildNodes()) {
-            elem.appendChild(section.firstChild);
-          }
+          elem.append(...section.childNodes);
         } else {
           elem.innerHTML = "";
         }
         elem.appendChild(structuredInternals);
         elem.setAttribute("aria-busy", "false");
       });
-    return cb();
+    return;
   }
   // We transplant the UI to do the markdown processing
-  const rsUI = doc.getElementById("respec-ui");
+  const rsUI = document.getElementById("respec-ui");
   rsUI.remove();
   // The new body will replace the old body
-  const newHTML = doc.createElement("html");
-  const newBody = doc.createElement("body");
-  newBody.innerHTML = doc.body.innerHTML;
+  const newHTML = document.createElement("html");
+  const newBody = document.createElement("body");
+  newBody.innerHTML = document.body.innerHTML;
   // Marked expects markdown be flush against the left margin
   // so we need to normalize the inner text of some block
   // elements.
@@ -216,10 +381,9 @@ export function run(conf, doc, cb) {
   // Remove links where class .nolinks
   substituteWithTextNodes(newBody.querySelectorAll(".nolinks a[href]"));
   // Restructure the document properly
-  const fragment = structure(newBody, doc);
+  const fragment = structure(newBody, document);
   // Frankenstein the whole thing back together
   newBody.appendChild(fragment);
-  newBody.insertAdjacentElement("afterbegin", rsUI);
-  doc.body.parentNode.replaceChild(newBody, doc.body);
-  cb();
+  newBody.prepend(rsUI);
+  document.body.replaceWith(newBody);
 }

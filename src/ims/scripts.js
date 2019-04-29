@@ -1,12 +1,8 @@
-import { toKeyValuePairs, createResourceHint, linkCSS } from "core/utils";
-import { pub } from "core/pubsubhub";
-import { toHTMLNode } from "ims/utils";
-
 export const name = "ims/scripts";
 
-function attachScript(doc, dest, conf, url) {
+function attachScript(url) {
 
-  const script = doc.createElement("script");
+  const script = document.createElement("script");
   script.type = 'text/javascript';
   script.addEventListener(
     "load",
@@ -19,10 +15,10 @@ function attachScript(doc, dest, conf, url) {
     { once: true }
   );
   script.src = url;
-  dest.appendChild(script);
+  document.body.appendChild(script);
 }
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
 
   if(!conf.noSideBarTOC) {
     //IMS canonical location
@@ -30,10 +26,8 @@ export function run(conf, doc, cb) {
     if(conf.overrideFixupLocation) {
       fixupURL = conf.overrideFixupLocation;
     }
-    attachScript(doc, doc.body, conf, fixupURL);
+    attachScript(fixupURL);
   } else {
-    doc.body.className += " toc-inline";
+    document.body.className += " toc-inline";
   }
-
-  cb();
 }

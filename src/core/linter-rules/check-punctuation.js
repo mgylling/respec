@@ -1,9 +1,10 @@
+// @ts-check
 /**
  * Linter rule "check-punctuation". Makes sure the there are no punctuations missing at the end of a <p>
  *   in the ReSpec config.
  */
-import { lang as defaultLang } from "core/l10n";
-import LinterRule from "core/LinterRule";
+import LinterRule from "../LinterRule.js";
+import { lang as defaultLang } from "../l10n.js";
 
 const name = "check-punctuation";
 const punctuationMarks = [".", ":", "!", "?"];
@@ -20,10 +21,11 @@ const lang = defaultLang in meta ? defaultLang : "en";
 /**
  * Runs linter rule.
  *
- * @param {Object} config The ReSpec config.
+ * @param {Object} _ The ReSpec config.
  * @param  {Document} doc The document to be checked.
+ * @return {import("../../core/LinterRule").LinterResult}
  */
-function lintingFunction(conf, doc) {
+function lintingFunction(_, doc) {
   // Check string ends with one of ., !, ?, :, ], or is empty.
   const punctuatingRegExp = new RegExp(
     `[${punctuationMarks.join("")}\\]]$|^ *$`,
@@ -33,14 +35,13 @@ function lintingFunction(conf, doc) {
     ...doc.querySelectorAll("p:not(#back-to-top)"),
   ].filter(elem => !punctuatingRegExp.test(elem.textContent.trim()));
   if (!offendingElements.length) {
-    return [];
+    return;
   }
-  const result = {
+  return {
     name,
     offendingElements,
     occurrences: offendingElements.length,
     ...meta[lang],
   };
-  return result;
 }
 export const rule = new LinterRule(name, lintingFunction);

@@ -5,21 +5,19 @@ const path = require("path");
 const fsp = require("fs-extra");
 
 const srcDesMap = [
-  ["./node_modules/clipboard/dist/clipboard.js", "./js/deps/"],
   [
     "./node_modules/handlebars/dist/handlebars.runtime.js",
     "./js/deps/handlebars.js",
   ],
-  ["./node_modules/highlight.js/src/styles/github.css", "./js/core/css/"],
-  ["./node_modules/hyperhtml/index.js", "./js/deps/hyperhtml.js"],
+  ["./node_modules/highlight.js/styles/github.css", "./assets/"],
+  ["./node_modules/hyperhtml/umd.js", "./js/deps/hyperhtml.js"],
   ["./node_modules/jquery/dist/jquery.slim.js", "./js/deps/jquery.js"],
   ["./node_modules/marked/lib/marked.js", "./js/deps/"],
   ["./node_modules/requirejs/require.js", "./js/deps/"],
   ["./node_modules/text/text.js", "./js/deps/"],
-  ["./node_modules/url-search-params/build/url-search-params.js", "./js/deps/"],
-  ["./node_modules/webidl2/lib/webidl2.js", "./js/deps/"],
+  ["./node_modules/webidl2/dist/webidl2.js", "./js/deps/"],
   ["./node_modules/pluralize/pluralize.js", "./js/deps/"],
-  ["./node_modules/idb-keyval/dist/idb-keyval-amd.min.js", "./js/deps/idb.js"],
+  ["./node_modules/idb/build/iife/with-async-ittr-min.js", "./js/deps/idb.js"],
 ];
 
 const deprecated = [

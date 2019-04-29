@@ -2,19 +2,18 @@
 
 "use strict";
 const colors = require("colors");
-const fsp = require("fs-extra");
-const loading = require("loading-indicator");
+const { promises: fsp } = require("fs");
 const path = require("path");
-const presets = require("loading-indicator/presets");
-const r = require("requirejs");
-const UglifyJS = require("uglify-es");
+const webpack = require("webpack");
+const { promisify } = require("util");
 const commandLineArgs = require("command-line-args");
 const getUsage = require("command-line-usage");
 colors.setTheme({
   error: "red",
-  info: "green",
+  info: "white",
 });
 
+/** @type {import("command-line-usage").OptionDefinition[]} */
 const optionList = [
   {
     alias: "h",
@@ -32,6 +31,13 @@ const optionList = [
     multiple: false,
     name: "profile",
     type: String,
+  },
+  {
+    alias: "d",
+    defaultValue: false,
+    description: "Disable optimization to ease debugging",
+    name: "debug",
+    type: Boolean,
   },
 ];
 
@@ -68,31 +74,19 @@ const usageSections = [
  * @param  {String} version The version of the script.
  * @return {Promise} Resolves when done writing the files.
  */
-function appendBoilerplate(outPath, version, name) {
-  return async (optimizedJs, sourceMap) => {
-    const respecJs = `"use strict";
-/* ReSpec ${version}
-Created by Robin Berjon, http://berjon.com/ (@robinberjon)
-Documentation: http://w3.org/respec/.
-See original source for licenses: https://github.com/w3c/respec */
+async function appendBoilerplate(outPath, version, name) {
+  const mapPath = `${path.dirname(outPath)}/respec-${name}.js.map`;
+  const [optimizedJs, sourceMap] = await Promise.all([
+    fsp.readFile(outPath, "utf-8"),
+    fsp.readFile(mapPath, "utf-8"),
+  ]);
+  const respecJs = `"use strict";
 window.respecVersion = "${version}";
-${optimizedJs}
-require(['profile-${name}']);`;
-    const result = UglifyJS.minify(respecJs, {
-      toplevel: true,
-      sourceMap: {
-        filename: `respec-${name}.js`,
-        url: `respec-${name}.build.js.map`,
-      },
-    });
-    if ("error" in result) {
-      throw new Error(result.error);
-    }
-    const mapPath = path.dirname(outPath) + `/respec-${name}.build.js.map`;
-    const promiseToWriteJs = fsp.writeFile(outPath, result.code, "utf-8");
-    const promiseToWriteMap = fsp.writeFile(mapPath, sourceMap, "utf-8");
-    await Promise.all([promiseToWriteJs, promiseToWriteMap]);
-  };
+${optimizedJs}`;
+  const respecJsMap = sourceMap.replace(`"mappings":"`, `"mappings":";;`);
+  const promiseToWriteJs = fsp.writeFile(outPath, respecJs, "utf-8");
+  const promiseToWriteMap = fsp.writeFile(mapPath, respecJsMap, "utf-8");
+  await Promise.all([promiseToWriteJs, promiseToWriteMap]);
 }
 
 const Builder = {
@@ -111,53 +105,55 @@ const Builder = {
    * Async function runs Requirejs' optimizer to generate the output.
    *
    * using a custom configuration.
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * @param {object} options
+   * @param {string} options.name
+   * @param {boolean} options.debug
    */
-  async build({ name }) {
+  async build({ name, debug }) {
     if (!name) {
       throw new TypeError("name is required");
     }
     const buildPath = path.join(__dirname, "../builds");
     const outFile = `respec-${name}.js`;
     const outPath = path.join(buildPath, outFile);
-    const loadingMsg = colors.info(` Generating ${outFile}. Please wait... `);
-    const timer = loading.start(loadingMsg, {
-      frames: presets.clock,
-      delay: 1,
-    });
+    console.log(colors.info(`Generating ${outFile}. Please wait...`));
 
     // optimisation settings
     const buildVersion = await this.getRespecVersion();
-    const outputWritter = appendBoilerplate(outPath, buildVersion, name);
     const config = {
-      baseUrl: path.join(__dirname, "../js/"),
-      deps: ["deps/require"],
-      generateSourceMaps: true,
-      inlineText: true,
-      logLevel: 2, // Show uglify warnings and errors.
-      mainConfigFile: `js/profile-${name}.js`,
-      name: `profile-${name}`,
-      optimize: "none",
-      preserveLicenseComments: false,
-      useStrict: true,
+      mode: debug ? "none" : "production",
+      entry: require.resolve(`../js/profile-${name}.js`),
+      output: {
+        path: buildPath,
+        filename: outFile,
+      },
+      module: {
+        rules: [
+          {
+            // shortcut.js uses global scope
+            test: require.resolve("../js/shortcut.js"),
+            use: "exports-loader?shortcut",
+          },
+        ],
+      },
+      resolveLoader: {
+        // to import texts via e.g. "text!./css/webidl.css"
+        alias: { text: "raw-loader" },
+      },
+      devtool: "source-map",
     };
-    const promiseToWrite = new Promise((resolve, reject) => {
-      config.out = (concatinatedJS, sourceMap) => {
-        outputWritter(concatinatedJS, sourceMap)
-          .then(resolve)
-          .catch(reject);
-      };
-    });
-    r.optimize(config);
     const buildDir = path.resolve(__dirname, "../builds/");
     const workerDir = path.resolve(__dirname, "../worker/");
+    const stats = await promisify(webpack)(config);
+    if (stats.hasErrors()) {
+      throw new Error(stats.toJson().errors);
+    }
+    await appendBoilerplate(outPath, buildVersion, name);
     // copy respec-worker
-    fsp
-      .createReadStream(`${workerDir}/respec-worker.js`)
-      .pipe(fsp.createWriteStream(`${buildDir}/respec-worker.js`));
-    await promiseToWrite;
-    loading.stop(timer);
+    await fsp.copyFile(
+      `${workerDir}/respec-worker.js`,
+      `${buildDir}/respec-worker.js`
+    );
   },
 };
 
@@ -176,12 +172,12 @@ if (require.main === module) {
       console.info(getUsage(usageSections));
       return process.exit(0);
     }
-    const { profile: name } = parsedArgs;
+    const { profile: name, debug } = parsedArgs;
     if (!name) {
       return;
     }
     try {
-      await Builder.build({ name });
+      await Builder.build({ name, debug });
     } catch (err) {
       console.error(colors.error(err.stack));
       return process.exit(1);

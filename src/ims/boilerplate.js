@@ -1,19 +1,18 @@
-import { pub } from "core/pubsubhub";
 import { toHTMLNode } from "ims/utils";
 
 export const name =  "ims/boilerplate";
 
-export function run(conf, doc, cb) {
+export async function run(conf) {
 
-  doc.title = conf.specTitle + " " + conf.specVersion + " " + conf.specStatus;
+  document.title = conf.specTitle + " " + conf.specVersion + " " + conf.specStatus;
 
-  var body = doc.body;
+  var body = document.body;
 
-  var header = doc.createElement("header");
-  var headerTop = doc.createElement("div");
+  var header = document.createElement("header");
+  var headerTop = document.createElement("div");
   headerTop.setAttribute("class", "header-top");
 
-  var hd = toHTMLNode(`<h1 class='title'>${conf.specTitle}</h1>`);
+  var hd = toHTMLNode(`<h1 class='title' id='title'>${conf.specTitle}</h1>`);
   headerTop.appendChild(hd);
 
   const imgURL = "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
@@ -82,7 +81,7 @@ export function run(conf, doc, cb) {
     body.appendChild(header);
   }
 
-  var footer = doc.createElement("footer");
+  var footer = document.createElement("footer");
 
   var endWarranty = toHTMLNode(`<div id="endWarranty">
   <p>IMS Global Learning Consortium, Inc. ("IMS Global") is publishing the information contained in this document ("Specification") for purposes of scientific, experimental, and scholarly collaboration only.</p>
@@ -97,9 +96,7 @@ export function run(conf, doc, cb) {
   <div>`);
   footer.appendChild(endWarranty);
 
-  doc.body.appendChild(footer);
-
-  cb();
+  document.body.appendChild(footer);
 }
 
 function getStatusToken(conf) {
@@ -121,15 +118,15 @@ function getStatusString(conf) {
   if(conf.specType === "doc") {
     return "This is an informative IMS Global document that may be revised at any time.";
   }
-  //specStatus: IMS Base Document, IMS Candidate Final (Public) or IMS Final Release
+  //specStatus: See ims/config.js for known values
   switch(conf.specStatus) {
     case 'IMS Base Document': return "This document is for review and comment by IMS Contributing Members.";
     case 'IMS Candidate Final': return "This document is for review and adoption by the IMS membership.";
     case 'IMS Candidate Final Public': return "This document is for review and adoption by the IMS membership.";
     case 'IMS Final Release': return "This document is made available for adoption by the public community at large.";
     default:
-      pub("warn", "Unrecognized specStatus, please use one of 'IMS Base Document', 'IMS Candidate Final (Public)' or 'IMS Final Release'");
-      return "specStatus ERROR";
+      // ims/config.js will issue error for unknown values
+      return "Unknown <code>specStatus: \"" + conf.specStatus + "\"</code>";
   }
 
 }

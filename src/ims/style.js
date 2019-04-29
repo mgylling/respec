@@ -1,9 +1,8 @@
-import { toKeyValuePairs, createResourceHint, linkCSS } from "core/utils";
-import { pub } from "core/pubsubhub";
+import { toKeyValuePairs, linkCSS } from "core/utils";
 
 export const name = "ims/style";
 
-function attachMetaViewport(doc) {
+async function attachMetaViewport() {
   const meta = document.createElement("meta");
   meta.name = "viewport";
   const contentProps = {
@@ -15,13 +14,12 @@ function attachMetaViewport(doc) {
   document.head.insertBefore(meta, document.head.firstChild);
 }
 
-export function run(conf, doc, cb) {        
-  attachMetaViewport(doc);
+export async function run(conf) {        
+  await attachMetaViewport();
   //IMS canonical location
   var cssURL = "https://purl.imsglobal.org/spec/ims-base.css"  
   if(conf.overrideCSSLocation) {
     cssURL = conf.overrideCSSLocation;
   }
-  linkCSS(doc, cssURL);
-  cb();
+  linkCSS(document, cssURL);
 }

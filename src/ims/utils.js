@@ -1,7 +1,3 @@
-/*jshint browser: true */
-
-import { pub } from "core/pubsubhub";
-
 export const name = "ims/utils";
 
 export function toHTMLNodes(string) {

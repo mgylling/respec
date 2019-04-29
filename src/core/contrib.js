@@ -4,9 +4,13 @@
 // #gh-commenters: people having contributed comments to issues.
 // #gh-contributors: people whose PR have been merged.
 // Spec editors get filtered out automatically.
-import { fetchIndex } from "core/github";
-import { pub } from "core/pubsubhub";
-import { joinAnd, flatten } from "core/utils";
+import {
+  checkLimitReached,
+  fetchIndex,
+  githubRequestHeaders,
+} from "./github-api.js";
+import { flatten, joinAnd } from "./utils.js";
+import { pub } from "./pubsubhub.js";
 export const name = "core/contrib";
 
 function prop(prop) {
@@ -24,9 +28,18 @@ function findUserURLs(...thingsWithUsers) {
 }
 
 async function toHTML(urls, editors, element, headers) {
-  const args = await Promise.all(urls.map(url => fetch(url, { headers })));
+  const args = await Promise.all(
+    urls
+      .map(url =>
+        fetch(new Request(url, { headers })).then(r => {
+          if (checkLimitReached(r)) return null;
+          return r.json();
+        })
+      )
+      .filter(arg => arg)
+  );
   const names = args
-    .map(([user]) => user.name || user.login)
+    .map(user => user.name || user.login)
     .filter(name => !editors.includes(name))
     .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
   element.textContent = joinAnd(names);
@@ -39,13 +52,7 @@ export async function run(conf) {
   if (!ghCommenters && !ghContributors) {
     return;
   }
-  const headers = {};
-  const { githubAPI, githubUser, githubToken } = conf;
-  if (githubUser && githubToken) {
-    const credentials = btoa(`${githubUser}:${githubToken}`);
-    const Authorization = `Basic ${credentials}`;
-    Object.assign(headers, { Authorization });
-  }
+  const { githubAPI } = conf;
   if (!githubAPI) {
     const msg =
       "Requested list of contributors and/or commenters from GitHub, but " +
@@ -53,7 +60,9 @@ export async function run(conf) {
     pub("error", msg);
     return;
   }
-  const response = await fetch(githubAPI, { headers });
+  const headers = githubRequestHeaders(conf);
+  const response = await fetch(new Request(githubAPI, { headers }));
+  checkLimitReached(response);
   if (!response.ok) {
     const msg =
       "Error fetching repository information from GitHub. " +
@@ -77,7 +86,8 @@ export async function run(conf) {
       toHTML(commenterUrls, editors, ghCommenters, headers),
       toHTML(contributorUrls, editors, ghContributors, headers)
     );
-  } catch (error) {
+  } catch (err) {
     pub("error", "Error loading contributors and/or commenters from GitHub.");
+    console.log(err);
   }
 }
