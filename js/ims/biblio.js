@@ -1,4 +1,4 @@
-define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
+define(["exports", "../core/pubsubhub"], function (_exports, _pubsubhub) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,7 +6,8 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
   });
   _exports.run = run;
   _exports.name = void 0;
-  const name = "ims/biblio";
+  //@ts-check
+
   /* 
   * Fetch the online ims-biblio json and append the data to conf.localBiblio.
   * This approach allows us to reuse the W3C biblio logic & implementation untouched. 
@@ -15,6 +16,10 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
   * - ims-biblio on purl.imsglobal.org
   * - specref.org
   */
+  const name = "ims/biblio";
+  /**
+   * @param {*} conf
+   */
 
   _exports.name = name;
 
@@ -41,7 +46,6 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
         //TODO we might want to worry about dupes and precedence
         conf.localBiblio = Object.assign(conf.localBiblio, json);
       }).catch(function (error) {
-        console.log("ims/biblio error: " + error.toString());
         (0, _pubsubhub.pub)("warn", error.toString());
       });
     }
