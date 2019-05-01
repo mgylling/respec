@@ -6,7 +6,7 @@ scratch
 examples/touchevents.html
 bevy.json
 .idea
-js/*
+js/
 !js/profile-w3c-common.js
 !js/profile-geonovum.js
 !js/profile-ims-default.js
