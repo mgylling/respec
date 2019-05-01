@@ -1,7 +1,14 @@
-import { toHTMLNode } from "ims/utils";
+//@ts-check
+
+import { toHTMLNode } from "../ims/utils";
 
 export const name =  "ims/link-here";
 
+/**
+ * 
+ * 
+ * @param {*} conf 
+ */
 export async function run(conf) {
     
     var sections = document.querySelectorAll("section:not(.introductory)");

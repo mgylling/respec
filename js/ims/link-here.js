@@ -1,4 +1,4 @@
-define(["exports", "ims/utils"], function (_exports, _utils) {
+define(["exports", "../ims/utils"], function (_exports, _utils) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,7 +6,14 @@ define(["exports", "ims/utils"], function (_exports, _utils) {
   });
   _exports.run = run;
   _exports.name = void 0;
+  //@ts-check
   const name = "ims/link-here";
+  /**
+   * 
+   * 
+   * @param {*} conf 
+   */
+
   _exports.name = name;
 
   async function run(conf) {
