@@ -1,6 +1,6 @@
 // @ts-check
 //
-// Ensure the conformance section has an id, then run core/inlines.
+// Ensure the conformance section has an id.
 //
 // core/inlines determines whether a document is informative by the
 // presence or absence of a section with id='conformance'. If the conformance
@@ -8,16 +8,15 @@
 // id to a section if the first header in the section is 'conformance' or
 // 'conformance statements' (ignoring case). For example,
 //
-// Note: Run after core/markdown
+// Note: Run after core/markdown and before core/inlines
 
 import { addId, children } from "../core/utils";
-import { pub } from "../core/pubsubhub.js";
-import { run as core_inlines } from "../core/inlines";
 
 export const name = "ims/inlines";
 
 /**
- * Find the Conformance section in parent and assign an id
+ * Find the Conformance section in parent and assign an id.
+ * 
  * @param {Element | HTMLElement} parent
  */
 function findConformanceSection(parent) {
@@ -58,7 +57,4 @@ export async function run(conf) {
     if (!conformance) {
         conformance = findConformanceSection(document.body);
     }
-
-    // Pass control to core/inlines
-    return await core_inlines(conf);
 }
