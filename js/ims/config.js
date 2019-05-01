@@ -1,4 +1,4 @@
-define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
+define(["exports", "../core/pubsubhub"], function (_exports, _pubsubhub) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,9 +6,27 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
   });
   _exports.run = run;
   _exports.name = void 0;
-  const name = "ims/config"; //check config and inform user if required ones are missing
+  //@ts-check
+
+  /**
+   * check config and inform user if required ones are missing
+   */
+  const name = "ims/config";
+  /**
+   * Returns true if value is not null or empty.
+   * 
+   * @param { string } value
+   */
 
   _exports.name = name;
+
+  function check(value) {
+    return value != undefined && value.trim().length > 0;
+  }
+  /**
+   * @param {*} conf 
+   */
+
 
   async function run(conf) {
     if (!check(conf.specTitle)) {
@@ -55,10 +73,6 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
       (0, _pubsubhub.pub)("error", "head config must have the <code>specVersion</code> property set, e.g. '1.1'");
       conf.specVersion = "@@@FIXME(conf.specVersion)";
     }
-  }
-
-  function check(value) {
-    return value != undefined && value.trim().length > 0;
   }
 });
 //# sourceMappingURL=config.js.map

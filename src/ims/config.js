@@ -1,8 +1,25 @@
-import { pub } from "core/pubsubhub";
+//@ts-check
+
+/**
+ * check config and inform user if required ones are missing
+ */
+
+import { pub } from "../core/pubsubhub";
 
 export const name =  "ims/config";
 
-//check config and inform user if required ones are missing
+/**
+ * Returns true if value is not null or empty.
+ * 
+ * @param { string } value
+ */
+function check(value) {
+  return value != undefined && value.trim().length > 0;
+}
+
+/**
+ * @param {*} conf 
+ */
 export async function run(conf) {
 
   if(!check(conf.specTitle)) {
@@ -56,6 +73,3 @@ export async function run(conf) {
   }
 }
 
-function check(value) {
-  return value != undefined && value.trim().length > 0;
-}

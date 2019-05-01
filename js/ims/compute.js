@@ -6,11 +6,17 @@ define(["exports"], function (_exports) {
   });
   _exports.run = run;
   _exports.name = void 0;
+  //@ts-check
   const name = "ims/compute";
+  /**
+   * Compute misc variables used by multiple other modules and store them back in conf.
+   * 
+   * @param {*} conf 
+   */
+
   _exports.name = name;
 
   async function run(conf) {
-    //compute misc variables used by multiple other modules and store them back in conf.
     var base = "https://www.imsglobal.org/spec/".concat(conf.shortName, "/"); //v1p2-style reformat for use in path segments
 
     conf.versionURL = "v".concat(conf.specVersion).replace('.', 'p');

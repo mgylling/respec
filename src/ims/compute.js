@@ -1,8 +1,13 @@
+//@ts-check
+
 export const name =  "ims/compute";
 
+/**
+ * Compute misc variables used by multiple other modules and store them back in conf.
+ * 
+ * @param {*} conf 
+ */
 export async function run(conf) {
-    //compute misc variables used by multiple other modules and store them back in conf.
-  
     var base = `https://www.imsglobal.org/spec/${conf.shortName}/`
   
     //v1p2-style reformat for use in path segments

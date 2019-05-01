@@ -1,7 +1,13 @@
+//@ts-check
+
 export const name = "ims/comments";
 
+/**
+ * Remove all comment nodes.
+ * 
+ * @param {*} conf 
+ */
 export async function run(conf) {
-  //remove all document comment nodes
 
   var nodeIterator = document.createNodeIterator(
       document.documentElement,

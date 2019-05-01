@@ -6,11 +6,14 @@ define(["exports"], function (_exports) {
   });
   _exports.run = run;
   _exports.name = void 0;
+  //@ts-check
   const name = "ims/cleanBody";
   /**
    * A snapshot-time body merciless script and inline css remover. Intended to
-   * be used only by admins. The activators are conf.cleanBodyScripts, 
+   * be used only by admins. The activators are conf.cleanBodyScripts,
    * conf.cleanBodyCSS, alternatively conf.cleanBodyAll
+   * 
+   * @param {*} conf
    */
 
   _exports.name = name;

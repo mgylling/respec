@@ -6,11 +6,17 @@ define(["exports"], function (_exports) {
   });
   _exports.run = run;
   _exports.name = void 0;
+  //@ts-check
   const name = "ims/comments";
+  /**
+   * Remove all comment nodes.
+   * 
+   * @param {*} conf 
+   */
+
   _exports.name = name;
 
   async function run(conf) {
-    //remove all document comment nodes
     var nodeIterator = document.createNodeIterator(document.documentElement, NodeFilter.SHOW_COMMENT);
     var comments = [];
     var currentNode;
