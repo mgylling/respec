@@ -19,10 +19,7 @@ This is the use cases & scope text.
 This is the terminology text.
 
 ### Document Set
-
-#### Normative Documents
-
-#### Informative Documents
+This is the list of documents in this spec.
 
 ### Conformance
 
@@ -30,5 +27,6 @@ This is the terminology text.
 
 <section class="appendix">
 ## Examples
+This is the appendix with examples.
 </section>
 `;
