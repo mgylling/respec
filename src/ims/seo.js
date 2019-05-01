@@ -1,3 +1,5 @@
+//@ts-check
+
 export const name = "ims/seo";
 
 export async function run(conf) {

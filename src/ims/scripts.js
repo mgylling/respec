@@ -1,3 +1,5 @@
+//@ts-check
+
 export const name = "ims/scripts";
 
 function attachScript(url) {

@@ -1,4 +1,6 @@
-import { pub } from "core/pubsubhub";
+//@ts-check
+
+import { pub } from "../core/pubsubhub";
 
 export const name =  "ims/title-attrs";
 

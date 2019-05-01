@@ -1,3 +1,5 @@
+//@ts-check
+
 export const name = "ims/utils";
 
 export function toHTMLNodes(string) {

@@ -1,4 +1,6 @@
-import { toKeyValuePairs, linkCSS } from "core/utils";
+//@ts-check
+
+import { toKeyValuePairs, linkCSS } from "../core/utils";
 
 export const name = "ims/style";
 
