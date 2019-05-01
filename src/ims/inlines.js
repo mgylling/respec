@@ -59,11 +59,6 @@ export async function run(conf) {
         conformance = findConformanceSection(document.body);
     }
 
-    // It is an IMS error if there is no conformance section found
-    if (!conformance) {
-        pub("error", "No section found with id 'conformance'");
-    }
-
     // Pass control to core/inlines
     return await core_inlines(conf);
 }
