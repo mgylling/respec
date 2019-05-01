@@ -94,11 +94,11 @@ function getNormativeText(conf) {
  */
   function getInformativeText(conf) {
     if (!conf.mainSpecTitle) {
-      pub("warning", "No mainSpecTitle property found in config')");
+      pub("warn", "No mainSpecTitle property found in config')");
     }
 
     if (!conf.mainSpecTitle) {
-      pub("warning", "No mainSpecBiblioKey property found in config')");
+      pub("warn", "No mainSpecBiblioKey property found in config')");
     }
 
     return html`

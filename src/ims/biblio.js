@@ -31,8 +31,8 @@ export async function run(conf) {
         //TODO we might want to worry about dupes and precedence
         conf.localBiblio = Object.assign(conf.localBiblio, json);              
       }).catch(function(error) {
-        console.log("imsbiblio error: " + error.toString());
-        pub("warning", error.toString());
+        console.log("ims/biblio error: " + error.toString());
+        pub("warn", error.toString());
     });
   }  
 }

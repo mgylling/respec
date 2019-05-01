@@ -27,7 +27,7 @@ export async function run(conf) {
         pub("error", "Issue asides must not be present when the status is 'IMS Final Release'");
       }
     else if(conf.specStatus == "IMS Candidate Final") {
-        pub("warning", "Issue asides should not be present when the status is 'IMS Final Release'");
+        pub("warn", "Issue asides should not be present when the status is 'IMS Final Release'");
       }
     }
 

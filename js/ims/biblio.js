@@ -41,8 +41,8 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
         //TODO we might want to worry about dupes and precedence
         conf.localBiblio = Object.assign(conf.localBiblio, json);
       }).catch(function (error) {
-        console.log("imsbiblio error: " + error.toString());
-        (0, _pubsubhub.pub)("warning", error.toString());
+        console.log("ims/biblio error: " + error.toString());
+        (0, _pubsubhub.pub)("warn", error.toString());
       });
     }
   }

@@ -31,7 +31,7 @@ define(["exports", "core/pubsubhub", "ims/utils", "core/utils"], function (_expo
       if (conf.specStatus == "IMS Final Release") {
         (0, _pubsubhub.pub)("error", "Issue asides must not be present when the status is 'IMS Final Release'");
       } else if (conf.specStatus == "IMS Candidate Final") {
-        (0, _pubsubhub.pub)("warning", "Issue asides should not be present when the status is 'IMS Final Release'");
+        (0, _pubsubhub.pub)("warn", "Issue asides should not be present when the status is 'IMS Final Release'");
       }
     } //prep the output element
 

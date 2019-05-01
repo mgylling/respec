@@ -44,7 +44,7 @@ define(["exports", "core/pubsubhub"], function (_exports, _pubsubhub) {
             //console.log("found blockish parent " + blockishParent);
             text = blockishParent.textContent;
           } else {
-            (0, _pubsubhub.pub)("warning", "Could not find suitable parent container for dfn#" + dfn.id);
+            (0, _pubsubhub.pub)("warn", "Could not find suitable parent container for dfn#" + dfn.id);
           }
         }
 

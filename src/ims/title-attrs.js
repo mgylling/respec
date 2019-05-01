@@ -35,7 +35,7 @@ export async function run(conf) {
             //console.log("found blockish parent " + blockishParent);
             text = blockishParent.textContent;
           } else {
-            pub("warning", "Could not find suitable parent container for dfn#" + dfn.id );
+            pub("warn", "Could not find suitable parent container for dfn#" + dfn.id );
           }
         }
         
