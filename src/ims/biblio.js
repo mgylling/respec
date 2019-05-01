@@ -1,7 +1,4 @@
-import { pub } from "core/pubsubhub";
-
-export const name =  "ims/biblio";
-
+//@ts-check
 /* 
 * Fetch the online ims-biblio json and append the data to conf.localBiblio.
 * This approach allows us to reuse the W3C biblio logic & implementation untouched. 
@@ -11,6 +8,13 @@ export const name =  "ims/biblio";
 * - specref.org
 */
 
+import { pub } from "../core/pubsubhub";
+
+export const name =  "ims/biblio";
+
+/**
+ * @param {*} conf
+ */
 export async function run(conf) {
   var imsBiblioURL = "https://purl.imsglobal.org/spec/ims-biblio.json";  
   if(conf.overrideIMSbiblioLocation) {
