@@ -52,10 +52,10 @@ define([
   "./ims/abstract",
   "./core/data-transform",
   "./core/data-abbr",
-  // Identitfy conformance section if it exists 
+//"./core/inlines",
+  "./ims/inlines",
+//"./w3c/conformance",
   "./ims/conformance",
-  "./core/inlines",
-  //"./w3c/conformance",
   "./ims/biblio",
   "./core/dfn",
   "./core/pluralize",
@@ -75,7 +75,6 @@ define([
   "./ims/contributors",
   "./core/fix-headers",
   "./core/structure",
-  "./ims/rfc2119",
   "./core/informative",
   // Move id-headers up
   //"./core/id-headers",

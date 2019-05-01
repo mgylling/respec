@@ -1,33 +1,178 @@
-// Find the conformance section and assign an id so
-// core/inlines knows this is a normative document.
+// @ts-check
+//
+// Based on w3c/conformance with following differences:
+//
+// IMS version:
+// - Skip if specType == 'Errata' (IMS Errata documents do not have a conformance section).
+// - Use slightly modified conformance text.
+//
+// Note: Run after inlines so the conformance section has an id and NormativeReferences is available.
 
-import { addId, children } from "core/utils";
-
+import html from "hyperhtml";
+import { joinAnd } from "../core/utils.js";
+import { pub } from "../core/pubsubhub.js";
+import { renderInlineCitation } from "../core/render-biblio.js";
+import { rfc2119Usage } from "../core/inlines.js";
 export const name = "ims/conformance";
 
-export async function run(conf) {
-    const conformanceSection = document.querySelector("section#conformance");
-    if (!conformanceSection) {
-        await findConformanceSection(document.body);
-    }
+/**
+ * core/inlines will count the actual occurances of each term and
+ * both w3c/conformance and ims/conformance will only list the terms
+ * that are in rfc2119Usage. But the current version of the normative 
+ * text refers to all the keywords, so this stuffs the list with all
+ * the keywords.
+ */
+function stuffRfc299Usage() {
+    rfc2119Usage["MUST"] = true;
+    rfc2119Usage["MUST NOT"] = true;
+    rfc2119Usage["REQUIRED"] = true;
+    rfc2119Usage["SHALL"] = true;   
+    rfc2119Usage["SHALL NOT"] = true;    
+    rfc2119Usage["SHOULD"] = true;   
+    rfc2119Usage["SHOULD NOT"] = true;    
+    rfc2119Usage["RECOMMENDED"] = true;    
+    rfc2119Usage["MAY"] = true;    
+    rfc2119Usage["OPTIONAL"] = true;
 }
 
-// Find Conformance sections and assign an id
-async function findConformanceSection(parent) {
-    const sectionElements = children(parent, "section");
-    for (const section of sectionElements) {
-        if (!section.children.length) {
-            continue;
-        }
+/**
+ * @param {*} conf
+ */
+function getNormativeText(conf) {
+    // Make sure all the terms referenced in the text below are included.
+    // Remove this step if you only want to list the terms that are actually
+    // used in this document.
+    stuffRfc299Usage();
 
-        if (!section.id) {
-            const header = section.children[0];
-            const title = header.textContent;
-            if (title.toLowerCase() == "conformance") {
-                addId(section, null, title);
-            }
-        }
+    // Build the HTML
+    const terms = [...Object.keys(rfc2119Usage)];
+    const keywords = joinAnd(
+        terms.sort(),
+        item => `"<em class="rfc2119">${item}</em>"`
+      );
+    const plural = terms.length > 1;
 
-        await findConformanceSection(section);
+    const content = html`
+    <p>
+      As well as sections marked as non-normative, all authoring guidelines, 
+      diagrams, examples, and notes in this specification are non-normative. 
+      Everything else in this specification is normative.
+    </p>
+    ${terms.length
+        ? html`
+            <p>
+              The key word${plural ? "s" : ""} ${[keywords]} in this document
+              ${plural ? "are" : "is"} to be interpreted as described in
+              ${renderInlineCitation("RFC2119")}.
+            </p>
+          `
+        : null}
+    <p>
+      An implementation of this specification that fails to implement a 
+      MUST/REQUIRED/SHALL requirement or fails to abide by a MUST NOT/SHALL NOT 
+      prohibition is considered nonconformant. SHOULD/SHOULD NOT/RECOMMENDED 
+      statements constitute a best practice. Ignoring a best practice does not 
+      violate conformance but a decision to disregard such guidance should be 
+      carefully considered. MAY/OPTIONAL statements indicate that implementers 
+      are entirely free to choose whether or not to implement the option.
+    </p>`;
+
+    if (conf.skipCertGuideConformanceRef || conf.specType == "cert") {
+      return content;
     }
+
+    return html`${content}
+        <p>
+            The <a href='#document-set'>Conformance and Certification Guide</a> 
+            for this specification may introduce greater normative constraints 
+            than those defined here for specific service or implementation categories.
+        </p>`;
+  }
+
+  /**
+ * @param {*} conf
+ */
+  function getInformativeText(conf) {
+    if (!conf.mainSpecTitle) {
+      pub("warning", "No mainSpecTitle property found in config')");
+    }
+
+    if (!conf.mainSpecTitle) {
+      pub("warning", "No mainSpecBiblioKey property found in config')");
+    }
+
+    return html`
+        <p>This document is an informative resource in the Document Set of the 
+        ${conf.mainSpecTitle ? conf.mainSpecTitle : ""} specification
+        ${conf.mainSpecBiblioKey ? renderInlineCitation(conf.mainSpecBiblioKey) : ""}.
+        As such, it does not include any normative requirements. Occurrences in this 
+        document of terms such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no 
+        impact on the conformance critera for implementors of this specification.
+        </p>`;
+  }
+
+/**
+ * @param {Element} conformance
+ * @param {*} conf
+ */
+function processConformance(conformance, conf) {
+    
+    // Add RFC2119 to the bibliography
+    conf.normativeReferences.add("RFC2119");
+    
+    // Get the appropriate text
+    let content;
+
+    if (conf.specNature === "normative") {
+        content = getNormativeText(conf);
+    } else if (conf.specNature === "informative") {
+        content = getInformativeText(conf);
+    }
+
+    if (conformance.tagName === "SECTION") {
+        conformance.prepend(...content.childNodes);
+    } else {
+        conformance.parentNode.append(...content.childNodes);
+    }
+
+}
+
+/**
+ * @param {*} conf
+ */
+export async function run(conf) {
+    // No conformance section in IMS Errata documents
+    if (conf.specType === "errata") {
+        return;
+    }
+
+    // It is an IMS error if there is no conformance section found
+    var conformance = document.querySelector("section#conformance");
+    if (!conformance) {
+        pub("error", "No section found with id 'conformance'");
+        return;
+    }
+
+    // Use IMS specNature to determine conformance text
+    if (!conf.specNature) {
+        pub("error", "Document must have config.specNature set")
+    }
+
+    // IMS standard is to have a Conformance heading
+    if (conformance.tagName === 'SECTION') {
+        const conformanceHeading = conformance.querySelector("h1, h2, h3, h4, h5, h6");
+        if (!conformanceHeading) {
+            pub("warn", "No heading found in the conformance section");
+        } else {
+            // Insert conformation text after heading
+            conformance = conformanceHeading;
+        }
+    }
+
+    // Insert the conformance text
+    processConformance(conformance, conf);
+
+    // Added message for legacy compat with Aria specs
+    // See https://github.com/w3c/respec/issues/793
+    pub("end", name);
 }
