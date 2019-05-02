@@ -13,6 +13,8 @@
       specVersion: "1.0",
       specNature: "normative",
       specType: "spec",
+      overrideReSpecCSSLocation: "../assets/respec2.css",
+      overrideHighlightCSSLocation: "../assets/github.css",
       overrideCSSLocation: "ims-base.css",
       skipCertGuideConformanceRef: true,
       contributors: [
@@ -121,11 +123,11 @@
     </p>
     <figure class="example">
       <pre><code>
-      {
-        "type": "ActivityState",
-        "createdTime": new Date().toISOString(),
-        "activityId": "unit_1_activity_5",
-        "data": {
+    {
+      "type": "ActivityState",
+      "createdTime": new Date().toISOString(),
+      "activityId": "unit_1_activity_5",
+      "data": {
         "choice": "blue",
         "directionLine": "What color is the sky?",
         "choices": ["blue","red","green"],
@@ -133,9 +135,9 @@
       },
       "profile": "ims.qti_v2p1.choice",
       "extensions": {
-      "vnd.vst.timesync_offset": 42000
+        "vnd.vst.timesync_offset": 42000
       }
-      }
+    }
       </code></pre>
       <figcaption>Example of the ActivityState object.</span>
       </figcaption>
