@@ -13,7 +13,6 @@
       specVersion: "1.0",
       specNature: "normative",
       specType: "spec",
-      overrideCSSLocation: "https://purl.imsglobal.org/spec/ims-base.css",
       skipCertGuideConformanceRef: true,
       contributors: [
         {
@@ -39,17 +38,27 @@
   <section>
     <h2>Introduction</h2>
     <p>Introduction text</p>
-    <section>
+    <section id="conformance">
       <h3>Conformance</h3>
+    </section>
+    <section id="definitions">
+      <h3>Definitions</h3>
+      <dl>
+        <dt><dfn>EPUB</dfn></dt>
+        <dd>This defines EPUP.</dd> 
+      </dl>
+      <p>
+        <dfn>Video</dfn> is another term we use.
+      </p>
     </section>
   </section>
   <section>
     <h2>ActivityState Object</h2>
     <p>An
-      <code>ActivityState</code> object is to be used by the EPUB to store stateful information
+      <code>ActivityState</code> object is to be used by the <a>EPUB</a> to store stateful information
       on behalf of the student.</p>
     <p>Examples of stateful data might be an incomplete multiple choice activity,
-      an incomplete essay or a even the current location in a streaming video.</p>
+      an incomplete essay or a even the current location in a streaming <a>video</a>.</p>
 
     <aside class="note">Example of text content of note aside</aside>
     <aside class="warning">Example of text content of warning aside</aside>
@@ -121,11 +130,11 @@
     </p>
     <figure class="example">
       <pre><code>
-      {
-        "type": "ActivityState",
-        "createdTime": new Date().toISOString(),
-        "activityId": "unit_1_activity_5",
-        "data": {
+    {
+      "type": "ActivityState",
+      "createdTime": new Date().toISOString(),
+      "activityId": "unit_1_activity_5",
+      "data": {
         "choice": "blue",
         "directionLine": "What color is the sky?",
         "choices": ["blue","red","green"],
@@ -133,9 +142,9 @@
       },
       "profile": "ims.qti_v2p1.choice",
       "extensions": {
-      "vnd.vst.timesync_offset": 42000
+        "vnd.vst.timesync_offset": 42000
       }
-      }
+    }
       </code></pre>
       <figcaption>Example of the ActivityState object.</span>
       </figcaption>
