@@ -1,5 +1,4 @@
 //@ts-check
-
 export const name =  "ims/cleanBody";
 
 /**
@@ -7,7 +6,7 @@ export const name =  "ims/cleanBody";
  * be used only by admins. The activators are conf.cleanBodyScripts,
  * conf.cleanBodyCSS, alternatively conf.cleanBodyAll
  * 
- * @param {*} conf
+ * @param {*} conf respecConfig
  */
 export async function run(conf) {
   
