@@ -1,23 +1,25 @@
-import { pub } from "core/pubsubhub";
-import { toHTMLNode } from "ims/utils";
-import { addId } from "core/utils";
+//@ts-check
+import { pub } from "../core/pubsubhub";
+import { toHTMLElement, toHTMLNode } from "../ims/utils";
+import { addId } from "../core/utils";
 
 export const name =  "ims/admonitions";
 
-/*
-* Handles admonitions, adding a top bar and a11y attrs
-* Types currently supported:
-* aside.note
-* aside.ednote
-* aside.warning
-* aside.issue (will yield error if status is final, warning if CF)
-*
-* Alternate syntax is div.aside.note|warning|issue
-*
-* This replaces core/issues-notes.js, which has github features we can't utilize
-* because of our non-open repos.
-*/
-
+/**
+ * Handles admonitions, adding a top bar and a11y attrs
+ * Types currently supported:
+ * aside.note
+ * aside.ednote
+ * aside.warning
+ * aside.issue (will yield error if status is final, warning if CF)
+ *
+ * Alternate syntax is div.aside.note|warning|issue
+ *
+ * This replaces core/issues-notes.js, which has github features we can't utilize
+ * because of our non-open repos.
+ *
+ * @param {*} conf respecConfig
+ */
 export async function run(conf) {
 
   //check and warn for issue admons in late process stages
@@ -35,8 +37,6 @@ export async function run(conf) {
   var admons = document.body.querySelectorAll("aside.note, aside.ednote, aside.warning, aside.issue, "
   +" div.aside.note, div.aside.ednote div.aside.warning, div.aside.issue");
 
-  //console.log("admons length: " + admons.length);
-
   admons.forEach((aside) => {
       var type = getAdmonType(aside);
       aside.setAttribute("role", "note");
@@ -44,12 +44,20 @@ export async function run(conf) {
       if (!aside.hasAttribute("id")) {
         addId(aside);
       }
-      var topBar = toHTMLNode(`<div class='admon-top'>${type}</div>`);
+      var topBar = toHTMLElement(`<div class='admon-top'>${type}</div>`);
       topBar.classList.add(type + "-title");
       aside.insertAdjacentElement('afterbegin', topBar);
   });
 }
 
+/**
+ * Returns the admonition type as a string based on the classList.
+ * The three known types are "note", "warning", and "issue". If none
+ * of those are present, returns "info".
+ * 
+ * @param { * } aside the element to inspect
+ * @returns { string } the admonition type as a string
+ */
 function getAdmonType(aside) {
   if(aside.classList.contains('note')) {
     return "note";
