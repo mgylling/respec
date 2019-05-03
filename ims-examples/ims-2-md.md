@@ -1,9 +1,8 @@
 var mdbody=`
 
 <md-only>
-# Temp MD title
-This is the temp md section text.
-
+Anything you put inside here will be removed from the
+rendered document.
 </md-only>
 
 ## Abstract

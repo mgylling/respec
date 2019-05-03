@@ -1,11 +1,12 @@
 //@ts-check
-
-import { pub } from "../core/pubsubhub";
-
 export const name = "ims/post-markdown";
 
+/**
+ * Post processing of markdown transcludes. Run after markkdown.
+ * 
+ * @param {*} conf respecConfig
+ */
 export async function run(conf) {
-  //post processing of markdown transcludes
 
   if(conf.format !== "markdown") return;
 
@@ -19,11 +20,11 @@ export async function run(conf) {
   var abstract = document.body.querySelector("#abstract");
   if(abstract) {
     if(abstract.tagName.startsWith("H")) {
-      abstract = abstract.parentNode;
-      if(abstract.tagName === "SECTION") {
-        if(!abstract.classList.contains("introductory")) {
-          abstract.classList.add("introductory");
-        }
+      abstract = abstract.parentElement;
+    }
+    if(abstract.tagName === "SECTION") {
+      if(!abstract.classList.contains("introductory")) {
+        abstract.classList.add("introductory");
       }
     }
   }
