@@ -1,7 +1,29 @@
 //@ts-check
-
 export const name = "ims/scripts";
 
+/**
+ * Attach fixup script.
+ * 
+ * @param {*} conf respecConfig
+ */
+export async function run(conf) {
+
+  if(!conf.noSideBarTOC) {
+    //IMS canonical location
+    var fixupURL = "https://purl.imsglobal.org/spec/fixup.js";
+    if(conf.overrideFixupLocation) {
+      fixupURL = conf.overrideFixupLocation;
+    }
+    attachScript(fixupURL);
+  } else {
+    document.body.className += " toc-inline";
+  }
+}
+
+/**
+ * 
+ * @param {string} url the URL of the script to attach
+ */
 function attachScript(url) {
 
   const script = document.createElement("script");
@@ -20,16 +42,3 @@ function attachScript(url) {
   document.body.appendChild(script);
 }
 
-export async function run(conf) {
-
-  if(!conf.noSideBarTOC) {
-    //IMS canonical location
-    var fixupURL = "https://purl.imsglobal.org/spec/fixup.js";
-    if(conf.overrideFixupLocation) {
-      fixupURL = conf.overrideFixupLocation;
-    }
-    attachScript(fixupURL);
-  } else {
-    document.body.className += " toc-inline";
-  }
-}
