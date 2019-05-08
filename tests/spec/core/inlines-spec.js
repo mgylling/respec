@@ -192,6 +192,40 @@ describe("Core - Inlines", () => {
     ]);
   });
 
+  it("allows [[[#...]]] to be a general expander for ids in document", async () => {
+    const body = `
+      <section id="section">
+        <h2>section heading</h2>
+        <figure id="figure">
+          <figcaption>figure caption</figcaption>
+        </figure>
+        <aside class="example" id="example-aside_thing" title="aside"></aside>
+        <pre class="example" id="example-pre" title="pre">
+        </pre>
+      </section>
+      <p id="output">
+        [[[#section]]]
+        [[[#figure]]]
+        [[[#example-aside_thing]]]
+        [[[#example-pre]]]
+        [[[#does-not-exist]]]
+      </p>`;
+    const doc = await makeRSDoc(makeStandardOps(null, body));
+    const anchors = doc.querySelectorAll("#output a");
+    expect(anchors.length).toBe(4);
+    const [section, figure, exampleAside, examplePre] = anchors;
+    expect(section.textContent).toBe("§\u00A01. section heading");
+    expect(section.classList).toContain("sec-ref");
+    expect(figure.textContent).toBe("Figure 1");
+    expect(figure.classList).toContain("fig-ref");
+    expect(exampleAside.textContent).toBe("Example 1");
+    expect(exampleAside.classList).toContain("box-ref");
+    expect(examplePre.textContent).toBe("Example 2");
+    expect(examplePre.classList).toContain("box-ref");
+    const badOne = doc.querySelector("#output span.respec-offending-element");
+    expect(badOne.textContent).toBe("[[[#does-not-exist]]]");
+  });
+
   it("proceseses backticks inside [= =] inline links", async () => {
     const body = `
       <section>
