@@ -171,7 +171,6 @@ div.subtitle {
   overflow: scroll;
   word-wrap: normal;
   overflow-wrap: normal;
-  padding: 1em 1em 0em 1em;
 }
 
 .example::before, .example > .marker {
