@@ -108,7 +108,7 @@ define([
   "./ims/title-attrs",
   "./ims/link-here",
   "./ims/scripts",
-  // Not working
+  // Not working...disable until fixed
   //"./ims/tooltips",
   "./ims/comments",
   /* Linter must be the last thing to run */
