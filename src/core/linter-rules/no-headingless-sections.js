@@ -1,11 +1,12 @@
+// @ts-check
 /**
  * Linter rule "no-headingless-sections".
  *
  * Checks that there are no sections in the document that don't start
  * with a heading element (h1-6).
  */
-import LinterRule from "core/LinterRule";
-import { lang as defaultLang } from "../l10n";
+import LinterRule from "../LinterRule.js";
+import { lang as defaultLang } from "../l10n.js";
 const name = "no-headingless-sections";
 const meta = {
   en: {
@@ -27,12 +28,17 @@ const hasNoHeading = ({ firstElementChild: elem }) => {
   return elem === null || /^h[1-6]$/.test(elem.localName) === false;
 };
 
-function linterFunction(conf, doc) {
+/**
+ * @param {*} _
+ * @param {Document} doc
+ * @return {import("../../core/LinterRule").LinterResult}
+ */
+function linterFunction(_, doc) {
   const offendingElements = [...doc.querySelectorAll("section")].filter(
     hasNoHeading
   );
   if (!offendingElements.length) {
-    return [];
+    return;
   }
   return {
     name,

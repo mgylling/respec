@@ -1,8 +1,16 @@
-/*jshint browser: true */
-
-import { pub } from "core/pubsubhub";
-
+//@ts-check
 export const name = "ims/utils";
+
+/**
+ * Returns the first Element in the string.
+ * 
+ * @param { string } string the HTML string to convert
+ * @returns { Element } the first element in the string
+ */
+export function toHTMLElement(string) {
+  var node = toHTMLNode(string);
+  return node.parentElement.firstElementChild;
+}
 
 export function toHTMLNodes(string) {
   var element = document.createElement('div');

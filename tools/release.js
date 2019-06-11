@@ -4,13 +4,13 @@ const { Builder } = require("./builder");
 const cmdPrompt = require("prompt");
 const colors = require("colors");
 const { exec } = require("child_process");
-const fsp = require("fs-extra");
+const { promises: fsp } = require("fs");
 const loading = require("loading-indicator");
 const path = require("path");
 const MAIN_BRANCH = "develop";
 const DEBUG = false;
 
-//See: https://github.com/w3c/respec/issues/645
+// See: https://github.com/w3c/respec/issues/645
 require("epipebomb")();
 
 const loadOps = {
@@ -163,7 +163,7 @@ const Prompts = {
             ? commitHints.exec(line)[0].toLowerCase()
             : "";
           let result = line;
-          let icon = match && iconMap.has(match) ? iconMap.get(match) : "❓";
+          const icon = match && iconMap.has(match) ? iconMap.get(match) : "❓";
           // colorize
           if (match) {
             result = result.replace(match.toLowerCase(), colors[match](match));
@@ -245,7 +245,7 @@ const Prompts = {
     pack.version = await this.askQuestion(promptOps);
     await fsp.writeFile(
       packagePath,
-      JSON.stringify(pack, null, 2) + "\n",
+      `${JSON.stringify(pack, null, 2)}\n`,
       "utf8"
     );
     return pack.version;
@@ -280,7 +280,7 @@ function toExecPromise(cmd, { timeout, showOutput }) {
       reject(new Error(`Command took too long: ${cmd}`));
       proc.kill("SIGTERM");
     }, timeout);
-    const proc = exec(cmd, function(err, stdout, stderr) {
+    const proc = exec(cmd, (err, stdout) => {
       clearTimeout(id);
       if (err) {
         return reject(err);
@@ -371,8 +371,9 @@ const run = async () => {
       case "up-to-date":
         break;
       case "needs to push":
-        var err = `Found unpushed commits on "${MAIN_BRANCH}" branch! Can't proceed.`;
-        throw new Error(err);
+        throw new Error(
+          `Found unpushed commits on "${MAIN_BRANCH}" branch! Can't proceed.`
+        );
       default:
         throw new Error(`Your branch is not up-to-date. It ${branchState}.`);
     }
@@ -383,17 +384,17 @@ const run = async () => {
     console.log(colors.info(" Performing npm upgrade... 📦"));
     await npm("update", { showOutput: true });
 
-    // Updates could trash our previouls protection, so reprotect.
+    // Updates could trash our previous protection, so reprotect.
     console.log(colors.info(" Running snyk-protect... 🐺"));
     await npm("run snyk-protect", { showOutput: true });
 
     // 3. Run the build script (node tools/build-w3c-common.js).
     indicators.get("build-merge-tag").show();
     await npm("run build:components");
-    await Builder.build({ name: "w3c-common" });
-    console.log(
-      colors.info(" Making sure the generated version is ok... 🕵🏻")
-    );
+    for (const name of ["w3c-common", "w3c", "geonovum"]) {
+      await Builder.build({ name });
+    }
+    console.log(colors.info(" Making sure the generated version is ok... 🕵🏻"));
     await node(
       `./tools/respec2html.js -e --timeout 30 --src file:///${__dirname}/../examples/basic.built.html --out /dev/null`,
       { showOutput: true }

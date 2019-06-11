@@ -1,5 +1,7 @@
 "use strict";
 
+import { flushIframes, makeRSDoc, makeStandardOps } from "../SpecHelper.js";
+
 describe("Core - UI", () => {
   afterAll(flushIframes);
 
@@ -19,12 +21,12 @@ describe("Core - UI", () => {
   it("hides the UI when document is clicked", async () => {
     const doc = await makeRSDoc(makeStandardOps(), null, "display: block");
     const menu = doc.getElementById("respec-menu");
-    expect(window.getComputedStyle(menu).display).toEqual("none");
+    expect(window.getComputedStyle(menu).display).toBe("none");
     doc.getElementById("respec-pill").click();
     // spin the event loop
     await new Promise(resolve => {
       setTimeout(() => {
-        expect(window.getComputedStyle(menu).display).toEqual("block");
+        expect(window.getComputedStyle(menu).display).toBe("block");
         doc.body.click();
         resolve();
       }, 500);
@@ -32,10 +34,32 @@ describe("Core - UI", () => {
     // Allow time to fade in
     await new Promise(resolve => {
       setTimeout(() => {
-        expect(window.getComputedStyle(menu).display).toEqual("none");
+        expect(window.getComputedStyle(menu).display).toBe("none");
         resolve();
       }, 500);
     });
     // give it time to fade out
+  });
+
+  describe("ui/dfn-list", () => {
+    it("shows a list of definitions and links them", async () => {
+      const body = "<p><dfn>bar()</dfn> <dfn>foo</dfn></p>";
+      const ops = makeStandardOps(null, body);
+      const doc = await makeRSDoc(ops);
+
+      // open list and wait for loading
+      const dfnListButton = doc.getElementById("respec-button-definitions");
+      dfnListButton.click();
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const dfns = doc.querySelectorAll("ul.respec-dfn-list li a");
+      expect(dfns.length).toBe(2);
+
+      const [dfnBar, dfnFoo] = dfns;
+      expect(dfnBar.textContent.trim()).toBe("bar()");
+      expect(dfnBar.getAttribute("href")).toBe("#dfn-bar");
+      expect(dfnFoo.textContent.trim()).toBe("foo");
+      expect(dfnFoo.getAttribute("href")).toBe("#dfn-foo");
+    });
   });
 });

@@ -1,23 +1,41 @@
-import { pub } from "core/pubsubhub";
-
+//@ts-check
+import { pub } from "../core/pubsubhub";
 export const name =  "ims/title-attrs";
 
 /**
- * Add title attributes to relevant elements. 
+ * Adds title attributes to internal definition references. When the
+ * reader hovers over the defined term, they will see the definition.
+ * 
+ * If the term is defined in a definition list, the definiton is pulled
+ * from the definition description element. For example,
+ * 
+ * <dl>
+ *   <dt><dfn>Term</dfn></dt>
+ *   <dd>This is my term.</dd>
+ * </dl>
+ * 
+ * If the term is defined outside of a defintion list, the definition is
+ * pulled from the nearest ancestor p, td, li, div, or aside. For example,
+ * 
+ * <p>
+ *   This is my <dfn>Term</dfn>.
+ * <p>
+ * 
+ * @param {*} conf respecConfig
  */
-export function run(conf, doc, cb) {
+export async function run(conf) {
     
   if(conf.noTitleAttrs) {
-      return cb();
-      
+      return;  
   } 
+
   //for now we deal only with a.internalDFN, whose title attr value is 
   //fetched from the destination link 
   
-  var anchors = doc.body.querySelectorAll("a[href].internalDFN");
+  var anchors = document.body.querySelectorAll("a[href].internalDFN");
   anchors.forEach(function(anchor) {
       var selector = anchor.getAttribute('href');      
-      var dfn = doc.body.querySelector(selector);
+      var dfn = document.body.querySelector(selector);
       if(dfn && dfn.tagName === "DFN") {
         var text = "";
         if(hasAncestor(dfn, "dt")) {
@@ -34,7 +52,7 @@ export function run(conf, doc, cb) {
             //console.log("found blockish parent " + blockishParent);
             text = blockishParent.textContent;
           } else {
-            pub("warning", "Could not find suitable parent container for dfn#" + dfn.id );
+            pub("warn", "Could not find suitable parent container for dfn#" + dfn.id );
           }
         }
         
@@ -48,8 +66,6 @@ export function run(conf, doc, cb) {
         
       }
   });
-      
-  cb();
 }
 
 function hasAncestor(element, ancestorName) {

@@ -1,30 +1,31 @@
-import { pub } from "core/pubsubhub";
-
+//@ts-check
 export const name = "ims/post-markdown";
 
-export function run(conf, doc, cb) {
-  //post processing of markdown transcludes
+/**
+ * Post processing of markdown transcludes. Run after markkdown.
+ * 
+ * @param {*} conf respecConfig
+ */
+export async function run(conf) {
 
-  if(conf.format !== "markdown") return cb();
+  if(conf.format !== "markdown") return;
 
   //remove <md-only> elements
-  var mdOnlies = doc.body.querySelectorAll("md-only");
+  var mdOnlies = document.body.querySelectorAll("md-only");
   for (var i = 0; i < mdOnlies.length; i++) {
 	  mdOnlies[i].parentNode.removeChild(mdOnlies[i]);
 	}
 
   //find abstract and add class introductory
-  var abstract = doc.body.querySelector("#abstract");
+  var abstract = document.body.querySelector("#abstract");
   if(abstract) {
     if(abstract.tagName.startsWith("H")) {
-      abstract = abstract.parentNode;
-      if(abstract.tagName === "SECTION") {
-        if(!abstract.classList.contains("introductory")) {
-          abstract.classList.add("introductory");
-        }
+      abstract = abstract.parentElement;
+    }
+    if(abstract.tagName === "SECTION") {
+      if(!abstract.classList.contains("introductory")) {
+        abstract.classList.add("introductory");
       }
     }
   }
-
-  cb();
 }

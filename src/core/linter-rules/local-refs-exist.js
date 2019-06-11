@@ -1,9 +1,10 @@
+// @ts-check
 /**
  * Linter rule "warn-local-ref".
  * Warns about href's that link to nonexistent id's in a spec
  */
-import { lang as defaultLang } from "core/l10n";
-import LinterRule from "core/LinterRule";
+import LinterRule from "../LinterRule.js";
+import { lang as defaultLang } from "../l10n.js";
 
 const name = "local-refs-exist";
 
@@ -20,15 +21,16 @@ const lang = defaultLang in meta ? defaultLang : "en";
 
 /**
  * Runs linter rule.
- * @param {Object} config The ReSpec config.
+ * @param {Object} _ The ReSpec config.
  * @param  {Document} doc The document to be checked.
+ * @return {import("../../core/LinterRule").LinterResult}
  */
-function linterFunction(conf, doc) {
+function linterFunction(_, doc) {
   const offendingElements = [...doc.querySelectorAll("a[href^='#']")].filter(
     isBrokenHyperlink
   );
   if (!offendingElements.length) {
-    return [];
+    return;
   }
   return {
     name,
@@ -41,7 +43,6 @@ function linterFunction(conf, doc) {
 export const rule = new LinterRule(name, linterFunction);
 
 function isBrokenHyperlink(elem) {
-  const { href, ownerDocument: doc } = elem;
-  const { hash } = new URL(href);
-  return !doc.getElementById(hash.substring(1));
+  const id = elem.getAttribute("href").substring(1);
+  return !elem.ownerDocument.getElementById(id);
 }

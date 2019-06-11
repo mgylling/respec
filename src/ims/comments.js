@@ -1,12 +1,16 @@
-import { pub } from "core/pubsubhub";
+//@ts-check
 
 export const name = "ims/comments";
 
-export function run(conf, doc, cb) {
-  //remove all document comment nodes
+/**
+ * Remove all comment nodes.
+ * 
+ * @param {*} conf 
+ */
+export async function run(conf) {
 
-  var nodeIterator = doc.createNodeIterator(
-      doc.documentElement,
+  var nodeIterator = document.createNodeIterator(
+      document.documentElement,
       NodeFilter.SHOW_COMMENT
   );
   var comments = [];
@@ -20,5 +24,4 @@ export function run(conf, doc, cb) {
     comment.parentElement.removeChild(comment);
   });
 
-  cb();
 }

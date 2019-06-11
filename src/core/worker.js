@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/worker
  *
@@ -7,12 +8,13 @@
 export const name = "core/worker";
 
 // Opportunistically preload syntax highlighter, which is used by the worker
-import { createResourceHint } from "core/utils";
-import workerScript from "deps/text!../../worker/respec-worker.js";
+import { createResourceHint } from "./utils.js";
+import { expose } from "./expose-modules.js";
+import workerScript from "text!../../worker/respec-worker.js";
 // Opportunistically preload syntax highlighter
 const hint = {
   hint: "preload",
-  href: "https://purl.imsglobal.org/spec/highlight.js",
+  href: "https://www.w3.org/Tools/respec/respec-highlight.js",
   as: "script",
 };
 const link = createResourceHint(hint);
@@ -22,3 +24,5 @@ const workerURL = URL.createObjectURL(
   new Blob([workerScript], { type: "application/javascript" })
 );
 export const worker = new Worker(workerURL);
+
+expose(name, { worker });

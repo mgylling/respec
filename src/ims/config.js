@@ -1,70 +1,75 @@
-import { pub } from "core/pubsubhub";
-import { toHTMLNode } from "ims/utils";
+//@ts-check
+
+/**
+ * check config and inform user if required ones are missing
+ */
+
+import { pub } from "../core/pubsubhub";
 
 export const name =  "ims/config";
 
-//check config and inform user if required ones are missing
-export function run(conf, doc, cb) {
+/**
+ * Returns true if value is not null or empty.
+ * 
+ * @param { string } value
+ */
+function check(value) {
+  return value != undefined && value.trim().length > 0;
+}
 
-  var hadError = false;
+/**
+ * @param {*} conf 
+ */
+export async function run(conf) {
 
   if(!check(conf.specTitle)) {
     pub("error", "head config must have the <code>specTitle</code> property set: "
     + "title of the document, excluding version");
     conf.specTitle = "@@@FIXME (conf.specTitle)";
-    hadError == true;
   }
 
   if(!check(conf.specDate)) {
     pub("error", "head config must have the <code>specDate</code> property set, e.g. 'June 28, 2019'");
     conf.specDate = "@@@FIXME(conf.specDate)";
-    hadError == true;
   }
 
   if(!check(conf.specNature)) {
     pub("error", "head config must have the <code>specNature</code> property set: one of 'normative' or 'informative'");
     conf.specNature = "informative";
-    hadError == true;
   }
 
   if(!check(conf.specType)) {
     pub("error", "head config must have the <code>specType</code> property set: One of 'spec', 'cert', 'impl', 'errata', 'doc' ");
     conf.specType = "spec";
-    hadError == true;
   }
 
-  if(conf.specType === 'doc') return cb();
+  if(conf.specType === 'doc') {
+    return;
+  }
 
   if(!check(conf.shortName)) {
     pub("error", "head config must have the <code>shortName</code> property set: "
     +"list at urls-names.md#shortnames");
     conf.shortName = "FIXME";
-    hadError == true;
   }
 
   if(!check(conf.specStatus)) {
-    pub("error", "head config must have the <code>specStatus</code> property set,"
-    + "one of 'IMS Base Document', 'IMS Candidate Final (Public)' or 'IMS Final Release'");
+    pub("error", "head config must have the <code>specStatus</code> property set to "
+    + "one of 'IMS Base Document', 'IMS Candidate Final', IMS Candidate Final Public', "
+    + "or 'IMS Final Release'");
     conf.specStatus = "@@@FIXME(conf.specStatus)";
-    hadError == true;
   }
 
   var statusValues = ["IMS Base Document", "IMS Candidate Final", "IMS Candidate Final Public", "IMS Final Release"];
   if (statusValues.indexOf(conf.specStatus) == -1) {
-    pub("error", "head config must have the <code>specStatus</code> property set to"
-    + "one of 'IMS Base Document', 'IMS Candidate Final', 'IMS Candidate Final Public' or 'IMS Final Release'");
-    hadError == true;
+    pub("error", "head config must have the <code>specStatus</code> property set to "
+    + "one of 'IMS Base Document', 'IMS Candidate Final', 'IMS Candidate Final Public', "
+    + "or 'IMS Final Release'");
   }
 
   if(!check(conf.specVersion)) {
     pub("error", "head config must have the <code>specVersion</code> property set, e.g. '1.1'");
     conf.specVersion = "@@@FIXME(conf.specVersion)";
-    hadError == true;
   }
-
-  cb();
 }
 
-function check(value) {
-  return value != undefined && value.trim().length > 0;
-}

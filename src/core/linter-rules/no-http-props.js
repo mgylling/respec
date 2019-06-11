@@ -1,9 +1,10 @@
+// @ts-check
 /**
  * Linter rule "no-http-props". Makes sure the there are no URLs that
  * start with http:// in the ReSpec config.
  */
-import { lang as defaultLang } from "core/l10n";
-import LinterRule from "core/LinterRule";
+import LinterRule from "../LinterRule.js";
+import { lang as defaultLang } from "../l10n.js";
 
 const name = "no-http-props";
 
@@ -20,13 +21,13 @@ const lang = defaultLang in meta ? defaultLang : "en";
 /**
  * Runs linter rule.
  *
- * @param {Object} config The ReSpec config.
- * @param  {Document} doc The document to be checked.
+ * @param {Object} conf The ReSpec config.
+ * @param {Document} doc The document to be checked.
  */
 function lintingFunction(conf, doc) {
   // We can only really perform this check over http/https
   if (!doc.location.href.startsWith("http")) {
-    return [];
+    return;
   }
   const offendingMembers = Object.getOwnPropertyNames(conf)
     // this check is cheap, "prevED" is w3c exception.
@@ -37,15 +38,17 @@ function lintingFunction(conf, doc) {
     )
     .reduce((collector, key) => collector.concat(key), []);
   if (!offendingMembers.length) {
-    return [];
+    return;
   }
+  /** @type {import("../../core/LinterRule").LinterResult} */
   const result = {
     name,
     occurrences: offendingMembers.length,
     ...meta[lang],
   };
-  result.howToFix +=
-    offendingMembers.map(item => "`" + item + "`").join(", ") + ".";
+  result.howToFix += `${offendingMembers
+    .map(item => `\`${item}\``)
+    .join(", ")}.`;
   return result;
 }
 

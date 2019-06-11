@@ -1,16 +1,20 @@
 // Module w3c/seo
 // Manages SEO information for documents
 // e.g. set the canonical URL for the document if configured
-import { pub } from "core/pubsubhub";
+import { biblio } from "../core/biblio.js";
+import { pub } from "../core/pubsubhub.js";
 export const name = "w3c/seo";
-export function run(conf, doc, cb) {
+export function run(conf) {
   const trLatestUri = conf.shortName
-    ? "https://www.w3.org/TR/" + conf.shortName + "/"
+    ? `https://www.w3.org/TR/${conf.shortName}/`
     : null;
   switch (conf.canonicalURI) {
     case "edDraft":
       if (conf.edDraftURI) {
-        conf.canonicalURI = new URL(conf.edDraftURI, doc.location).href;
+        conf.canonicalURI = new URL(
+          conf.edDraftURI,
+          document.location.href
+        ).href;
       } else {
         pub(
           "warn",
@@ -35,9 +39,12 @@ export function run(conf, doc, cb) {
     default:
       if (conf.canonicalURI) {
         try {
-          conf.canonicalURI = new URL(conf.canonicalURI, doc.location).href;
+          conf.canonicalURI = new URL(
+            conf.canonicalURI,
+            document.location.href
+          ).href;
         } catch (err) {
-          pub("warn", "CanonicalURI is an invalid URL: " + err.message);
+          pub("warn", `CanonicalURI is an invalid URL: ${err.message}`);
           conf.canonicalURI = null;
         }
       } else if (trLatestUri) {
@@ -45,14 +52,13 @@ export function run(conf, doc, cb) {
       }
   }
   if (conf.canonicalURI) {
-    const linkElem = doc.createElement("link");
+    const linkElem = document.createElement("link");
     linkElem.setAttribute("rel", "canonical");
     linkElem.setAttribute("href", conf.canonicalURI);
-    doc.head.appendChild(linkElem);
+    document.head.appendChild(linkElem);
   }
-  cb();
   if (conf.doJsonLd) {
-    addJSONLDInfo(conf, doc);
+    addJSONLDInfo(conf, document);
   }
 }
 
@@ -118,7 +124,7 @@ async function addJSONLDInfo(conf, doc) {
 
   // normative and informative references
   jsonld.citation = [...conf.normativeReferences, ...conf.informativeReferences]
-    .map(ref => conf.biblio[ref])
+    .map(ref => biblio[ref])
     .filter(ref => typeof ref === "object")
     .map(addRef);
 

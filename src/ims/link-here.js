@@ -1,9 +1,15 @@
-import { pub } from "core/pubsubhub";
-import { toHTMLNode } from "ims/utils";
+//@ts-check
+
+import { toHTMLNode } from "../ims/utils";
 
 export const name =  "ims/link-here";
 
-export function run(conf, doc, cb) {
+/**
+ * 
+ * 
+ * @param {*} conf 
+ */
+export async function run(conf) {
     
     var sections = document.querySelectorAll("section:not(.introductory)");
     for (var i = 0; i < sections.length; i++) {
@@ -16,6 +22,4 @@ export function run(conf, doc, cb) {
       h.insertAdjacentElement('afterbegin', link);
       //console.log(link);
     }
-
-    cb();
 }

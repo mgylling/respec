@@ -1,25 +1,27 @@
-import "deps/hyperhtml";
-import { pub } from "core/pubsubhub";
+// @ts-check
+import html from "hyperhtml";
+import { showInlineWarning } from "../../core/utils.js";
 
 export default obj => {
-  const a = document.createElement("a");
+  /** @type {HTMLAnchorElement} */
+  const a = html`
+    <a href="${obj.url || ""}" class="logo"></a>
+  `;
   if (!obj.alt) {
-    const msg = "Found spec logo without an `alt` attribute. See dev console.";
-    a.classList.add("respec-offending-element");
-    pub("warn", msg);
-    console.warn("warn", msg, a);
+    showInlineWarning(a, "Found spec logo without an `alt` attribute");
   }
-  a.href = obj.url || "";
-  a.classList.add("logo");
-  hyperHTML.bind(a)`
-      <img
-        id="${obj.id}"
-        alt="${obj.alt}"
-        width="${obj.width}"
-        height="${obj.height}">
+  /** @type {HTMLImageElement} */
+  const img = html`
+    <img
+      id="${obj.id}"
+      alt="${obj.alt}"
+      width="${obj.width}"
+      height="${obj.height}"
+    />
   `;
   // avoid triggering 404 requests from dynamically generated
   // hyperHTML attribute values
-  a.querySelector("img").src = obj.src;
+  img.src = obj.src;
+  a.append(img);
   return a;
 };

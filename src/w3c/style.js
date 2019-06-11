@@ -1,12 +1,11 @@
-/*jshint strict: true, browser:true, jquery: true*/
-/*globals define*/
+/* jshint strict: true, browser:true, jquery: true */
 // Module w3c/style
 // Inserts a link to the appropriate W3C style for the specification's maturity level.
 // CONFIGURATION
 //  - specStatus: the short code for the specification's maturity level or type (required)
 
-import { toKeyValuePairs, createResourceHint, linkCSS } from "core/utils";
-import { pub, sub } from "core/pubsubhub";
+import { createResourceHint, linkCSS, toKeyValuePairs } from "../core/utils.js";
+import { pub, sub } from "../core/pubsubhub.js";
 export const name = "w3c/style";
 function attachFixupScript(doc, version) {
   const script = doc.createElement("script");
@@ -14,7 +13,7 @@ function attachFixupScript(doc, version) {
     script.addEventListener(
       "load",
       () => {
-        window.location = location.hash;
+        window.location.href = location.hash;
       },
       { once: true }
     );
@@ -99,12 +98,19 @@ const elements = createResourceHints();
 elements.appendChild(createBaseStyle());
 if (!document.head.querySelector("meta[name=viewport]")) {
   // Make meta viewport the first element in the head.
-  elements.insertBefore(createMetaViewport(), elements.firstChild);
+  elements.prepend(createMetaViewport());
 }
 
-document.head.insertBefore(elements, document.head.firstChild);
+document.head.prepend(elements);
 
-export function run(conf, doc, cb) {
+function styleMover(linkURL) {
+  return exportDoc => {
+    const w3cStyle = exportDoc.querySelector(`head link[href="${linkURL}"]`);
+    exportDoc.querySelector("head").append(w3cStyle);
+  };
+}
+
+export function run(conf) {
   if (!conf.specStatus) {
     const warn = "`respecConfig.specStatus` missing. Defaulting to 'base'.";
     conf.specStatus = "base";
@@ -150,14 +156,15 @@ export function run(conf, doc, cb) {
     sub(
       "end-all",
       () => {
-        attachFixupScript(doc, version);
+        attachFixupScript(document, version);
       },
       { once: true }
     );
   }
-  const finalVersionPath = version ? version + "/" : "";
+  const finalVersionPath = version ? `${version}/` : "";
   const finalStyleURL = `https://www.w3.org/StyleSheets/TR/${finalVersionPath}${styleFile}`;
-
-  linkCSS(doc, finalStyleURL);
-  cb();
+  linkCSS(document, finalStyleURL);
+  // Make sure the W3C stylesheet is the last stylesheet, as required by W3C Pub Rules.
+  const moveStyle = styleMover(finalStyleURL);
+  sub("beforesave", moveStyle);
 }

@@ -1,10 +1,11 @@
-import { pub } from "core/pubsubhub";
-import { toHTMLNode } from "ims/utils";
+//@ts-check
+
+import { toHTMLNode } from "../ims/utils";
 
 export const name =  "ims/contributors";
 
-export function run(conf, doc, cb) {
-  if(!conf.contributors) return cb();
+export async function run(conf) {
+  if(!conf.contributors) return;
 
   if(conf.specType !== "errata") {
     var useRoles = hasRoles(conf.contributors);
@@ -23,10 +24,8 @@ export function run(conf, doc, cb) {
       </tbody>
     </table>
     </section>`);
-    doc.body.appendChild(contrib);
+    document.body.appendChild(contrib);
   }
-
-  cb();
 }
 
 function personsToTableRows(arr) {

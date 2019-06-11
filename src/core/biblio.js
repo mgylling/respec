@@ -3,14 +3,15 @@
 // Configuration:
 //  - localBiblio: override or supplement the official biblio with your own.
 
-/*jshint jquery: true*/
-/*globals console*/
-import { biblioDB } from "core/biblio-db";
-import { createResourceHint } from "core/utils";
-import { pub } from "core/pubsubhub";
+/* jshint jquery: true */
+/* globals console */
+import { biblioDB } from "./biblio-db.js";
+import { createResourceHint } from "./utils.js";
+import { pub } from "./pubsubhub.js";
+export const biblio = {};
 
 // for backward compatibity
-export { wireReference, stringifyReference } from "core/render-biblio";
+export { wireReference, stringifyReference } from "./render-biblio.js";
 
 export const name = "core/biblio";
 
@@ -19,8 +20,11 @@ const bibrefsURL = new URL("https://specref.herokuapp.com/bibrefs?refs=");
 // Normative references take precedence over informative ones,
 // so any duplicates ones are removed from the informative set.
 function normalizeReferences(conf) {
+  const normalizedNormativeRefs = new Set(
+    [...conf.normativeReferences].map(key => key.toLowerCase())
+  );
   Array.from(conf.informativeReferences)
-    .filter(key => conf.normativeReferences.has(key))
+    .filter(key => normalizedNormativeRefs.has(key.toLowerCase()))
     .forEach(redundantKey => conf.informativeReferences.delete(redundantKey));
 }
 
@@ -39,7 +43,7 @@ const link = createResourceHint({
 });
 document.head.appendChild(link);
 let doneResolver;
-export const done = new Promise(resolve => {
+const done = new Promise(resolve => {
   doneResolver = resolve;
 });
 
@@ -50,7 +54,7 @@ export async function updateFromNetwork(
   const refsToFetch = [...new Set(refs)].filter(ref => ref.trim());
   // Update database if needed, if we are online
   if (!refsToFetch.length || navigator.onLine === false) {
-    return;
+    return null;
   }
   let response;
   try {
@@ -83,10 +87,9 @@ export async function resolveRef(key) {
   return entry;
 }
 
-export async function run(conf, doc, cb) {
+export async function run(conf) {
   const finish = () => {
     doneResolver(conf.biblio);
-    cb();
   };
   if (!conf.localBiblio) {
     conf.localBiblio = {};
@@ -96,7 +99,7 @@ export async function run(conf, doc, cb) {
     msg += "`.localBiblio` for custom biblio entries.";
     pub("warn", msg);
   }
-  conf.biblio = {};
+  conf.biblio = biblio;
   const localAliases = Array.from(Object.keys(conf.localBiblio))
     .filter(key => conf.localBiblio[key].hasOwnProperty("aliasOf"))
     .map(key => conf.localBiblio[key].aliasOf);
@@ -140,14 +143,14 @@ export async function run(conf, doc, cb) {
   split.hasData.reduce((collector, ref) => {
     collector[ref.id] = ref.data;
     return collector;
-  }, conf.biblio);
+  }, biblio);
   const externalRefs = split.noData.map(item => item.id);
   if (externalRefs.length) {
     // Going to the network for refs we don't have
     const data = await updateFromNetwork(externalRefs, { forceUpdate: true });
-    Object.assign(conf.biblio, data);
+    Object.assign(biblio, data);
   }
-  Object.assign(conf.biblio, conf.localBiblio);
+  Object.assign(biblio, conf.localBiblio);
   await updateFromNetwork(neededRefs);
   finish();
 }

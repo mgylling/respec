@@ -1,12 +1,12 @@
 // Module core/base-runner
 // The module in charge of running the whole processing pipeline.
-import "core/include-config";
-import "core/override-configuration";
-import "core/respec-ready";
-import { removeReSpec } from "core/utils";
-import { done as postProcessDone } from "core/post-process";
-import { done as preProcessDone } from "core/pre-process";
-import { pub } from "core/pubsubhub";
+import "./include-config.js";
+import "./override-configuration.js";
+import "./respec-ready.js";
+import { done as postProcessDone } from "./post-process.js";
+import { done as preProcessDone } from "./pre-process.js";
+import { pub } from "./pubsubhub.js";
+import { removeReSpec } from "./utils.js";
 
 export const name = "core/base-runner";
 const canMeasure = performance.mark && performance.measure;
@@ -24,14 +24,16 @@ function toRunnable(plug) {
         reject(new Error(msg));
       }, 15000);
       if (canMeasure) {
-        performance.mark(name + "-start");
+        performance.mark(`${name}-start`);
       }
       try {
-        // Modern plugins are async or normal functions, take zero or one argument (conf)
         if (plug.run.length <= 1) {
           await plug.run(config);
           resolve();
         } else {
+          console.warn(
+            `Plugin ${name} uses a deprecated callback signature. Return a Promise instead. Read more at: https://github.com/w3c/respec/wiki/Developers-Guide#plugins`
+          );
           plug.run(config, document, resolve);
         }
       } catch (err) {
@@ -40,8 +42,8 @@ function toRunnable(plug) {
         clearTimeout(timerId);
       }
       if (canMeasure) {
-        performance.mark(name + "-end");
-        performance.measure(name, name + "-start", name + "-end");
+        performance.mark(`${name}-end`);
+        performance.measure(name, `${name}-start`, `${name}-end`);
       }
     });
   };
@@ -49,12 +51,8 @@ function toRunnable(plug) {
 
 export async function runAll(plugs) {
   pub("start-all", respecConfig);
-  // TODO: assign defaults properly
-  if (!respecConfig.definitionMap) {
-    respecConfig.definitionMap = Object.create(null);
-  }
   if (canMeasure) {
-    performance.mark(name + "-start");
+    performance.mark(`${name}-start`);
   }
   await preProcessDone;
   const runnables = plugs.filter(plug => plug && plug.run).map(toRunnable);
@@ -70,7 +68,7 @@ export async function runAll(plugs) {
   pub("end-all", respecConfig);
   removeReSpec(document);
   if (canMeasure) {
-    performance.mark(name + "-end");
-    performance.measure(name, name + "-start", name + "-end");
+    performance.mark(`${name}-end`);
+    performance.measure(name, `${name}-start`, `${name}-end`);
   }
 }

@@ -1,20 +1,22 @@
 "use strict";
 
+import { flushIframes, makeRSDoc, makeStandardOps } from "../SpecHelper.js";
+
 describe("Core - exporter", () => {
   afterAll(flushIframes);
 
   async function getExportedDoc(ops) {
-    const { rsDocToDataURL } = await new Promise(resolve => {
-      require(["core/exporter"], resolve);
-    });
     const doc = await makeRSDoc(ops);
-    await doc.respecIsReady;
-    const parser = new DOMParser();
-    const docString = decodeURIComponent(
-      rsDocToDataURL("text/html", doc)
-    ).replace("data:text/html;charset=utf-8,", "");
-    const exportedDoc = parser.parseFromString(docString, "text/html");
-    return exportedDoc;
+    const dataURL = await new Promise(resolve => {
+      doc.defaultView.require(["core/exporter"], ({ rsDocToDataURL }) =>
+        resolve(rsDocToDataURL("text/html", doc))
+      );
+    });
+    const docString = decodeURIComponent(dataURL).replace(
+      "data:text/html;charset=utf-8,",
+      ""
+    );
+    return new DOMParser().parseFromString(docString, "text/html");
   }
 
   it("removes .removeOnSave elements", async () => {
@@ -26,9 +28,9 @@ describe("Core - exporter", () => {
     expect(doc.querySelectorAll(".removeOnSave").length).toBe(0);
   });
 
-  it("cleans up hyperHTML comments", async () => {
+  it("removes all comments", async () => {
     const ops = makeStandardOps();
-    ops.body = `<div><!--_hyper: LEAVE;-->PASS<!-- STAY --></div>`;
+    ops.body = `<div><!-- remove -->PASS <span><!-- remove --></span></div>`;
     const doc = await getExportedDoc(ops);
 
     const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_COMMENT);
@@ -36,13 +38,24 @@ describe("Core - exporter", () => {
     while (walker.nextNode()) {
       comments.push(walker.currentNode);
     }
+    expect(comments.length).toBe(0);
+  });
 
-    const hyperComments = comments.filter(comment =>
-      comment.textContent.startsWith("_hyper")
+  it("moves the W3C style sheet to be last thing in documents head", async () => {
+    const ops = makeStandardOps();
+    ops.body = `
+      <!-- add WebIDL style -->
+      <pre class="idl">
+        interface Foo {};
+      </pre>
+      <!-- add examples and hljs styles -->
+      <pre class="example js">
+        function Foo(){};
+      </pre>`;
+    const doc = await getExportedDoc(ops);
+    const { lastElementChild } = doc.head;
+    expect(lastElementChild.href).toBe(
+      "https://www.w3.org/StyleSheets/TR/2016/W3C-ED"
     );
-    expect(hyperComments.length).toBe(0);
-
-    expect(comments.length).toBe(1);
-    expect(comments[0].textContent.trim()).toBe("STAY");
   });
 });

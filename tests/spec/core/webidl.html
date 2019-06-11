@@ -3,18 +3,16 @@
   <head>
     <meta charset='utf-8'/>
     <title>WebIDL Tests</title>
-    <script class='remove' src='/js/deps/require.js' data-main='/js/profile-w3c-common'>
-    </script>
     <script class='remove'>
       var respecConfig = {
               specStatus:   "ED"
           ,   shortName:    "webidl"
           ,   editors:      [{ name: "Robin Berjon", url: "http://berjon.com/" }]
           ,   wg:           "ReSpec Hackin' Gang"
-          ,   wgURI:        "http://darobin.github.com/respec"
+          ,   wgURI:        "https://darobin.github.com/respec"
           ,   wgPublicList: "none"
-          ,   wgPatentURI:  "XXX"
-          ,   edDraftURI:   "http://darobin.github.com/respec"
+          ,   wgPatentURI:  "https://example.com/"
+          ,   edDraftURI:   "https://darobin.github.com/respec"
         };
     </script>
   </head>
@@ -250,8 +248,12 @@
         interface DocInterface {};
         interface DocIsNotCaseSensitive {};
         interface UndocInterface {};
+        namespace Afterglow {};
       </pre>
-      <p id='if-doc-p'><dfn>DocInterface</dfn> is an interface and so is <dfn>DoCiSnOtCaSeSeNsItIvE</dfn>.</p>
+      <p id='if-doc-p'>
+        <dfn>DocInterface</dfn> is an interface and so is <dfn>DoCiSnOtCaSeSeNsItIvE</dfn>.
+        <dfn>Afterglow</dfn> is a namespace.
+      </p>
     </section>
     <section>
       <h2>Constructors</h2>
@@ -313,23 +315,18 @@
           const double twice = 4.222222222;
           // 13
           const unrestricted double rambaldi = 47.0;
-
           // 14
-          const boolean? why = false;
-          // 15
-          const boolean? notSo = null;
-          // 16
           const short inf = Infinity;
-          // 17
+          // 15
           const short mininf = -Infinity;
-          // 18
+          // 16
           const short cheese = NaN;
-          // 19
+          // 17
           [Something] const short extAttr = NaN;
         };
       </pre>
       <p id="const-basic-doc">
-        <dfn data-dfn-for="ConstTest">rambaldi</dfn> is a constant and so are <dfn data-dfn-for="ConstTest">why</dfn> and <dfn data-dfn-for="ConstTest" data-lt="inf">this other thing</dfn>.
+        <dfn data-dfn-for="ConstTest">rambaldi</dfn> is a constant and so are <dfn data-dfn-for="ConstTest">bite</dfn> and <dfn data-dfn-for="ConstTest" data-lt="inf">this other thing</dfn>.
       </p>
     </section>
     <section>
@@ -587,7 +584,9 @@
       <p data-dfn-for="EnumBasic"><dfn>one</dfn> is first.</p>
       <p data-link-for="EnumBasic"><a>one</a> is referenced with a <code>[link-for]</code> attribute.</p>
       <p id="enum-ref-without-link-for"><a>EnumBasic.one</a> may also be referenced with fully-qualified name.</p>
+      <p><dfn data-dfn-for="EnumBasic">white space</dfn></p>
       <section id="enum-empty-sec" data-dfn-for="EmptyEnum">
+        <h2>Enumeration with an empty string</h2>
         <pre class="idl no-link-warnings">
         enum EmptyEnum {
           "",
@@ -598,6 +597,19 @@
         <p><dfn>""</dfn></p>...
         <p><dfn>not empty</dfn>...</p>
       </section>
+    </section>
+    <section id="multipleEnums" data-dfn-for="Test2">
+      <h2>Multiple unique enums</h2>
+      <pre class="idl">
+        enum Test1 { "enum" };
+        enum Test2 { "enum" };
+      </pre>
+      <p>
+        <!-- Test1's enum -->
+        <dfn data-dfn-for="Test1">enum</dfn>
+        <!-- Test2's enum -->
+        <dfn>enum</dfn>
+      </p>
     </section>
     <section>
       <h2>Callbacks</h2>
@@ -656,21 +668,6 @@
       </pre>
     </section>
     <section>
-      <h2>Implements</h2>
-      <p>
-        Basic implements.
-      </p>
-      <pre id='impl-basic' class='idl'>
-        Window implements Breakable;
-      </pre>
-      <p>
-        Less basic implements.
-      </p>
-      <pre id='impl-less-basic' class='idl'>
-        [Something]Window implements Breakable;
-      </pre>
-    </section>
-    <section>
       <h2>Includes</h2>
       <p>
         Basic includes.
@@ -714,6 +711,7 @@
       </p>
     </section>
     <section>
+      <h2>IDL block with arbitrary CSS classes</h2>
       <pre id='retain-css-classes' class='idl a b c overlarge'>
         interface NotTested {};
       </pre>
@@ -750,5 +748,53 @@
         callback CallBack = Z? (X x, optional Y y, /*trivia*/ optional Z z);
       </pre>
     </section>
+    <section data-dfn-for="CodedThings">
+        <h2><dfn>CodedThings</dfn> interface</h2>
+        <pre class="idl">
+        interface CodedThings {
+          attribute DOMString definedElsewhere;
+          attribute Bar barBar;
+          void doTheFoo();
+        };
+        </pre>
+        <dfn>doTheFoo()</dfn>
+        <dfn>barBar</dfn>
+      </section>
+      <section data-link-for="CodedThings">
+        <h2>All these things surrounded by code elements</h2>
+        <ol id="coded-things">
+          <li><dfn>CodedThings.definedElsewhere</dfn>
+          <li><a>CodedThings.barBar</a>
+          <li><a>barBar</a>
+          <li><a>CodedThings.doTheFoo()</a>
+          <li><a>CodedThings.doTheFoo</a>
+          <li><a>doTheFoo()</a>
+          <li><a>doTheFoo</a>
+        </ol>
+      </section>
+      <section id="idl-dfn-types">
+        <h2>It gives definitions the right idl type</h2>
+        <pre class="idl">
+          interface InterfaceType {
+            readonly attribute DOMString attributeType;
+            void operationType();
+          };
+          dictionary DictionaryType {
+            DOMString fieldType;
+          };
+          enum EnumType {
+            "enumValueType"
+          };
+        </pre>
+        <p>
+          <dfn>InterfaceType</dfn>
+          <dfn data-dfn-for="InterfaceType">attributeType</dfn>
+          <dfn data-dfn-for="InterfaceType">operationType</dfn>
+          <dfn>DictionaryType</dfn>
+          <dfn data-dfn-for="DictionaryType">fieldType</dfn>
+          <dfn>EnumType</dfn>
+          <dfn data-dfn-for="EnumType">enumValueType</dfn>
+        </p>
+      </section>
   </body>
 </html>

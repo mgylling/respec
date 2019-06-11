@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module core/data-cite
  *
@@ -13,8 +14,9 @@
  * Usage:
  * https://github.com/w3c/respec/wiki/data--cite
  */
-import { resolveRef, updateFromNetwork } from "core/biblio";
-import { showInlineError } from "core/utils";
+import { biblio, resolveRef, updateFromNetwork } from "./biblio.js";
+import { refTypeFromContext, showInlineWarning, wrapInner } from "./utils.js";
+import hyperHTML from "hyperhtml";
 export const name = "core/data-cite";
 
 function requestLookup(conf) {
@@ -23,37 +25,59 @@ function requestLookup(conf) {
     const originalKey = elem.dataset.cite;
     const { key, frag, path } = toCiteDetails(elem);
     let href = "";
+    let title = "";
     // This is just referring to this document
-    if (key === conf.shortName) {
+    if (key.toLowerCase() === conf.shortName.toLowerCase()) {
+      console.log(
+        elem,
+        `The reference "${key}" is resolved into the current document per \`conf.shortName\`.`
+      );
       href = document.location.href;
     } else {
       // Let's go look it up in spec ref...
       const entry = await resolveRef(key);
       cleanElement(elem);
       if (!entry) {
-        showInlineError(elem, `Couldn't find a match for "${originalKey}".`);
+        showInlineWarning(elem, `Couldn't find a match for "${originalKey}"`);
         return;
       }
       href = entry.href;
+      title = entry.title;
     }
     if (path) {
-      href = new URL(path, href).href;
+      // See: https://github.com/w3c/respec/issues/1856#issuecomment-429579475
+      const relPath = path.startsWith("/") ? `.${path}` : path;
+      href = new URL(relPath, href).href;
     }
     if (frag) {
       href = new URL(frag, href).href;
     }
     switch (elem.localName) {
       case "a": {
+        if (elem.textContent === "") {
+          elem.textContent = title;
+        }
         elem.href = href;
+        if (!path && !frag) {
+          const cite = document.createElement("cite");
+          elem.replaceWith(cite);
+          cite.append(elem);
+        }
         break;
       }
       case "dfn": {
-        const a = elem.ownerDocument.createElement("a");
-        a.href = href;
-        while (elem.firstChild) {
-          a.appendChild(elem.firstChild);
+        const anchor = hyperHTML`<a href="${href}">`;
+        if (!elem.textContent) {
+          anchor.textContent = title;
+          elem.append(anchor);
+        } else {
+          wrapInner(elem, anchor);
         }
-        elem.appendChild(a, elem);
+        if (!path && !frag) {
+          const cite = document.createElement("cite");
+          cite.append(anchor);
+          elem.append(cite);
+        }
         break;
       }
     }
@@ -66,15 +90,21 @@ function cleanElement(elem) {
     .forEach(attrName => elem.removeAttribute(attrName));
 }
 
+function makeComponentFinder(component) {
+  return key => {
+    const position = key.search(component);
+    return position !== -1 ? key.substring(position) : "";
+  };
+}
+
 function citeDetailsConverter(conf) {
+  const findFrag = makeComponentFinder("#");
+  const findPath = makeComponentFinder("/");
   return function toCiteDetails(elem) {
     const { dataset } = elem;
-    let { cite: key, citeFrag: frag, citePath: path } = dataset;
-    const isNormative = key.startsWith("!");
-    const pathPosition = key.search("/");
-    const fragPosition = key.search("#");
+    const { cite: rawKey, citeFrag, citePath } = dataset;
     // The key is a fragment, resolve using the shortName as key
-    if (key.startsWith("#") && !frag) {
+    if (rawKey.startsWith("#") && !citeFrag) {
       // Closes data-cite not starting with "#"
       const closest = elem.parentElement.closest(
         `[data-cite]:not([data-cite^="#"])`
@@ -82,42 +112,39 @@ function citeDetailsConverter(conf) {
       const { key: parentKey, isNormative: closestIsNormative } = closest
         ? toCiteDetails(closest)
         : { key: conf.shortName || "", isNormative: false };
-      elem.dataset.cite = closestIsNormative ? `!${parentKey}` : parentKey;
-      elem.dataset.citeFrag = key; // the key is acting as fragment
+      dataset.cite = closestIsNormative ? parentKey : `?${parentKey}`;
+      dataset.citeFrag = rawKey.replace("#", ""); // the key is acting as fragment
       return toCiteDetails(elem);
     }
-    if (fragPosition !== -1) {
-      frag = !frag ? key.substr(fragPosition) : frag;
-      key = key.substring(0, fragPosition);
-    }
-    if (pathPosition !== -1) {
-      path = !path ? key.substr(pathPosition) : path;
-      key = key.substring(0, pathPosition);
-    }
-    if (isNormative) {
-      key = key.substr(1);
-    }
-    if (frag && !frag.startsWith("#")) {
-      frag = "#" + frag;
-    }
-    // remove head / for URL resolution
-    if (path && path.startsWith("/")) {
-      path = path.substr(1);
-    }
-    return { key, isNormative, frag, path };
+    const frag = citeFrag ? `#${citeFrag}` : findFrag(rawKey);
+    const path = citePath || findPath(rawKey).split("#")[0]; // path is always before "#"
+    const { type } = refTypeFromContext(rawKey, elem);
+    const isNormative = type === "normative";
+    // key is before "/" and "#" but after "!" or "?" (e.g., ?key/path#frag)
+    const key = rawKey.split(/[/|#]/)[0].substring(/^[?|!]/.test(rawKey));
+    const details = { key, isNormative, frag, path };
+    return details;
   };
 }
 
 export async function run(conf) {
   const toCiteDetails = citeDetailsConverter(conf);
-  Array.from(document.querySelectorAll(["dfn[data-cite], a[data-cite]"]))
+  /** @type {NodeListOf<HTMLElement>} */
+  const cites = document.querySelectorAll("dfn[data-cite], a[data-cite]");
+  Array.from(cites)
     .filter(el => el.dataset.cite)
     .map(toCiteDetails)
+    // it's not the same spec
+    .filter(({ key }) => {
+      return key.toLowerCase() !== (conf.shortName || "").toLowerCase();
+    })
     .forEach(({ isNormative, key }) => {
-      const refSink = isNormative
-        ? conf.normativeReferences
-        : conf.informativeReferences;
-      refSink.add(key);
+      if (!isNormative && !conf.normativeReferences.has(key)) {
+        conf.informativeReferences.add(key);
+        return;
+      }
+      conf.normativeReferences.add(key);
+      conf.informativeReferences.delete(key);
     });
 }
 
@@ -144,8 +171,8 @@ export async function linkInlineCitations(doc, conf = respecConfig) {
 
   // we now go to network to fetch missing entries
   const newEntries = await updateFromNetwork(missingBibEntries);
-  Object.assign(conf.biblio, newEntries);
+  if (newEntries) Object.assign(biblio, newEntries);
 
-  const lookupRequests = elems.map(toLookupRequest);
+  const lookupRequests = [...new Set(elems)].map(toLookupRequest);
   return await Promise.all(lookupRequests);
 }

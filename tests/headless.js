@@ -1,24 +1,18 @@
 #!/usr/bin/env node
-/*eslint-env node*/
+// @ts-check
+/* eslint-env node */
 "use strict";
+const port = 5000;
 const testURLs = [
-  `file:///${__dirname}/../examples/basic.built.html`,
-  `file:///${__dirname}/../examples/basic.html`,
+  `http://localhost:${port}/examples/basic.built.html`,
+  `http://localhost:${port}/examples/basic.html`,
 ];
 const colors = require("colors");
 const { exec } = require("child_process");
 const moment = require("moment");
-colors.setTheme({
-  data: "grey",
-  debug: "cyan",
-  error: "red",
-  help: "cyan",
-  info: "green",
-  input: "grey",
-  prompt: "grey",
-  verbose: "cyan",
-  warn: "yellow",
-});
+
+const handler = require("serve-handler");
+const http = require("http");
 
 function toExecutable(cmd) {
   return {
@@ -41,6 +35,9 @@ function toExecutable(cmd) {
 }
 
 async function runRespec2html() {
+  const server = http.createServer(handler);
+  server.listen(port);
+
   const errors = new Set();
   // Incrementally spawn processes and add them to process counter.
   const executables = testURLs.map(url => {
@@ -53,12 +50,13 @@ async function runRespec2html() {
   let testCount = 1;
   for (const exe of executables) {
     try {
-      const testInfo = colors.info(`(test ${testCount++}/${testURLs.length})`);
+      const testInfo = colors.green(`(test ${testCount++}/${testURLs.length})`);
       const msg = ` 👷‍♀️  ${exe.cmd} ${testInfo}`;
       debug(msg);
       await exe.run();
     } catch (err) {
-      console.error(colors.error(err));
+      // eslint-disable-next-line no-console
+      console.error(colors.red(err));
       errors.add(exe.cmd);
     }
   }
@@ -69,7 +67,8 @@ async function runRespec2html() {
 }
 
 function debug(msg) {
-  console.log(colors.debug(`${colors.input(moment().format("LTS"))} ${msg}`));
+  // eslint-disable-next-line no-console
+  console.log(colors.grey(moment().format("LTS")) + colors.cyan(` ${msg}`));
 }
 
 async function run() {
@@ -77,6 +76,7 @@ async function run() {
   try {
     await runRespec2html();
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error(err);
     process.exit(1);
   }

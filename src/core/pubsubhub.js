@@ -1,3 +1,5 @@
+import { expose } from "./expose-modules.js";
+
 /**
  * Module core/pubsubhub
  *
@@ -12,7 +14,17 @@ export function pub(topic, ...data) {
   if (!subscriptions.has(topic)) {
     return; // Nothing to do...
   }
-  Array.from(subscriptions.get(topic)).forEach(cb => cb.apply(undefined, data));
+  Array.from(subscriptions.get(topic)).forEach(cb => {
+    try {
+      cb(...data);
+    } catch (err) {
+      pub(
+        "error",
+        `Error when calling function ${cb.name}. See developer console.`
+      );
+      console.error(err);
+    }
+  });
   if (window.parent === window.self) {
     return;
   }
@@ -67,3 +79,5 @@ sub("error", err => {
 sub("warn", str => {
   console.warn(str);
 });
+
+expose(name, { sub });

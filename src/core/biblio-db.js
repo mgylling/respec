@@ -7,12 +7,15 @@
  * It's a standalone module that can be imported into other modules.
  *
  */
-/*globals IDBKeyRange, DOMException, console */
-import { pub } from "core/pubsubhub";
+/* globals IDBKeyRange, DOMException */
+import { pub } from "./pubsubhub.js";
 export const name = "core/biblio-db";
 
 const ALLOWED_TYPES = new Set(["alias", "reference"]);
-// Database initialization, tracked by "readyPromise"
+/**
+ * Database initialization tracker
+ * @type {Promise<IDBDatabase>}
+ */
 const readyPromise = new Promise((resolve, reject) => {
   let request;
   try {
@@ -72,7 +75,7 @@ export const biblioDB = {
    * If it's an alias, it resolves it.
    *
    * @param {String} id The reference or alias to look for.
-   * @return {Object?} The reference or null.
+   * @return {Promise<Object?>} The reference or null.
    */
   async find(id) {
     if (await this.isAlias(id)) {
@@ -85,11 +88,11 @@ export const biblioDB = {
    *
    * @param {String} type One of the ALLOWED_TYPES.
    * @param {String} id The reference to find.
-   * @return {Boolean} True if it has it, false otherwise.
+   * @return {Promise<Boolean>} True if it has it, false otherwise.
    */
   async has(type, id) {
     if (!ALLOWED_TYPES.has(type)) {
-      throw new TypeError("Invalid type: " + type);
+      throw new TypeError(`Invalid type: ${type}`);
     }
     if (!id) {
       throw new TypeError("id is required");
@@ -169,7 +172,7 @@ export const biblioDB = {
    */
   async get(type, id) {
     if (!ALLOWED_TYPES.has(type)) {
-      throw new TypeError("Invalid type: " + type);
+      throw new TypeError(`Invalid type: ${type}`);
     }
     if (!id) {
       throw new TypeError("id is required");
@@ -241,7 +244,7 @@ export const biblioDB = {
    */
   async add(type, details) {
     if (!ALLOWED_TYPES.has(type)) {
-      throw new TypeError("Invalid type: " + type);
+      throw new TypeError(`Invalid type: ${type}`);
     }
     if (typeof details !== "object") {
       throw new TypeError("details should be an object");
