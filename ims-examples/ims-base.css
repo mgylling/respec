@@ -225,6 +225,7 @@ td, th {
   padding-right:1em;
   text-align: left;
   text-align: start;
+  vertical-align: top;
   border: 1px solid var(--gray);
 }
 
