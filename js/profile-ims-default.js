@@ -34,7 +34,7 @@ define([
   "./core/location-hash",
   "./core/l10n",
 // Similar to ims/compute and not used by IMS specs
-//"./w3c/defaults",
+  "./w3c/defaults",
   "./core/style",
 // Replaced by ims/style
 //"./w3c/style",
@@ -58,6 +58,7 @@ define([
   "./ims/abstract",
   "./core/data-transform",
   "./core/data-abbr",
+// Add ims/inlines
   "./ims/inlines",
   "./core/inlines",
 // Replaced by ims/conformance
@@ -79,9 +80,9 @@ define([
   "./core/webidl-index",
   "./core/link-to-dfn",
   "./core/render-biblio",
-// Replaced by ims/contributors
+// Replaced by ims/contrib
 //"./core/contrib",
-  "./ims/contributors",
+  "./ims/contrib",
   "./core/fix-headers",
   "./core/structure",
   "./core/informative",
@@ -106,11 +107,11 @@ define([
   "./ims/boilerplate",
   "./ims/cleanBody",
   "./ims/title-attrs",
-  "./ims/link-here",
   "./ims/scripts",
-  // Not working...disable until fixed
-  //"./ims/tooltips",
+// Not working...disable until fixed
+//"./ims/tooltips",
   "./ims/comments",
+  "./core/anchor-expander",
   /* Linter must be the last thing to run */
   "./core/linter",
 ], (runner, { ui }, ...plugins) => {
