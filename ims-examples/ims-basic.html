@@ -6,17 +6,17 @@
   <title>
     Replace me with a real title
   </title>
-  <script src='https://purl.imsglobal.org/spec/respec-ims-default.js' async class='remove'></script>
+  <script src='../js/deps/require.js' data-main='../js/profile-ims-default' async class='remove'></script>
   <script class='remove'>
     var respecConfig = {
-      specTitle: "Example 1 Specification",
+      specTitle: "Replace me with a real title",
       shortName: "example",
-      specStatus: "IMS Candidate Final",
+      specStatus: "IMS Base Document",
       specDate: "November 16th, 2017",
       specVersion: "1.0",
       specNature: "normative",
       specType: "spec",
-      overrideCSSLocation: "https://purl.imsglobal.org/spec/ims-base.css",
+      overrideCSSLocation: "ims-base.css",
       contributors: [
         {
           name: "First Last",
@@ -37,13 +37,14 @@
   <section id='abstract'>
     <h2>Abstract</h2>
     <p>
-      This is an abstract.
-    </p>
-  </section>
-  <section id='sotd'>
-    <h2>Scope of this Document</h2>
-    <p>
-      This is the scope of this document.
+      This section is required for IMS spec documents.
+      <pre class="example" title="Abstract in HTML">
+        &lt;section id='abstract'>
+          &lt;h2>Abstract&lt;/h2>
+      </pre>
+      <pre class="example" title="Abstract in Markdown">
+        ## Abstract
+      </pre>
     </p>
   </section>
   <section class="introductory" id="overview">
@@ -54,7 +55,7 @@
       This section has a CSS class "<code>introductory</code>", which means
       it will not appear in the <abbr title="Table of Contents">TOC</abbr>.
       Example Link to Section <a href="#logo"></a>.
-    </p>
+  </p>
   </section>
   <section class="informative" id="intro">
     <h2>
@@ -68,18 +69,32 @@
   </section>
   <section id="conformance">
     <h2>Conformance</h2>
+    <p>
+      This section is required for IMS spec documents. The section will be
+      filled with boilerplate text, including a reference to the
+      Conformance and Certification Guide in a section with <code>id="document-set"</code>.
+      If you do not want to include the reference, set
+      <code>conf.skipCertGuideConformanceRef = true</code>
+   </p>
+  </section>
+  <section id="document-set">
+    <h2>Document Set</h2>
+    <p>
+      This is where you would list the documents for the
+      specification.
+    </p>
   </section>
   <section data-dfn-for="Foo">
     <h2>
       <dfn>Foo</dfn> interface
     </h2>
     <pre class="idl">
-      [Constructor]
-      interface Foo {
-        attribute Bar bar;
-        void doTheFoo();
-      };
-      </pre>
+    [Exposed=Window, Constructor]
+    interface Foo {
+      attribute DOMString bar;
+      void doTheFoo();
+    };
+    </pre>
     <p>
       The <a>Foo</a> interface is nice. Lets you do stuff.
     </p>
@@ -97,11 +112,11 @@
       [[?HTML]]
     </p>
     <pre class="js example" title="Usage example">
-        const foo = new Foo();
-        if (foo.bar === "my bar") {
-          foo.doTheBar();
-        }
-      </pre>
+      const foo = new Foo();
+      if (foo.bar === "my bar") {
+        foo.doTheBar();
+      }
+    </pre>
   </section>
   <section id="logo">
     <h2>

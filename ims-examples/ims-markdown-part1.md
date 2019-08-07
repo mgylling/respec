@@ -21,11 +21,4 @@ This is the terminology text.
 This is the list of documents in this spec.
 
 ### Conformance
-
-## API
-
-<section class="appendix">
-## Examples
-This is the appendix with examples.
-</section>
 `;

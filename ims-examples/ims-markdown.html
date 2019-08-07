@@ -3,17 +3,18 @@
 
 <head>
   <meta charset='utf-8'>
-  <script src='https://purl.imsglobal.org/spec/respec-ims-default.js' async class='remove'></script>
+  <script src='../js/deps/require.js' data-main='../js/profile-ims-default' async class='remove'></script>
   <script class='remove'>
     var respecConfig = {
       format: "markdown",
       specTitle: "Example Markdown Specification",
       shortName: "mdexample",
-      specStatus: "IMS Candidate Final",
+      specStatus: "IMS Base Document",
       specDate: "November 16th, 2017",
       specVersion: "1.0",
       specNature: "normative",
       specType: "spec",
+      overrideCSSLocation: "https://purl.imsglobal.org/spec/ims-base.css",
       contributors: [
         {
           name: "First Last",
@@ -33,7 +34,12 @@
 </head>
 
 <body>
-  <div data-include="ims-3-md.md" data-include-replace=true></div>
+
+  <!--
+    There are two ways to embed markdown:
+  -->
+  <script class="transclude" data-id="mdbody" src="ims-markdown-part1.md"></script>
+  <div data-include="ims-markdown-part2.md" data-include-replace="true"></div>
 </body>
 
 </html>
