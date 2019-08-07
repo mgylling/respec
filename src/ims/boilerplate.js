@@ -49,7 +49,7 @@ export async function run(conf) {
   headerTop.appendChild(hd);
 
   const imgURL = "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
-  var logo = html`<a href='https://www.imsglobal.org' id='logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
+  var logo = html`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
   headerTop.appendChild(logo);
 
   header.appendChild(headerTop);
