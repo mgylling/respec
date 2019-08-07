@@ -6,6 +6,8 @@
 * - localBiblio
 * - ims-biblio on purl.imsglobal.org
 * - specref.org
+*
+* Note: Run before core/biblio
 */
 
 import { pub } from "../core/pubsubhub";

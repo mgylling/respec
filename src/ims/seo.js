@@ -5,6 +5,8 @@ export const name = "ims/seo";
  * Add a canonical href
  * 
  * @param {*} conf respecConfig
+ *
+ * Can be run before or after core/seo
  */
 export async function run(conf) {
 
