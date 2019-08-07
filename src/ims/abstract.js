@@ -14,7 +14,7 @@ export async function run(conf) {
   var abstract = document.querySelector("#abstract");
   if(abstract === null) {
       pub("warn", "No abstract found. Consider adding a section element with an "
-      + "id of 'abstract', a class of 'introductory' and a h2 child as the first child of the body");
+      + "id of 'abstract'");
       //insert a temp abstract
       var tempAbstract = toHTMLNode("<section id='abstract' class='introductory remove'><h2>h</h2></section>");
       document.body.prepend(tempAbstract);
