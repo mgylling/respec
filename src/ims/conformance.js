@@ -148,6 +148,7 @@ export async function run(conf) {
 
     // It is an IMS error if there is no conformance section found
     var conformance = document.querySelector("section#conformance");
+    if (!conformance) conformance = document.querySelector("section#conformance-0");
     if (!conformance) {
         pub("error", "No section found with id 'conformance'");
         return;
