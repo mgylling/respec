@@ -27,7 +27,6 @@ export function checkLimitReached(response) {
       checkLimitReached.warned = true;
       const msg = `You have run out of github requests. Some github assets will not show up.`;
       pub("warning", msg);
-      window.pub = pub;
     }
     return true;
   }
@@ -56,8 +55,17 @@ export async function fetchAndStoreGithubIssues(conf) {
 }
 
 /**
- * @typedef {{ color: string, name: string }} GitHubLabel
- * @typedef {{ title: string, number: number, state: string, message: string, body_html: string, labels: GitHubLabel[] }} GitHubIssue
+ * @typedef {object} GitHubLabel
+ * @property {string} color
+ * @property {string} name
+ *
+ * @typedef {object} GitHubIssue
+ * @property {string} title
+ * @property {number} number
+ * @property {string} state
+ * @property {string} message
+ * @property {string} body_html
+ * @property {GitHubLabel[]} labels
  *
  * @param {Response} response
  * @param {number} issueNumber
@@ -75,9 +83,7 @@ async function processResponse(response, issueNumber) {
     issue.message = `Error JSON parsing issue #${issueNumber} from GitHub.`;
   }
   if (!response.ok || issue.message) {
-    const msg = `Error fetching issue #${issueNumber} from GitHub. ${
-      issue.message
-    } (HTTP Status ${response.status}).`;
+    const msg = `Error fetching issue #${issueNumber} from GitHub. ${issue.message} (HTTP Status ${response.status}).`;
     pub("error", msg);
   }
   return [issueNumber, issue];

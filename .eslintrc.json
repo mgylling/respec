@@ -8,6 +8,8 @@
     "worker": true
   },
   "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  // TODO: Remove this when https://github.com/eslint/eslint/issues/11803 gets a fix
+  "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2019
@@ -21,6 +23,7 @@
     "no-duplicate-imports": 2,
     "no-eval": "error",
     "no-implied-eval": "error",
+    "no-prototype-builtins": 0,
     "no-unused-vars": ["error", {
       "args": "all",
       "argsIgnorePattern": "^_",
@@ -33,6 +36,7 @@
     "prefer-const": 2,
     "prefer-template": 2,
     "quotes": 0,
+    "require-atomic-updates": 0,
     "semi": ["error", "always"],
     "sort-imports": 2,
     "spaced-comment": ["error", "always", { "block": { "balanced": true } }]

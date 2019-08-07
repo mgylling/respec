@@ -1,11 +1,6 @@
 "use strict";
 
-import {
-  flushIframes,
-  makeRSDoc,
-  makeStandardOps,
-  xrefTestUrl,
-} from "../SpecHelper.js";
+import { flushIframes, makeRSDoc, makeStandardOps } from "../SpecHelper.js";
 
 describe("Core - Inlines", () => {
   afterAll(flushIframes);
@@ -28,11 +23,11 @@ describe("Core - Inlines", () => {
     const doc = await makeRSDoc(ops);
 
     const norm = [...doc.querySelectorAll("#normative-references dt")];
-    expect(norm.length).toBe(4);
     expect(norm.map(el => el.textContent)).toEqual([
       "[dom]",
       "[html]",
       "[RFC2119]", // added by conformance section
+      "[RFC8174]", // added by conformance section
       "[svg]",
     ]);
 
@@ -41,13 +36,15 @@ describe("Core - Inlines", () => {
     expect(inform.map(el => el.textContent)).toEqual(["[infra]", "[webidl]"]);
 
     const links = [...doc.querySelectorAll("section cite a")];
-    expect(links.length).toBe(7);
+    expect(links.length).toBe(8);
     expect(links[0].textContent).toBe("RFC2119");
     expect(links[0].getAttribute("href")).toBe("#bib-rfc2119");
-    expect(links[1].textContent).toBe("dom");
-    expect(links[1].getAttribute("href")).toBe("#bib-dom");
-    expect(links[5].textContent).toBe("svg");
-    expect(links[5].getAttribute("href")).toBe("#bib-svg");
+    expect(links[1].textContent).toBe("RFC8174");
+    expect(links[1].getAttribute("href")).toBe("#bib-rfc8174");
+    expect(links[2].textContent).toBe("dom");
+    expect(links[2].getAttribute("href")).toBe("#bib-dom");
+    expect(links[6].textContent).toBe("svg");
+    expect(links[6].getAttribute("href")).toBe("#bib-svg");
 
     const illegalCite = doc.querySelector("#illegal cite");
     expect(illegalCite.classList.contains("respec-offending-element")).toBe(
@@ -236,6 +233,13 @@ describe("Core - Inlines", () => {
         <p id="inlines">
           [= \`link\` element =] and [= some \`Coded\` thing =]
         </p>
+        <p id="multiline">
+        [=environment 
+            settings
+          object / 
+          responsible 
+          document =]
+        </p>
       </section>
     `;
     const doc = await makeRSDoc(makeStandardOps(null, body));
@@ -248,6 +252,9 @@ describe("Core - Inlines", () => {
     expect(someCodedThing.getAttribute("href")).toBe("#dfn-some-coded-thing");
     const codedThingCodeElem = someCodedThing.querySelector("code");
     expect(codedThingCodeElem.textContent).toBe("Coded");
+
+    const responsibleDocLink = doc.querySelector("#multiline a");
+    expect(responsibleDocLink.hash).toBe("#responsible-document");
   });
 
   it("proceseses `backticks` as code", async () => {
@@ -276,6 +283,32 @@ describe("Core - Inlines", () => {
 
     // no-match
     expect(doc.querySelector("#no-match code")).toBeNull();
+  });
+
+  it('processes inline {{"Exceptions"}}', async () => {
+    const body = `
+      <section>
+        <p id="test"> {{
+          "SyntaxError"
+        }}</p>
+      </section>
+    `;
+    const doc = await makeRSDoc(makeStandardOps(null, body));
+    const syntaxErrorAnchor = doc.querySelector("#test a");
+    expect(syntaxErrorAnchor.href).toBe(
+      "https://heycam.github.io/webidl/#syntaxerror"
+    );
+  });
+
+  it("processes inline inline [^element^]s.", async () => {
+    const body = `
+      <section>
+        <p id="test">[^body^]</p>
+      </section>
+    `;
+    const doc = await makeRSDoc(makeStandardOps({ xref: ["HTML"] }, body));
+    const bodyAnchor = doc.querySelector("#test a");
+    expect(bodyAnchor.hash).toBe("#the-body-element");
   });
 
   it("processes [= BikeShed style inline links =]", async () => {
@@ -315,7 +348,7 @@ describe("Core - Inlines", () => {
         </p>
       </section>
     `;
-    const config = { xref: { url: xrefTestUrl("inline-links") } };
+    const config = { xref: true };
     const doc = await makeRSDoc(makeStandardOps(config, body));
     const dfnId = doc.querySelector("#definitions dfn").id;
     const anchors = doc.querySelectorAll("#simple-links a");
@@ -347,6 +380,47 @@ describe("Core - Inlines", () => {
     );
     expect(multiMapForEach.href).toBe(
       "https://infra.spec.whatwg.org/#map-iterate"
+    );
+  });
+
+  it("processes {{ forContext/term }} IDL", async () => {
+    const body = `
+      <section>
+        <p id="link1">{{ Window.event }}</p>
+        <p id="link2">{{ Window/event }}</p>
+        <p id="link3">{{ EventTarget/addEventListener(type, callback) }}</p>
+        <p id="link4">{{
+          Window
+          /
+          event
+        }}</p>
+        <p id="link5">{{ ReferrerPolicy/"no-referrer" }}</p>
+      </section>
+    `;
+    const config = { xref: ["DOM", "HTML", "referrer-policy"] };
+    const doc = await makeRSDoc(makeStandardOps(config, body));
+
+    expect(doc.getElementById("link1").textContent).toBe("Window.event");
+    const [linkWindow, linkWindowEvent] = doc.querySelectorAll("#link1 a");
+    expect(linkWindow.hash).toBe("#window");
+    expect(linkWindowEvent.hash).toBe("#dom-window-event");
+
+    expect(doc.getElementById("link2").textContent).toBe("event");
+    expect(doc.querySelector("#link2 a").hash).toBe("#dom-window-event");
+
+    expect(doc.getElementById("link3").textContent).toBe(
+      "addEventListener(type, callback)"
+    );
+    expect(doc.querySelector("#link3 a").hash).toBe(
+      "#dom-eventtarget-addeventlistener"
+    );
+
+    expect(doc.getElementById("link4").textContent).toBe("event");
+    expect(doc.querySelector("#link4 a").hash).toBe("#dom-window-event");
+
+    expect(doc.querySelector("#link5 a").textContent).toBe("no-referrer");
+    expect(doc.querySelector("#link5 a").hash).toBe(
+      "#dom-referrerpolicy-no-referrer"
     );
   });
 });

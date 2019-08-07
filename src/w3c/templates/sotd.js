@@ -18,14 +18,7 @@ export default (conf, opts) => {
                 ${!conf.sotdAfterWGinfo ? opts.additionalContent : ""}
                 ${!conf.overrideStatus
                   ? html`
-                      <p>
-                        This document was published by ${[conf.wgHTML]} as
-                        ${conf.anOrA} ${conf.longStatus}.
-                        ${conf.notYetRec
-                          ? "This document is intended to become a W3C Recommendation."
-                          : ""}
-                      </p>
-                      ${linkToCommunity(conf, opts)}
+                      ${linkToWorkingGroup(conf)} ${linkToCommunity(conf, opts)}
                       ${conf.isCR || conf.isPER || conf.isPR
                         ? html`
                             <p>
@@ -67,9 +60,7 @@ export default (conf, opts) => {
                                       >subscribe</a
                                     >,
                                     <a
-                                      href="${`https://lists.w3.org/Archives/Public/${
-                                        conf.wgPublicList
-                                      }/`}"
+                                      href="${`https://lists.w3.org/Archives/Public/${conf.wgPublicList}/`}"
                                       >archives</a
                                     >) through ${conf.humanPREnd}. Advisory
                                     Committee Representatives should consult
@@ -332,6 +323,21 @@ function noteForTeamSubmission(conf, opts) {
   `;
 }
 
+function linkToWorkingGroup(conf) {
+  if (!conf.wg) {
+    return;
+  }
+  return html`
+    <p>
+      This document was published by ${[conf.wgHTML]} as ${conf.anOrA}
+      ${conf.longStatus}.
+      ${conf.notYetRec
+        ? "This document is intended to become a W3C Recommendation."
+        : ""}
+    </p>
+  `;
+}
+
 function linkToCommunity(conf, opts) {
   if (!conf.github && !conf.wgPublicList) {
     return;
@@ -354,9 +360,7 @@ function linkToCommunity(conf, opts) {
               >${conf.wgPublicList}@w3.org</a
             >
             (<a
-              href="${`https://lists.w3.org/Archives/Public/${
-                conf.wgPublicList
-              }/`}"
+              href="${`https://lists.w3.org/Archives/Public/${conf.wgPublicList}/`}"
               >archives</a
             >)${conf.subjectPrefix
               ? html`

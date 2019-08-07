@@ -13,11 +13,6 @@ const topLevelEntities = new Set([
   "typedef",
 ]);
 
-// TODO: make these linkable somehow.
-// https://github.com/w3c/respec/issues/999
-// https://github.com/w3c/respec/issues/982
-const unlinkable = new Set(["maplike", "setlike", "stringifier"]);
-
 /**
  * This function looks for a <dfn> element whose title is 'name' and
  * that is "for" 'parent', which is the empty string when 'name'
@@ -30,31 +25,9 @@ const unlinkable = new Set(["maplike", "setlike", "stringifier"]);
  * the function returns 'undefined'.
  * @param {*} defn
  * @param {string} name
- * @param {{ parent?: string; suppressWarnings?: boolean }} options
  */
-export function findDfn(
-  defn,
-  name,
-  { parent = "", suppressWarnings = false } = {}
-) {
-  if (unlinkable.has(name)) {
-    return;
-  }
-  const dfn = tryFindDfn(defn, parent, name);
-  if (dfn) {
-    return dfn;
-  }
-  const showWarnings = name && !(suppressWarnings || defn.type === "typedef");
-  if (showWarnings) {
-    const styledName = defn.type === "operation" ? `${name}()` : name;
-    const ofParent = parent ? ` \`${parent}\`'s` : "";
-    pub(
-      "warn",
-      `Missing \`<dfn>\` for${ofParent} \`${styledName}\` ${
-        defn.type
-      }. [More info](https://github.com/w3c/respec/wiki/WebIDL-thing-is-not-defined).`
-    );
-  }
+export function findDfn(defn, name, { parent = "" } = {}) {
+  return tryFindDfn(defn, parent, name);
 }
 
 /**
@@ -167,7 +140,7 @@ function findNormalDfn(defn, parent, name) {
     if (name !== resolvedName) {
       dfns[0].dataset.lt = resolvedName;
     }
-    return decorateDfn(dfns[0], defn, parentLow, nameLow);
+    return dfns[0];
   }
 }
 
@@ -177,10 +150,15 @@ function findNormalDfn(defn, parent, name) {
  * @param {string} parent
  * @param {string} name
  */
-function decorateDfn(dfn, defn, parent, name) {
+export function decorateDfn(dfn, defn, parent, name) {
+  parent = parent.toLowerCase();
   if (!dfn.id) {
     const middle = parent ? `${parent}-` : "";
-    const last = name.replace(/[()]/g, "").replace(/\s/g, "-");
+    let last = name
+      .toLowerCase()
+      .replace(/[()]/g, "")
+      .replace(/\s/g, "-");
+    if (last === "") last = "the-empty-string";
     dfn.id = `dom-${middle}${last}`;
   }
   dfn.dataset.idl = defn.type;
@@ -235,10 +213,9 @@ function getDfns(dfnForArray, parent, originalName, type) {
  * @return {string}
  */
 function getDataType(idlStruct) {
-  const { idlType, generic, type, body, union } = idlStruct;
+  const { idlType, generic, union } = idlStruct;
   if (typeof idlType === "string") return idlType;
   if (generic) return generic;
-  if (type === "operation") return getDataType(body.idlType);
   // join on "|" handles for "unsigned short" etc.
   if (union) return idlType.map(getDataType).join("|");
   return getDataType(idlType);

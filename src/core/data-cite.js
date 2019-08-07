@@ -15,8 +15,12 @@
  * https://github.com/w3c/respec/wiki/data--cite
  */
 import { biblio, resolveRef, updateFromNetwork } from "./biblio.js";
-import { refTypeFromContext, showInlineWarning, wrapInner } from "./utils.js";
-import hyperHTML from "hyperhtml";
+import {
+  refTypeFromContext,
+  showInlineError,
+  showInlineWarning,
+  wrapInner,
+} from "./utils.js";
 export const name = "core/data-cite";
 
 function requestLookup(conf) {
@@ -54,7 +58,7 @@ function requestLookup(conf) {
     }
     switch (elem.localName) {
       case "a": {
-        if (elem.textContent === "") {
+        if (elem.textContent === "" && elem.dataset.lt !== "the-empty-string") {
           elem.textContent = title;
         }
         elem.href = href;
@@ -66,7 +70,8 @@ function requestLookup(conf) {
         break;
       }
       case "dfn": {
-        const anchor = hyperHTML`<a href="${href}">`;
+        const anchor = document.createElement("a");
+        anchor.href = href;
         if (!elem.textContent) {
           anchor.textContent = title;
           elem.append(anchor);
@@ -78,6 +83,15 @@ function requestLookup(conf) {
           cite.append(anchor);
           elem.append(cite);
         }
+        if ("export" in elem.dataset) {
+          showInlineError(
+            elem,
+            "Exporting an linked external definition is not allowed. Please remove the `data-export` attribute",
+            "Please remove the `data-export` attribute."
+          );
+          delete elem.dataset.export;
+        }
+        elem.dataset.noExport = "";
         break;
       }
     }
@@ -90,6 +104,10 @@ function cleanElement(elem) {
     .forEach(attrName => elem.removeAttribute(attrName));
 }
 
+/**
+ * @param {string} component
+ * @return {(key: string) => string}
+ */
 function makeComponentFinder(component) {
   return key => {
     const position = key.search(component);
@@ -97,6 +115,15 @@ function makeComponentFinder(component) {
   };
 }
 
+/**
+ * @typedef {object} CiteDetails
+ * @property {string} key
+ * @property {boolean} isNormative
+ * @property {string} frag
+ * @property {string} path
+ *
+ * @return {(elem: HTMLElement) => CiteDetails};
+ */
 function citeDetailsConverter(conf) {
   const findFrag = makeComponentFinder("#");
   const findPath = makeComponentFinder("/");
@@ -106,6 +133,7 @@ function citeDetailsConverter(conf) {
     // The key is a fragment, resolve using the shortName as key
     if (rawKey.startsWith("#") && !citeFrag) {
       // Closes data-cite not starting with "#"
+      /** @type {HTMLElement} */
       const closest = elem.parentElement.closest(
         `[data-cite]:not([data-cite^="#"])`
       );
@@ -121,7 +149,8 @@ function citeDetailsConverter(conf) {
     const { type } = refTypeFromContext(rawKey, elem);
     const isNormative = type === "normative";
     // key is before "/" and "#" but after "!" or "?" (e.g., ?key/path#frag)
-    const key = rawKey.split(/[/|#]/)[0].substring(/^[?|!]/.test(rawKey));
+    const hasPrecedingMark = /^[?|!]/.test(rawKey);
+    const key = rawKey.split(/[/|#]/)[0].substring(Number(hasPrecedingMark));
     const details = { key, isNormative, frag, path };
     return details;
   };
@@ -148,6 +177,10 @@ export async function run(conf) {
     });
 }
 
+/**
+ * @param {Document} doc
+ * @param {*} conf
+ */
 export async function linkInlineCitations(doc, conf = respecConfig) {
   const toLookupRequest = requestLookup(conf);
   const elems = [
@@ -160,7 +193,7 @@ export async function linkInlineCitations(doc, conf = respecConfig) {
   const promisesForMissingEntries = elems
     .map(citeConverter)
     .map(async entry => {
-      const result = await resolveRef(entry);
+      const result = await resolveRef(entry.key);
       return { entry, result };
     });
   const bibEntries = await Promise.all(promisesForMissingEntries);

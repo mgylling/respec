@@ -161,7 +161,9 @@ export function renderInlineCitation(ref) {
   return hyperHTML`[<cite><a class="bibref" href="${href}">${key}</a></cite>]`;
 }
 
-// renders a reference
+/**
+ * renders a reference
+ */
 function showRef({ ref, refcontent }) {
   const refId = `bib-${ref.toLowerCase()}`;
   if (refcontent) {
@@ -236,7 +238,9 @@ export function stringifyReference(ref) {
   return output;
 }
 
-// get aliases for a reference "key"
+/**
+ * get aliases for a reference "key"
+ */
 function getAliases(refs) {
   return refs.reduce((aliases, ref) => {
     const key = ref.refcontent.id;
@@ -248,8 +252,10 @@ function getAliases(refs) {
   }, new Map());
 }
 
-// fix biblio reference URLs
-// Add title attribute to references
+/**
+ * fix biblio reference URLs
+ * Add title attribute to references
+ */
 function decorateInlineReference(refs, aliases) {
   refs
     .map(({ ref, refcontent }) => {
@@ -265,11 +271,14 @@ function decorateInlineReference(refs, aliases) {
       elems.forEach(a => {
         a.setAttribute("href", refUrl);
         a.setAttribute("title", refcontent.title);
+        a.dataset.linkType = "biblio";
       });
     });
 }
 
-// warn about bad references
+/**
+ * warn about bad references
+ */
 function warnBadRefs(badRefs) {
   badRefs.forEach(({ ref }) => {
     const badrefs = [
