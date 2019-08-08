@@ -153,7 +153,7 @@ div.subtitle {
 
 /** Examples *******************************************************************/
 
-/* .example {
+.example {
   border: 1px solid var(--darkgray);;
   background: var(--lightgray);
   counter-increment: example;
@@ -166,13 +166,13 @@ div.subtitle {
     color: white;
 }
 
-.example pre {
+/* .example pre {
   margin-top:0;
   overflow: scroll;
   word-wrap: normal;
   overflow-wrap: normal;
-}
-
+} */
+/* 
 .example::before, .example > .marker {
 	text-transform: uppercase;
 	color: #827017;
@@ -316,7 +316,14 @@ dt > dfn {
 
 /** "Link here" for section headings  *****************************************/
 
-a[href].hidden-reveal::before, a[href].self-link::before {
+a[href].hidden-reveal::before {
+	content: "›";
+}
+
+/* w3c/respec change in how section headers are formed */
+h2 > a[href].self-link::before, h3 > a[href].self-link::before, 
+h4 > a[href].self-link::before, h5 > a[href].self-link::before,
+h6 > a[href].self-link::before {
 	content: "›";
 }
 
