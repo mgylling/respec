@@ -46,7 +46,7 @@ header {
   justify-content: space-between;
 }
 
-a#logo {
+a#logo, a#ims-logo {
 	text-decoration: none;
 	border:0;
 }
@@ -316,7 +316,7 @@ dt > dfn {
 
 /** "Link here" for section headings  *****************************************/
 
-a[href].hidden-reveal::before {
+a[href].hidden-reveal::before, a[href].self-link::before {
 	content: "›";
 }
 
