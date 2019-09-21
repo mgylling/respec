@@ -25,10 +25,6 @@ body {
   font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
-div#ipr, div#endWarranty, section#contributors, .condensed {
-  font-family: 'RobotoCondensed', Arial, Helvetica, sans-serif;
-}
-
 pre, code, samp {
   font-family: 'Source Code Pro', monospace;
 }
@@ -61,7 +57,6 @@ div.subtitle {
 }
 
 #cpr {
-  font-size: 80%;
 	margin-bottom: 1.5em;
 	margin-top: 2.5em;
 }
@@ -166,28 +161,10 @@ div.subtitle {
     color: white;
 }
 
-/* .example pre {
-  margin-top:0;
-  overflow: scroll;
-  word-wrap: normal;
-  overflow-wrap: normal;
-} */
-/* 
-.example::before, .example > .marker {
-	text-transform: uppercase;
-	color: #827017;
-	min-width: 7.5em;
-	display: block;
-} */
-
 /** Footer ******************************************************************/
 
 section#revisionhistory table {
 	margin-bottom: 3em;
-}
-
-div#ipr, div#endWarranty {
-  font-size: 80%;
 }
 
 div#endWarranty p {
