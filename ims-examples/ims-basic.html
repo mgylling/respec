@@ -55,7 +55,7 @@
       This section has a CSS class "<code>introductory</code>", which means
       it will not appear in the <abbr title="Table of Contents">TOC</abbr>.
       Example Link to Section <a href="#logo"></a>.
-  </p>
+    </p>
   </section>
   <section class="informative" id="intro">
     <h2>
@@ -75,7 +75,7 @@
       Conformance and Certification Guide in a section with <code>id="document-set"</code>.
       If you do not want to include the reference, set
       <code>conf.skipCertGuideConformanceRef = true</code>
-   </p>
+    </p>
   </section>
   <section id="document-set">
     <h2>Document Set</h2>
@@ -89,14 +89,18 @@
       <dfn>Foo</dfn> interface
     </h2>
     <pre class="idl">
-    [Exposed=Window, Constructor]
+    [Exposed=Window]
     interface Foo {
+      constructor();
       attribute DOMString bar;
       void doTheFoo();
     };
     </pre>
     <p>
       The <a>Foo</a> interface is nice. Lets you do stuff.
+    </p>
+    <p>
+      The <dfn>Foo.constructor()</dfn> creates a Foo instance.
     </p>
     <p>
       The <dfn>bar</dfn> attribute, returns 🍺.
@@ -215,15 +219,15 @@
         "createdTime": new Date().toISOString(),
         "activityId": "unit_1_activity_5",
         "data": {
-        "choice": "blue",
-        "directionLine": "What color is the sky?",
-        "choices": ["blue","red","green"],
-        "correct": "blue"
-      },
-      "profile": "ims.qti_v2p1.choice",
-      "extensions": {
-      "vnd.vst.timesync_offset": 42000
-      }
+          "choice": "blue",
+          "directionLine": "What color is the sky?",
+          "choices": ["blue","red","green"],
+          "correct": "blue"
+        },
+        "profile": "ims.qti_v2p1.choice",
+        "extensions": {
+          "vnd.vst.timesync_offset": 42000
+        }
       }
       </code></pre>
       <figcaption>Example of the ActivityState object.</span>
