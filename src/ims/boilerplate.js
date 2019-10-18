@@ -139,6 +139,7 @@ export async function run(conf) {
     var iprTable = `<table>
       <thead>
         <tr>
+          <th>Spec version</th>
           <th>Org name</th>
           <th>Date election made</th>
           <th>Necessary claims</th>
@@ -148,6 +149,7 @@ export async function run(conf) {
       <tbody>`;
     conf.iprs.forEach(element => {
       iprTable += `<tr>
+          <td>${element.specVersion}</td>
           <td>${element.company}</td>
           <td>${element.electionDate}</td>
           <td>${element.necessaryClaims}</td>
