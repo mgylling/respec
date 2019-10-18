@@ -97,7 +97,7 @@ function getNormativeText(conf) {
       pub("warn", "No mainSpecTitle property found in config')");
     }
 
-    if (!conf.mainSpecTitle) {
+    if (!conf.mainSpecBiblioKey) {
       pub("warn", "No mainSpecBiblioKey property found in config')");
     }
 
