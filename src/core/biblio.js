@@ -1,3 +1,4 @@
+// @ts-check
 // Module core/biblio
 // Pre-processes bibliographic references
 // Configuration:
@@ -104,16 +105,17 @@ export async function run(conf) {
     pub("warn", msg);
   }
   conf.biblio = biblio;
-  const localAliases = Array.from(Object.keys(conf.localBiblio))
+  const localAliases = Object.keys(conf.localBiblio)
     .filter(key => conf.localBiblio[key].hasOwnProperty("aliasOf"))
-    .map(key => conf.localBiblio[key].aliasOf);
+    .map(key => conf.localBiblio[key].aliasOf)
+    .filter(key => !conf.localBiblio.hasOwnProperty(key));
   normalizeReferences(conf);
   const allRefs = getRefKeys(conf);
   const neededRefs = allRefs.normativeReferences
     .concat(allRefs.informativeReferences)
     // Filter, as to not go to network for local refs
     .filter(key => !conf.localBiblio.hasOwnProperty(key))
-    // but include local aliases, in case they refer to external specs
+    // but include local aliases which refer to external specs
     .concat(localAliases)
     // remove duplicates
     .reduce((collector, item) => {

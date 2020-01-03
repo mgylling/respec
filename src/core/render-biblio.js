@@ -4,8 +4,8 @@
 
 import { addId } from "./utils.js";
 import { biblio } from "./biblio.js";
-import { lang as defaultLang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import { getIntlData } from "../core/l10n.js";
+import { hyperHTML } from "./import-maps.js";
 import { pub } from "./pubsubhub.js";
 
 export const name = "core/render-biblio";
@@ -28,9 +28,7 @@ const localizationStrings = {
   },
 };
 
-const lang = defaultLang in localizationStrings ? defaultLang : "en";
-
-const l10n = localizationStrings[lang];
+const l10n = getIntlData(localizationStrings);
 
 const REF_STATUSES = new Map([
   ["CR", "W3C Candidate Recommendation"],
@@ -61,13 +59,17 @@ export function run(conf) {
   const informs = Array.from(conf.informativeReferences);
   const norms = Array.from(conf.normativeReferences);
 
-  if (!informs.length && !norms.length && !conf.refNote) return;
+  if (!informs.length && !norms.length) return;
 
-  const refsec = hyperHTML`
-    <section id='references' class='appendix'>
-      <h2>${l10n.references}</h2>
-      ${conf.refNote ? hyperHTML`<p>${conf.refNote}</p>` : ""}
-    </section>`;
+  const refSection =
+    document.querySelector("section#references") ||
+    hyperHTML`<section id='references'></section>`;
+
+  if (!document.querySelector("section#references > h2")) {
+    refSection.prepend(hyperHTML`<h2>${l10n.references}</h2>`);
+  }
+
+  refSection.classList.add("appendix");
 
   for (const type of ["Normative", "Informative"]) {
     const refs = type === "Normative" ? norms : informs;
@@ -113,14 +115,14 @@ export function run(conf) {
       <dl class='bibliography'>
         ${refsToShow.map(showRef)}
       </dl>`);
-    refsec.appendChild(sec);
+    refSection.appendChild(sec);
 
     const aliases = getAliases(goodRefs);
     decorateInlineReference(uniqueRefs, aliases);
     warnBadRefs(badRefs);
   }
 
-  document.body.appendChild(refsec);
+  document.body.appendChild(refSection);
 }
 
 /**
@@ -158,7 +160,7 @@ function toRefContent(ref) {
 export function renderInlineCitation(ref) {
   const key = ref.replace(/^(!|\?)/, "");
   const href = `#bib-${key.toLowerCase()}`;
-  return hyperHTML`[<cite><a class="bibref" href="${href}">${key}</a></cite>]`;
+  return hyperHTML`[<cite><a class="bibref" href="${href}" data-link-type="biblio">${key}</a></cite>]`;
 }
 
 /**

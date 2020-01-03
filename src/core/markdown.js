@@ -44,7 +44,7 @@
  * The whitespace of pre elements are left alone.
  */
 
-import marked from "marked";
+import { marked } from "./import-maps.js";
 export const name = "core/markdown";
 
 const gtEntity = /&gt;/gm;
@@ -85,6 +85,25 @@ const inlineElems = new Set([
   "tt",
   "var",
 ]);
+
+class Renderer extends marked.Renderer {
+  code(code, language, isEscaped) {
+    // regex to check whether the language is webidl
+    if (/(^webidl$)/i.test(language)) {
+      return `<pre class="idl">${code}</pre>`;
+    }
+    return super.code(code, language, isEscaped);
+  }
+
+  heading(text, level, raw, slugger) {
+    const headingWithIdRegex = /(.+)\s+{#([\w-]+)}$/;
+    if (headingWithIdRegex.test(text)) {
+      const [, textContent, id] = text.match(headingWithIdRegex);
+      return `<h${level} id="${id}">${textContent}</h${level}>`;
+    }
+    return super.heading(text, level, raw, slugger);
+  }
+}
 
 /**
  * @param {string} text
@@ -200,22 +219,49 @@ export function markdownToHtml(text) {
   const potentialMarkdown = normalizedLeftPad
     .replace(gtEntity, ">")
     .replace(ampEntity, "&");
+  // @ts-ignore
   const result = marked(potentialMarkdown, {
     sanitize: false,
     gfm: true,
     headerIds: false,
+    langPrefix: "",
+    renderer: new Renderer(),
   });
   return result;
 }
 
-function processElements(selector) {
+/**
+ * @param {string} selector
+ * @return {(el: Element) => Element[]}
+ */
+function convertElements(selector) {
   return element => {
-    const elements = Array.from(element.querySelectorAll(selector));
-    elements.reverse().forEach(element => {
-      element.innerHTML = markdownToHtml(element.innerHTML);
-    });
-    return elements;
+    const elements = element.querySelectorAll(selector);
+    elements.forEach(convertElement);
+    return Array.from(elements);
   };
+}
+
+/**
+ * @param {Element} element
+ */
+function convertElement(element) {
+  element.innerHTML = markdownToHtml(element.innerHTML);
+}
+
+/**
+ * @param {HTMLElement} element
+ * @param {string} selector
+ */
+function enableBlockLevelMarkdown(element, selector) {
+  /** @type {NodeListOf<HTMLElement>} */
+  const elements = element.querySelectorAll(selector);
+  for (const element of elements) {
+    // Double newlines are needed to be parsed as Markdown
+    if (!element.innerHTML.match(/^\n\s*\n/)) {
+      element.prepend("\n\n");
+    }
+  }
 }
 
 class Builder {
@@ -320,10 +366,9 @@ function substituteWithTextNodes(elements) {
   });
 }
 
-const processMDSections = processElements("[data-format='markdown']:not(body)");
-const processBlockLevelElements = processElements(
-  "[data-format=markdown]:not(body), section, div, address, article, aside, figure, header, main, body"
-);
+const processMDSections = convertElements("[data-format='markdown']:not(body)");
+const blockLevelElements =
+  "[data-format=markdown], section, div, address, article, aside, figure, header, main";
 
 export function run(conf) {
   const hasMDSections = !!document.querySelector(
@@ -364,25 +409,17 @@ export function run(conf) {
   const rsUI = document.getElementById("respec-ui");
   rsUI.remove();
   // The new body will replace the old body
-  const newHTML = document.createElement("html");
-  const newBody = document.createElement("body");
-  newBody.innerHTML = document.body.innerHTML;
+  const newBody = document.body.cloneNode(true);
   // Marked expects markdown be flush against the left margin
   // so we need to normalize the inner text of some block
   // elements.
-  newHTML.appendChild(newBody);
-  processBlockLevelElements(newHTML);
-  // Process root level text nodes
-  const cleanHTML = newBody.innerHTML
-    // Markdown parsing sometimes inserts empty p tags
-    .replace(/<p>\s*<\/p>/gm, "");
-  newBody.innerHTML = cleanHTML;
+  enableBlockLevelMarkdown(newBody, blockLevelElements);
+  convertElement(newBody);
   // Remove links where class .nolinks
   substituteWithTextNodes(newBody.querySelectorAll(".nolinks a[href]"));
   // Restructure the document properly
   const fragment = structure(newBody, document);
   // Frankenstein the whole thing back together
-  newBody.appendChild(fragment);
-  newBody.prepend(rsUI);
+  newBody.append(rsUI, fragment);
   document.body.replaceWith(newBody);
 }

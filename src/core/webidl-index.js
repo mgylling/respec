@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Module: core/webidl-index
  * constructs a summary of WebIDL in the document by
@@ -11,9 +12,11 @@
  * that is preferred.
  */
 export const name = "core/webidl-index";
+import { addIDLHeader } from "./webidl.js";
 import { nonNormativeSelector } from "./utils.js";
 
 export function run() {
+  /** @type {HTMLElement | null} */
   const idlIndexSec = document.querySelector("section#idl-index");
   if (!idlIndexSec) {
     return;
@@ -61,5 +64,9 @@ export function run() {
     });
   // Remove duplicate IDs
   pre.querySelectorAll("*[id]").forEach(elem => elem.removeAttribute("id"));
+  // Remove IDL headers
+  pre.querySelectorAll(".idlHeader").forEach(elem => elem.remove());
+  // Add our own IDL header
   idlIndexSec.appendChild(pre);
+  addIDLHeader(pre);
 }

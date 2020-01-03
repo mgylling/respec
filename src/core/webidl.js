@@ -4,11 +4,17 @@
 // TODO:
 //  - It could be useful to report parsed IDL items as events
 //  - don't use generated content in the CSS!
-import * as webidl2 from "webidl2";
+import {
+  addHashId,
+  flatten,
+  showInlineError,
+  showInlineWarning,
+  xmlEscape,
+} from "./utils.js";
 import { decorateDfn, findDfn } from "./dfn-finder.js";
-import { flatten, showInlineError, showInlineWarning } from "./utils.js";
-import css from "text!../../assets/webidl.css";
-import hyperHTML from "hyperhtml";
+import { hyperHTML, webidl2 } from "./import-maps.js";
+import { addCopyIDLButton } from "./webidl-clipboard.js";
+import { fetchAsset } from "./text-loader.js";
 import { registerDefinition } from "./dfn-map.js";
 
 export const name = "core/webidl";
@@ -38,6 +44,9 @@ const templates = {
         hyperHTML`<a data-xref-type="dfn" data-cite="WebIDL">${keyword}</a>`;
   },
   reference(wrapped, unescaped, context) {
+    if (context.type === "extended-attribute" && context.name !== "Exposed") {
+      return wrapped;
+    }
     let type = "_IDL_";
     let cite = null;
     let lt;
@@ -52,11 +61,7 @@ const templates = {
         break;
       default: {
         const isWorkerType = unescaped.includes("Worker");
-        if (
-          isWorkerType &&
-          context.type === "extended-attribute" &&
-          context.name === "Exposed"
-        ) {
+        if (isWorkerType && context.type === "extended-attribute") {
           lt = `${unescaped}GlobalScope`;
           type = "interface";
           cite = ["Worker", "DedicatedWorker", "SharedWorker"].includes(
@@ -309,6 +314,7 @@ function renderWebIDL(idlElement, index) {
     // Skip this <pre> and move on to the next one.
     return [];
   }
+  // we add "idl" as the canonical match, so both "webidl" and "idl" work
   idlElement.classList.add("def", "idl");
   const html = webidl2.write(parse, { templates });
   const render = hyperHTML.bind(idlElement);
@@ -334,22 +340,47 @@ function renderWebIDL(idlElement, index) {
     const cites = dataset.cite.trim().split(/\s+/);
     dataset.cite = ["WebIDL", ...cites].join(" ");
   }
+  addIDLHeader(idlElement);
   return parse;
 }
+/**
+ * Adds a "WebIDL" decorative header/permalink to a block of WebIDL.
+ * @param {HTMLPreElement} pre
+ */
+export function addIDLHeader(pre) {
+  addHashId(pre, "webidl");
+  const header = hyperHTML`<div class="idlHeader"><a
+      class="self-link"
+      href="${`#${pre.id}`}"
+    >WebIDL</a></div>`;
+  pre.prepend(header);
+  addCopyIDLButton(header);
+}
 
-export function run() {
-  const idls = document.querySelectorAll("pre.idl");
+const cssPromise = loadStyle();
+
+async function loadStyle() {
+  try {
+    return (await import("text!../../assets/webidl.css")).default;
+  } catch {
+    return fetchAsset("webidl.css");
+  }
+}
+
+export async function run() {
+  const idls = document.querySelectorAll("pre.idl, pre.webidl");
   if (!idls.length) {
     return;
   }
-  if (!document.querySelector(".idl:not(pre)")) {
+  if (!document.querySelector(".idl:not(pre), .webidl:not(pre)")) {
     const link = document.querySelector("head link");
     if (link) {
       const style = document.createElement("style");
-      style.textContent = css;
+      style.textContent = await cssPromise;
       link.before(style);
     }
   }
+
   const astArray = [...idls].map(renderWebIDL);
 
   const validations = webidl2.validate(astArray);
@@ -357,8 +388,10 @@ export function run() {
     let details = `<pre>${validation.context}</pre>`;
     if (validation.autofix) {
       validation.autofix();
+      const idlToFix = webidl2.write(astArray[validation.sourceName]);
+      const escaped = xmlEscape(idlToFix);
       details += `Try fixing as:
-      <pre>${webidl2.write(astArray[validation.sourceName])}</pre>`;
+      <pre>${escaped}</pre>`;
     }
     showInlineError(
       idls[validation.sourceName],

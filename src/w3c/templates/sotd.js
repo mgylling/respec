@@ -1,8 +1,33 @@
-import html from "hyperhtml";
+// @ts-check
+import { getIntlData } from "../../core/l10n.js";
+import { hyperHTML as html } from "../../core/import-maps.js";
+
+const localizationStrings = {
+  en: {
+    sotd: "Status of This Document",
+  },
+  ko: {
+    sotd: "현재 문서의 상태",
+  },
+  zh: {
+    sotd: "关于本文档",
+  },
+  ja: {
+    sotd: "この文書の位置付け",
+  },
+  nl: {
+    sotd: "Status van dit document",
+  },
+  es: {
+    sotd: "Estado de este Document",
+  },
+};
+
+export const l10n = getIntlData(localizationStrings);
 
 export default (conf, opts) => {
   return html`
-    <h2>${conf.l10n.sotd}</h2>
+    <h2>${l10n.sotd}</h2>
     ${conf.isPreview ? renderPreview(conf) : ""}
     ${conf.isUnofficial
       ? renderIsUnofficial(opts)
@@ -223,7 +248,7 @@ function renderDeliverer(conf) {
         ? html`
             ${multipleWGs
               ? html`
-                  W3C maintains ${[wgPatentHTML]}
+                  W3C maintains ${wgPatentHTML}
                 `
               : html`
                   W3C maintains a
@@ -329,7 +354,7 @@ function linkToWorkingGroup(conf) {
   }
   return html`
     <p>
-      This document was published by ${[conf.wgHTML]} as ${conf.anOrA}
+      This document was published by ${conf.wgHTML} as ${conf.anOrA}
       ${conf.longStatus}.
       ${conf.notYetRec
         ? "This document is intended to become a W3C Recommendation."

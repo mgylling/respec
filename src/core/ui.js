@@ -1,3 +1,4 @@
+// @ts-check
 // Module core/ui
 // Handles the ReSpec UI
 /* jshint laxcomma:true */
@@ -8,21 +9,32 @@
 //      - save to GitHub
 //  - make a release candidate that people can test
 //  - once we have something decent, merge, ship as 3.2.0
-
-import css from "text!../../assets/ui.css";
-import hyperHTML from "hyperhtml";
+import { hyperHTML, pluralize } from "./import-maps.js";
+import { fetchAsset } from "./text-loader.js";
 import { markdownToHtml } from "./markdown.js";
-import shortcut from "../shortcut.js";
+import shortcut from "../../js/shortcut.js";
 import { sub } from "./pubsubhub.js";
 export const name = "core/ui";
 
 // Opportunistically inserts the style, with the chance to reduce some FOUC
-const styleElement = document.createElement("style");
-styleElement.id = "respec-ui-styles";
-styleElement.textContent = css;
-styleElement.classList.add("removeOnSave");
+insertStyle();
 
-document.head.appendChild(styleElement);
+async function loadStyle() {
+  try {
+    return (await import("text!../../assets/ui.css")).default;
+  } catch {
+    return fetchAsset("ui.css");
+  }
+}
+
+async function insertStyle() {
+  const styleElement = document.createElement("style");
+  styleElement.id = "respec-ui-styles";
+  styleElement.textContent = await loadStyle();
+  styleElement.classList.add("removeOnSave");
+  document.head.appendChild(styleElement);
+  return styleElement;
+}
 
 function ariaDecorate(elem, ariaMap) {
   if (!elem) {
@@ -46,7 +58,7 @@ sub("end-all", () => document.body.prepend(respecUI), { once: true });
 
 const respecPill = hyperHTML`<button id='respec-pill' disabled>ReSpec</button>`;
 respecUI.appendChild(respecPill);
-respecPill.addEventListener("click", function(e) {
+respecPill.addEventListener("click", e => {
   e.stopPropagation();
   if (menu.hidden) {
     menu.classList.remove("respec-hidden");
@@ -55,7 +67,7 @@ respecPill.addEventListener("click", function(e) {
     menu.classList.add("respec-hidden");
     menu.classList.remove("respec-visible");
   }
-  this.setAttribute("aria-expanded", String(menu.hidden));
+  respecPill.setAttribute("aria-expanded", String(menu.hidden));
   menu.hidden = !menu.hidden;
 });
 document.documentElement.addEventListener("click", () => {
@@ -81,14 +93,18 @@ function errWarn(msg, arr, butName, title) {
     buttons[butName] = createWarnButton(butName, arr, title);
     respecUI.appendChild(buttons[butName]);
   }
-  buttons[butName].textContent = arr.length;
+  const button = buttons[butName];
+  button.textContent = arr.length;
+  const label = arr.length === 1 ? pluralize.singular(title) : title;
+  const ariaMap = new Map([["label", `${arr.length} ${label}`]]);
+  ariaDecorate(button, ariaMap);
 }
 
 function createWarnButton(butName, arr, title) {
   const buttonId = `respec-pill-${butName}`;
   const button = hyperHTML`<button id='${buttonId}' class='respec-info-button'>`;
-  button.addEventListener("click", function() {
-    this.setAttribute("aria-expanded", "true");
+  button.addEventListener("click", () => {
+    button.setAttribute("aria-expanded", "true");
     const ol = hyperHTML`<ol class='${`respec-${butName}-list`}'></ol>`;
     for (const err of arr) {
       const fragment = document
@@ -104,13 +120,12 @@ function createWarnButton(butName, arr, title) {
       }
       ol.appendChild(li);
     }
-    ui.freshModal(title, ol, this);
+    ui.freshModal(title, ol, button);
   });
   const ariaMap = new Map([
     ["expanded", "false"],
     ["haspopup", "true"],
     ["controls", `respec-pill-${butName}-modal`],
-    ["label", `Document ${title.toLowerCase()}`],
   ]);
   ariaDecorate(button, ariaMap);
   return button;
@@ -134,7 +149,7 @@ export const ui = {
     icon = icon || "";
     const id = `respec-button-${label.toLowerCase().replace(/\s+/, "-")}`;
     const button = hyperHTML`<button id="${id}" class="respec-option" title="${keyShort}">
-      <span class="respec-cmd-icon">${icon}</span> ${label}…
+      <span class="respec-cmd-icon" aria-hidden="true">${icon}</span> ${label}…
     </button>`;
     const menuItem = hyperHTML`<li role=menuitem>${button}</li>`;
     menuItem.addEventListener("click", handler);
@@ -143,10 +158,10 @@ export const ui = {
     return button;
   },
   error(msg) {
-    errWarn(msg, errors, "error", "Errors");
+    errWarn(msg, errors, "error", "ReSpec Errors");
   },
   warning(msg) {
-    errWarn(msg, warnings, "warning", "Warnings");
+    errWarn(msg, warnings, "warning", "ReSpec Warnings");
   },
   closeModal(owner) {
     if (overlay) {

@@ -10,12 +10,13 @@ import {
   wrapInner,
 } from "./utils.js";
 import { run as addExternalReferences } from "./xref.js";
-import { lang as defaultLang } from "./l10n.js";
 import { definitionMap } from "./dfn-map.js";
+import { getIntlData } from "./l10n.js";
 import { linkInlineCitations } from "./data-cite.js";
 import { pub } from "./pubsubhub.js";
 export const name = "core/link-to-dfn";
-const l10n = {
+
+const localizationStrings = {
   en: {
     /**
      * @param {string} title
@@ -26,7 +27,7 @@ const l10n = {
     duplicateTitle: "This is defined more than once in the document.",
   },
 };
-const lang = defaultLang in l10n ? defaultLang : "en";
+const l10n = getIntlData(localizationStrings);
 
 class CaseInsensitiveMap extends Map {
   /**
@@ -107,8 +108,8 @@ function mapTitleToDfns() {
     if (duplicates.length > 0) {
       showInlineError(
         duplicates,
-        l10n[lang].duplicateMsg(title),
-        l10n[lang].duplicateTitle
+        l10n.duplicateMsg(title),
+        l10n.duplicateTitle
       );
     }
   });
@@ -205,31 +206,47 @@ function isCode(dfn) {
 
 /**
  * Wrap links by <code>.
- * @param {HTMLAnchorElement} ant a link
+ * @param {HTMLAnchorElement} anchor a link
  * @param {HTMLElement} dfn a definition
  */
-function wrapAsCode(ant, dfn) {
+function wrapAsCode(anchor, dfn) {
   // only add code to IDL when the definition matches
-  const term = ant.textContent.trim();
+  const term = anchor.textContent.trim();
   const isIDL = dfn.dataset.hasOwnProperty("idl");
-  const needsCode = shouldWrapByCode(dfn, term);
+  const needsCode = shouldWrapByCode(anchor) || shouldWrapByCode(dfn, term);
   if (!isIDL || needsCode) {
-    wrapInner(ant, document.createElement("code"));
+    wrapInner(anchor, document.createElement("code"));
   }
 }
 
 /**
- * @param {HTMLElement} dfn
+ * @param {HTMLElement} elem
  * @param {string} term
  */
-function shouldWrapByCode(dfn, term) {
-  const { dataset } = dfn;
-  if (dfn.textContent.trim() === term) {
-    return true;
-  } else if (dataset.title === term) {
-    return true;
-  } else if (dataset.lt) {
-    return dataset.lt.split("|").includes(term);
+function shouldWrapByCode(elem, term = "") {
+  switch (elem.localName) {
+    case "a":
+      if (elem.querySelector("code")) {
+        return true;
+      }
+      break;
+    default: {
+      const { dataset } = elem;
+      if (elem.textContent.trim() === term) {
+        return true;
+      } else if (dataset.title === term) {
+        return true;
+      } else if (dataset.lt || dataset.localLt) {
+        const terms = [];
+        if (dataset.lt) {
+          terms.push(...dataset.lt.split("|"));
+        }
+        if (dataset.localLt) {
+          terms.push(...dataset.localLt.split("|"));
+        }
+        return terms.includes(term);
+      }
+    }
   }
   return false;
 }

@@ -1,10 +1,11 @@
+// @ts-check
 // Module w3c/seo
 // Manages SEO information for documents
 // e.g. set the canonical URL for the document if configured
-import { biblio } from "../core/biblio.js";
 import { pub } from "../core/pubsubhub.js";
+import { resolveRef } from "../core/biblio.js";
 export const name = "w3c/seo";
-export function run(conf) {
+export async function run(conf) {
   // Don't include a canonical URL for documents
   // that haven't been published.
   if (!conf.canonicalURI) {
@@ -68,12 +69,11 @@ export function run(conf) {
     document.head.appendChild(linkElem);
   }
   if (conf.doJsonLd) {
-    addJSONLDInfo(conf, document);
+    await addJSONLDInfo(conf, document);
   }
 }
 
 async function addJSONLDInfo(conf, doc) {
-  await doc.respecIsReady;
   // Content for JSON
   const type = ["TechArticle"];
   if (conf.rdfStatus) type.push(conf.rdfStatus);
@@ -98,6 +98,7 @@ async function addJSONLDInfo(conf, doc) {
     inLanguage: doc.documentElement.lang || "en",
     license: conf.licenseInfo.url,
     datePublished: conf.dashDate,
+    /** @type {{ name: string, url?: string } | { name: string, url?: string }[]} */
     copyrightHolder: {
       name: "World Wide Web Consortium",
       url: "https://www.w3.org/",
@@ -133,8 +134,14 @@ async function addJSONLDInfo(conf, doc) {
   }
 
   // normative and informative references
-  jsonld.citation = [...conf.normativeReferences, ...conf.informativeReferences]
-    .map(ref => biblio[ref])
+  const citationIds = [
+    ...conf.normativeReferences,
+    ...conf.informativeReferences,
+  ];
+  const citationContents = await Promise.all(
+    citationIds.map(ref => resolveRef(ref))
+  );
+  jsonld.citation = citationContents
     .filter(ref => typeof ref === "object")
     .map(addRef);
 
@@ -168,10 +175,23 @@ function addPerson({ name, url, mailto, company, companyURL }) {
  */
 function addRef(ref) {
   const { href: id, title: name, href: url } = ref;
-  return {
+  const jsonld = {
     id,
     type: "TechArticle",
     name,
     url,
   };
+  if (ref.authors) {
+    jsonld.creator = ref.authors.map(a => ({ name: a }));
+  }
+  if (ref.rawDate) {
+    jsonld.publishedDate = ref.rawDate;
+  }
+  if (ref.isbn) {
+    jsonld.identifier = ref.isbn;
+  }
+  if (ref.publisher) {
+    jsonld.publisher = { name: ref.publisher };
+  }
+  return jsonld;
 }

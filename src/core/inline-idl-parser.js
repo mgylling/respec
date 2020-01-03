@@ -1,8 +1,9 @@
+// @ts-check
 // Parses an inline IDL string (`{{ idl string }}`)
 //  and renders its components as HTML
 
-import hyperHTML from "hyperhtml";
-import { showInlineError } from "./utils";
+import { hyperHTML } from "./import-maps.js";
+import { showInlineError } from "./utils.js";
 const idlPrimitiveRegex = /^[a-z]+(\s+[a-z]+)+$/; // {{unrestricted double}} {{ double }}
 const exceptionRegex = /\B"([^"]*)"\B/; // {{ "SomeException" }}
 const methodRegex = /(\w+)\((.*)\)$/;
@@ -15,7 +16,57 @@ const enumRegex = /^(\w+)\["([\w- ]*)"\]$/;
 // https://github.com/w3c/respec/pull/1848/files#r225087385
 const methodSplitRegex = /\.?(\w+\(.*\)$)/;
 
-/** @param {string} str */
+/**
+ * @typedef {object} IdlBase
+ * @property {"base"} type
+ * @property {string} identifier
+ * @property {boolean} renderParent
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {object} IdlAttribute
+ * @property {"attribute"} type
+ * @property {string} identifier
+ * @property {boolean} renderParent
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {object} IdlInternalSlot
+ * @property {"internal-slot"} type
+ * @property {string} identifier
+ * @property {boolean} renderParent
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {object} IdlMethod
+ * @property {"method"} type
+ * @property {string} identifier
+ * @property {string[]} args
+ * @property {boolean} renderParent
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {object} IdlEnum
+ * @property {"enum"} type
+ * @property {string} [identifier]
+ * @property {string} enumValue
+ * @property {boolean} renderParent
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {object} IdlException
+ * @property {"exception"} type
+ * @property {string} identifier
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {object} IdlPrimitive
+ * @property {"idl-primitive"} type
+ * @property {string} identifier
+ * @property {boolean} renderParent
+ * @property {InlineIdl | null} [parent]
+ *
+ * @typedef {IdlBase | IdlAttribute | IdlInternalSlot | IdlMethod | IdlEnum | IdlException | IdlPrimitive} InlineIdl
+ */
+
+/**
+ * @param {string} str
+ * @returns {InlineIdl[]}
+ */
 function parseInlineIDL(str) {
   const [nonMethodPart, methodPart] = str.split(methodSplitRegex);
   const tokens = nonMethodPart
@@ -24,6 +75,7 @@ function parseInlineIDL(str) {
     .filter(s => s && s.trim())
     .map(s => s.trim());
   const renderParent = !str.includes("/");
+  /** @type {InlineIdl[]} */
   const results = [];
   while (tokens.length) {
     const value = tokens.pop();
@@ -82,31 +134,36 @@ function parseInlineIDL(str) {
   return results.reverse();
 }
 
+/**
+ * @param {IdlBase} details
+ */
 function renderBase(details) {
   // Check if base is a local variable in a section
   const { identifier, renderParent } = details;
   if (renderParent) {
-    return hyperHTML`<a data-xref-type="_IDL_">${identifier}</a>`;
+    return hyperHTML`<a data-xref-type="_IDL_"><code>${identifier}</code></a>`;
   }
 }
 
 /**
  * Internal slot: .[[identifier]] or [[identifier]]
+ * @param {IdlInternalSlot} details
  */
 function renderInternalSlot(details) {
   const { identifier, parent, renderParent } = details;
   const { identifier: linkFor } = parent || {};
   const lt = `[[${identifier}]]`;
-  const html = hyperHTML`${parent && renderParent ? "." : ""}[[<a
+  const html = hyperHTML`${parent && renderParent ? "." : ""}<a
     data-xref-type="attribute"
     data-link-for=${linkFor}
     data-xref-for=${linkFor}
-    data-lt="${lt}">${identifier}</a>]]`;
+    data-lt="${lt}"><code>[[${identifier}]]</code></a>`;
   return html;
 }
 
 /**
  * Attribute: .identifier
+ * @param {IdlAttribute} details
  */
 function renderAttribute(details) {
   const { parent, identifier, renderParent } = details;
@@ -115,12 +172,13 @@ function renderAttribute(details) {
       data-xref-type="attribute|dict-member"
       data-link-for="${linkFor}"
       data-xref-for="${linkFor}"
-    >${identifier}</a>`;
+    ><code>${identifier}</code></a>`;
   return html;
 }
 
 /**
  * Method: .identifier(arg1, arg2, ...), identifier(arg1, arg2, ...)
+ * @param {IdlMethod} details
  */
 function renderMethod(details) {
   const { args, identifier, type, parent, renderParent } = details;
@@ -132,7 +190,7 @@ function renderMethod(details) {
     data-link-for="${linkFor}"
     data-xref-for="${linkFor}"
     data-lt="${searchText}"
-    >${identifier}</a>(${[argsText]})`;
+    ><code>${identifier}</code></a><code>(${[argsText]})</code>`;
   return html;
 }
 
@@ -140,6 +198,7 @@ function renderMethod(details) {
  * Enum:
  * Identifier["enum value"]
  * Identifer / "enum value"
+ * @param {IdlEnum} details
  */
 function renderEnum(details) {
   const { identifier, enumValue, parent } = details;
@@ -149,33 +208,35 @@ function renderEnum(details) {
     data-link-for="${forContext}"
     data-xref-for="${forContext}"
     data-lt="${!enumValue ? "the-empty-string" : null}"
-    >${enumValue}</a>"`;
+    ><code>${enumValue}</code></a>"`;
   return html;
 }
 
 /**
  * Exception value: "NotAllowedError"
  * Only the WebIDL spec can define exceptions
+ * @param {IdlException} details
  */
 function renderException(details) {
   const { identifier } = details;
   const html = hyperHTML`"<a
     data-cite="WebIDL"
     data-xref-type="exception"
-    >${identifier}</a>"`;
+    ><code>${identifier}</code></a>"`;
   return html;
 }
 
 /**
  * Interface types: {{ unrestricted double }} {{long long}}
  * Only the WebIDL spec defines these types.
+ * @param {IdlPrimitive} details
  */
 function renderIdlPrimitiveType(details) {
   const { identifier } = details;
   const html = hyperHTML`<a
     data-cite="WebIDL"
     data-xref-type="interface"
-    >${identifier}</a>`;
+    ><code>${identifier}</code></a>`;
   return html;
 }
 
@@ -224,6 +285,6 @@ export function idlStringToHtml(str) {
         throw new Error("Unknown type.");
     }
   }
-  const result = render`<code>${output}</code>`;
+  const result = render`${output}`;
   return result;
 }

@@ -1,6 +1,7 @@
-import { fetchAndCache } from "./utils";
-import hyperHTML from "hyperhtml";
-import mdnCss from "text!../../assets/mdn-annotation.css";
+// @ts-check
+import { fetchAndCache } from "./utils.js";
+import { fetchAsset } from "./text-loader.js";
+import { hyperHTML } from "./import-maps.js";
 
 export const name = "core/mdn-annoatation";
 
@@ -30,6 +31,16 @@ const MDN_BROWSERS = {
   webview_android: "WebView Android",
 };
 
+const mdnCssPromise = loadStyle();
+
+async function loadStyle() {
+  try {
+    return (await import("text!../../assets/mdn-annotation.css")).default;
+  } catch {
+    return fetchAsset("mdn-annotation.css");
+  }
+}
+
 function fetchAndCacheJson(url, maxAge) {
   if (!url) return {};
   return fetchAndCache(url, maxAge).then(r => r.json());
@@ -51,10 +62,11 @@ function attachMDNDetail(container, mdnSpec) {
   const { slug, summary } = mdnSpec;
   container.innerHTML += `<button onclick="toggleMDNStatus(this.parentNode)" aria-label="Expand MDN details"><b>MDN</b></button>`;
   const mdnSubPath = slug.slice(slug.indexOf("/") + 1);
-  const mdnDetail = document.createElement("div");
   const href = `${MDN_URL_BASE}${slug}`;
-  hyperHTML(mdnDetail)`
+  const mdnDetail = hyperHTML`
+    <div>
       <a title="${summary}" href="${href}">${mdnSubPath}</a>
+    </div>
   `;
   attachMDNBrowserSupport(mdnDetail, mdnSpec);
   container.appendChild(mdnDetail);
@@ -137,6 +149,7 @@ export async function run(conf) {
     `${baseJsonPath}/${shortName}.json`,
     maxAge
   );
+  const mdnCss = await mdnCssPromise;
   document.head.appendChild(hyperHTML`<style>${[mdnCss]}</style>`);
   document.head.appendChild(hyperHTML`<script>
      function toggleMDNStatus(div) {

@@ -101,6 +101,44 @@ describe("Core - Markdown", () => {
     }
   });
 
+  xit("allows custom ids to headers", async () => {
+    const body = `
+      ## Heading {#custom-id}
+      PASS
+
+      Foo title {#foo}
+      =========
+      PASS
+
+      Bar title {#bar}
+      ------------------------------
+      PASS
+
+      ## Another title
+      PASS
+    `;
+    const ops = makeStandardOps({ format: "markdown" }, body);
+    ops.abstract = null;
+    const doc = await makeRSDoc(ops);
+
+    const headings = doc.querySelectorAll("section h2, section h3");
+    expect(headings.length).toBe(4);
+
+    const [customID, foo, bar, automaticId] = headings;
+
+    expect(customID.id).toBe("custom-id");
+    expect(customID.textContent).toBe("1. Heading");
+
+    expect(foo.id).toBe("foo");
+    expect(foo.textContent).toBe("2. Foo title");
+
+    expect(bar.id).toBe("bar");
+    expect(bar.textContent).toBe("2.1 Bar title");
+
+    expect(automaticId.id).toBe("x2-2-another-title");
+    expect(automaticId.textContent).toBe("2.2 Another title");
+  });
+
   it("structures content in nested sections with appropriate titles", async () => {
     const body = `
 
@@ -239,6 +277,70 @@ describe("Core - Markdown", () => {
     const bar = doc.getElementById("bar");
     expect(doc.body.contains(bar)).toBeTruthy();
     expect(foo.contains(bar)).toBeFalsy();
+  });
+
+  it("supports backticks for syntax highlighting", async () => {
+    const body = `
+      ## test
+
+      \`\`\` webidl
+      [Exposed=Window]
+      interface Foo {
+        constructor();
+        attribute DOMString bar;
+        void doTheFoo();
+      };
+      \`\`\`
+
+      \`\`\` js
+      console.log("hey")
+      \`\`\`
+
+      \`\`\`
+      IDK what I am
+      \`\`\`
+    `;
+    const ops = makeStandardOps({ format: "markdown" }, body);
+    const doc = await makeRSDoc(ops);
+    const [webidlBlock, jsBlock, normalBlock] = doc.querySelectorAll("pre");
+
+    expect(webidlBlock.classList).toContain("idl");
+    expect(webidlBlock.querySelector("code.hljs")).toBeNull();
+    expect(webidlBlock.querySelector(".idlConstructor")).not.toBeNull();
+    expect(webidlBlock.querySelector(".respec-button-copy-paste")).toBeTruthy();
+
+    expect(jsBlock.firstElementChild.localName).toBe("code");
+    expect(
+      jsBlock.querySelector("code.hljs").classList.contains("js")
+    ).toBeTruthy();
+    expect(jsBlock.querySelector("code.hljs span")).not.toBeNull();
+    expect(jsBlock.querySelector(".respec-button-copy-paste")).toBeNull();
+
+    expect(normalBlock.firstElementChild.localName).toBe("code");
+    expect(normalBlock.querySelector(".respec-button-copy-paste")).toBeNull();
+    expect(normalBlock.querySelector("code.hljs")).not.toBeNull();
+    expect(normalBlock.querySelector("code.hljs span")).toBeNull();
+  });
+
+  it("is case insensitive for webidl language tags", async () => {
+    const body = `
+      ## test
+
+      \`\`\` weBiDl
+      [Exposed=Window]
+      interface FooWebidl {};
+      \`\`\`
+    `;
+
+    const ops = makeStandardOps({ format: "markdown" }, body);
+    const doc = await makeRSDoc(ops);
+    const [mixedCaseWebidl] = doc.querySelectorAll("pre");
+
+    expect(mixedCaseWebidl.classList).toContain("idl");
+    expect(mixedCaseWebidl.querySelector("code.hljs")).toBeFalsy();
+    expect(
+      mixedCaseWebidl.querySelector(".respec-button-copy-paste")
+    ).toBeTruthy();
   });
 
   describe("nolinks options", () => {

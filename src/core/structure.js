@@ -11,8 +11,8 @@
 //  - maxTocLevel: only generate a TOC so many levels deep
 
 import { addId, children, parents, renameElement } from "./utils.js";
-import { lang as defaultLang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import { getIntlData } from "../core/l10n.js";
+import { hyperHTML } from "./import-maps.js";
 
 const lowerHeaderTags = ["h2", "h3", "h4", "h5", "h6"];
 const headerTags = ["h1", ...lowerHeaderTags];
@@ -32,9 +32,7 @@ const localizationStrings = {
   },
 };
 
-const lang = defaultLang in localizationStrings ? defaultLang : "en";
-
-const l10n = localizationStrings[lang];
+const l10n = getIntlData(localizationStrings);
 
 /**
  * @typedef {object} SectionInfo
@@ -82,7 +80,8 @@ function scanSections(sections, maxTocLevel, { prefix = "" } = {}) {
     }
 
     if (level <= maxTocLevel) {
-      const item = createTocListItem(section.header, section.element.id);
+      const id = section.header.id || section.element.id;
+      const item = createTocListItem(section.header, id);
       const sub = scanSections(section.subsections, maxTocLevel, {
         prefix: secno,
       });

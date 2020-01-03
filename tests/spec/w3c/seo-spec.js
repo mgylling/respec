@@ -61,7 +61,7 @@ describe("W3C - SEO", () => {
       <p>foo</p>
     </section>
     <section id="toc"></section>
-    <p>foo [[!TestRef1]] [[TestRef2]] [[!TestRef3]]</p>
+    <p>foo [[!TestRef1]] [[TestRef2]] [[!TestAlias]]</p>
   `;
   const config = {
     editors: [
@@ -106,6 +106,10 @@ describe("W3C - SEO", () => {
         title: "Third test",
         href: "http://test.com/3",
         publisher: "Publisher Here",
+        isbn: "9783319934167",
+      },
+      TestAlias: {
+        aliasOf: "TestRef3",
       },
     },
   };
@@ -180,18 +184,24 @@ describe("W3C - SEO", () => {
       type: "TechArticle",
       name: "Test ref title",
       url: "http://test.com/1",
+      creator: [{ name: "William Shakespeare" }],
+      publisher: { name: "Publishers Inc." },
     });
     expect(jsonld.citation).toContain({
       id: "http://test.com/2",
       type: "TechArticle",
       name: "Second test",
       url: "http://test.com/2",
+      creator: [{ name: "Another author" }],
+      publisher: { name: "Testing 123" },
     });
     expect(jsonld.citation).toContain({
       id: "http://test.com/3",
       type: "TechArticle",
       name: "Third test",
       url: "http://test.com/3",
+      publisher: { name: "Publisher Here" },
+      identifier: "9783319934167",
     });
   });
 

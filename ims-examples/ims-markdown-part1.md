@@ -11,7 +11,7 @@ This is the abstract text.
 ## Introduction
 This is the introduction text.
 
-### Use Cases & Scope
+### Use Cases & Scope {#use-cases}
 This is the use cases & scope text.
 
 ### Terminology
