@@ -1,9 +1,9 @@
-//@ts-check
-import { pub } from "../core/pubsubhub.js";
-import { toHTMLElement, toHTMLNode } from "../ims/utils.js";
+// @ts-check
 import { addId } from "../core/utils.js";
+import { pub } from "../core/pubsubhub.js";
+import { toHTMLElement } from "../ims/utils.js";
 
-export const name =  "ims/admonitions";
+export const name = "ims/admonitions";
 
 /**
  * Handles admonitions, adding a top bar and a11y attrs
@@ -21,33 +21,39 @@ export const name =  "ims/admonitions";
  * @param {*} conf respecConfig
  */
 export async function run(conf) {
-
-  //check and warn for issue admons in late process stages
-  var issues = document.body.querySelectorAll("aside.issue, div.aside.issue");
+  // check and warn for issue admons in late process stages
+  const issues = document.body.querySelectorAll("aside.issue, div.aside.issue");
   if (issues.length > 0) {
-    if(conf.specStatus == "IMS Final Release") {
-        pub("error", "Issue asides must not be present when the status is 'IMS Final Release'");
-      }
-    else if(conf.specStatus == "IMS Candidate Final") {
-        pub("warn", "Issue asides should not be present when the status is 'IMS Candidate Final'");
-      }
+    if (conf.specStatus == "IMS Final Release") {
+      pub(
+        "error",
+        "Issue asides must not be present when the status is 'IMS Final Release'"
+      );
+    } else if (conf.specStatus == "IMS Candidate Final") {
+      pub(
+        "warn",
+        "Issue asides should not be present when the status is 'IMS Candidate Final'"
+      );
     }
+  }
 
-  //prep the output element
+  // prep the output element
   /** @type {NodeListOf<HTMLElement>} */
-  var admons = document.body.querySelectorAll("aside.note, aside.ednote, aside.warning, aside.issue, "
-  +" div.aside.note, div.aside.ednote div.aside.warning, div.aside.issue");
+  const admons = document.body.querySelectorAll(
+    "aside.note, aside.ednote, aside.warning, aside.issue, " +
+      " div.aside.note, div.aside.ednote div.aside.warning, div.aside.issue"
+  );
 
-  admons.forEach((aside) => {
-      var type = getAdmonType(aside);
-      aside.setAttribute("role", "note");
-      aside.classList.add("admonition");
-      if (!aside.hasAttribute("id")) {
-        addId(aside);
-      }
-      var topBar = toHTMLElement(`<div class='admon-top'>${type}</div>`);
-      topBar.classList.add(type + "-title");
-      aside.insertAdjacentElement('afterbegin', topBar);
+  admons.forEach(aside => {
+    const type = getAdmonType(aside);
+    aside.setAttribute("role", "note");
+    aside.classList.add("admonition");
+    if (!aside.hasAttribute("id")) {
+      addId(aside);
+    }
+    const topBar = toHTMLElement(`<div class='admon-top'>${type}</div>`);
+    topBar.classList.add(`${type}-title`);
+    aside.insertAdjacentElement("afterbegin", topBar);
   });
 }
 
@@ -55,16 +61,16 @@ export async function run(conf) {
  * Returns the admonition type as a string based on the classList.
  * The three known types are "note", "warning", and "issue". If none
  * of those are present, returns "info".
- * 
+ *
  * @param { * } aside the element to inspect
  * @returns { string } the admonition type as a string
  */
 function getAdmonType(aside) {
-  if(aside.classList.contains('note')) {
+  if (aside.classList.contains("note")) {
     return "note";
-  } else if(aside.classList.contains('warning')) {
+  } else if (aside.classList.contains("warning")) {
     return "warning";
-  } else if(aside.classList.contains('issue')) {
+  } else if (aside.classList.contains("issue")) {
     return "issue";
   }
   return "info";

@@ -16,14 +16,14 @@ const modules = [
   import("../src/w3c/defaults.js"),
   import("../src/core/style.js"),
   // Replaced by ims/style
-  //import("../src/w3c/style.js"),
+  // import("../src/w3c/style.js"),
   import("../src/ims/style.js"),
   import("../src/ims/config.js"),
   import("../src/ims/compute.js"),
   import("../src/ims/transclude.js"),
   import("../src/w3c/l10n.js"),
   // Adds GitHub links to front matter (not used by IMS specs)
-  //import("../src/core/github.js"),
+  // import("../src/core/github.js"),
   import("../src/core/data-include.js"),
   import("../src/core/markdown.js"),
   // New order: run id-headers after markdown and before post-markdown
@@ -31,9 +31,9 @@ const modules = [
   // Run after id-headers so abstract is identified
   import("../src/ims/post-markdown.js"),
   // W3C frontmatter is not used by IMS
-  //import("../src/w3c/headers.js"),
+  // import("../src/w3c/headers.js"),
   // Replaced by ims/abstract
-  //import("../src/w3c/abstract.js"),
+  // import("../src/w3c/abstract.js"),
   import("../src/ims/abstract.js"),
   import("../src/core/data-transform.js"),
   import("../src/core/data-abbr.js"),
@@ -41,17 +41,17 @@ const modules = [
   import("../src/ims/inlines.js"),
   import("../src/core/inlines.js"),
   // Replaced by ims/conformance
-  //import("../src/w3c/conformance.js"),
+  // import("../src/w3c/conformance.js"),
   import("../src/ims/conformance.js"),
   import("../src/ims/biblio.js"),
   import("../src/core/dfn.js"),
   import("../src/core/pluralize.js"),
   import("../src/core/examples.js"),
   // Replaced by ims/admonitions
-  //import("../src/core/issues-notes.js"),
+  // import("../src/core/issues-notes.js"),
   import("../src/ims/admonitions.js"),
   // Removed.js)",
-  //import("../src/core/requirements.js"),
+  // import("../src/core/requirements.js"),
   import("../src/core/best-practices.js"),
   import("../src/core/figures.js"),
   import("../src/core/webidl.js"),
@@ -61,13 +61,13 @@ const modules = [
   import("../src/core/link-to-dfn.js"),
   import("../src/core/render-biblio.js"),
   // Replaced by ims/contrib
-  //import("../src/core/contrib.js"),
+  // import("../src/core/contrib.js"),
   import("../src/ims/contributors.js"),
   import("../src/core/fix-headers.js"),
   import("../src/core/structure.js"),
   import("../src/core/informative.js"),
   // Moved id-headers up in order
-  //import("../src/core/id-headers.js"),
+  // import("../src/core/id-headers.js"),
   import("../src/core/caniuse.js"),
   import("../src/ui/save-html.js"),
   import("../src/ui/search-specref.js"),
@@ -75,12 +75,12 @@ const modules = [
   import("../src/ui/about-respec.js"),
   import("../src/core/seo.js"),
   // Replaced by ims/seo
-  //import("../src/w3c/seo.js"),
+  // import("../src/w3c/seo.js"),
   import("../src/ims/seo.js"),
   import("../src/core/highlight.js"),
   import("../src/core/webidl-clipboard.js"),
   // Testing disabled in this profile
-  //import("../src/core/data-tests.js"),
+  // import("../src/core/data-tests.js"),
   import("../src/core/list-sorter.js"),
   import("../src/core/highlight-vars.js"),
   import("../src/core/algorithms.js"),
@@ -89,7 +89,7 @@ const modules = [
   import("../src/ims/title-attrs.js"),
   import("../src/ims/scripts.js"),
   // Not working...disable until fixed
-  //import("../src/ims/tooltips.js"),
+  // import("../src/ims/tooltips.js"),
   import("../src/ims/comments.js"),
   import("../src/core/anchor-expander.js"),
   /* Linter must be the last thing to run */

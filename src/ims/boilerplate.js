@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Add IMS boilerplate front matter to the document.
@@ -12,23 +12,27 @@ export const name = "ims/boilerplate";
  * @param {*} conf
  */
 function getStatusString(conf) {
-  //specStatusString: an override of the default descriptions
+  // specStatusString: an override of the default descriptions
   if (conf.specStatusString) {
     return conf.specStatusString;
   }
-  //for generic docs, have a generic desc
+  // for generic docs, have a generic desc
   if (conf.specType === "doc") {
     return "This is an informative IMS Global document that may be revised at any time.";
   }
-  //specStatus: See ims/config.js for known values
+  // specStatus: See ims/config.js for known values
   switch (conf.specStatus) {
-    case 'IMS Base Document': return "This document is for review and comment by IMS Contributing Members.";
-    case 'IMS Candidate Final': return "This document is for review and adoption by the IMS membership.";
-    case 'IMS Candidate Final Public': return "This document is for review and adoption by the IMS membership.";
-    case 'IMS Final Release': return "This document is made available for adoption by the public community at large.";
+    case "IMS Base Document":
+      return "This document is for review and comment by IMS Contributing Members.";
+    case "IMS Candidate Final":
+      return "This document is for review and adoption by the IMS membership.";
+    case "IMS Candidate Final Public":
+      return "This document is for review and adoption by the IMS membership.";
+    case "IMS Final Release":
+      return "This document is made available for adoption by the public community at large.";
     default:
       // ims/config.js will issue error for unknown values
-      return "Unknown <code>specStatus: \"" + conf.specStatus + "\"</code>";
+      return `Unknown <code>specStatus: "${conf.specStatus}"</code>`;
   }
 }
 
@@ -36,34 +40,36 @@ function getStatusString(conf) {
  * @param {*} conf
  */
 export async function run(conf) {
+  document.title = `${conf.specTitle} ${conf.specVersion} ${conf.specStatus}`;
 
-  document.title = conf.specTitle + " " + conf.specVersion + " " + conf.specStatus;
+  const body = document.body;
 
-  var body = document.body;
-
-  var header = document.createElement("header");
-  var headerTop = document.createElement("div");
+  const header = document.createElement("header");
+  const headerTop = document.createElement("div");
   headerTop.setAttribute("class", "header-top");
 
-  var hd = hyperHTML`<h1 class='title' id='title'>${conf.specTitle}</h1>`;
+  const hd = hyperHTML`<h1 class='title' id='title'>${conf.specTitle}</h1>`;
   headerTop.appendChild(hd);
 
-  const imgURL = "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
-  var logo = hyperHTML`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
+  const imgURL =
+    "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
+  const logo = hyperHTML`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
   headerTop.appendChild(logo);
 
   header.appendChild(headerTop);
 
   if (conf.specType !== "doc") {
-    var release = hyperHTML`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`;
+    const release = hyperHTML`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`;
     header.appendChild(release);
 
-    var statusClass = "statusPD" + (conf.specStatus === 'IMS Final Release' ? " final" : "");
-    var statusPD = hyperHTML`<span class='${statusClass}' data-content='${conf.specStatus}'>${conf.specStatus}</span>`;
+    const statusClass = `statusPD${
+      conf.specStatus === "IMS Final Release" ? " final" : ""
+    }`;
+    const statusPD = hyperHTML`<span class='${statusClass}' data-content='${conf.specStatus}'>${conf.specStatus}</span>`;
     header.appendChild(statusPD);
   }
 
-  var versionTable = hyperHTML`
+  const versionTable = hyperHTML`
     <table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
       <tbody>
         <tr>
@@ -78,7 +84,9 @@ export async function run(conf) {
           <td>This version:</td>
           <td><a href='${conf.thisURL}'>${conf.thisURL}</a></td>
         </tr>
-        ${conf.specNature === "normative" ? hyperHTML`
+        ${
+          conf.specNature === "normative"
+            ? hyperHTML`
         <tr>
           <td>Latest version:</td>
           <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td>
@@ -87,14 +95,15 @@ export async function run(conf) {
           <td>Errata:</td>
           <td><a href='${conf.errataURL}'>${conf.errataURL}</a></td>
         </tr>`
-      : null}
+            : null
+        }
       </tbody>
     </table>`;
 
   if (conf.specType !== "doc") {
     header.appendChild(versionTable);
   } else {
-    var genericDocTable = hyperHTML`
+    const genericDocTable = hyperHTML`
       <table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
         <tbody>
           <tr>
@@ -110,7 +119,7 @@ export async function run(conf) {
     header.appendChild(genericDocTable);
   }
 
-  var ipr = hyperHTML`
+  const ipr = hyperHTML`
     <div id="ipr">
       <h2>IPR and Distribution Notice</h2>
       <p>
@@ -132,11 +141,10 @@ export async function run(conf) {
     </div>`;
   header.appendChild(ipr);
 
-  if (conf.iprs)
-  {
+  if (conf.iprs) {
     header.appendChild(hyperHTML`<p>The following participating organizations have made explicit license
       commitments to this specification:</p>`);
-    var iprTable = `<table>
+    let iprTable = `<table>
       <thead>
         <tr>
           <th>Spec version</th>
@@ -157,12 +165,12 @@ export async function run(conf) {
         </tr>`;
     });
     iprTable += `</tbody></table>`;
-    var iprTableElement = document.createElement("div");
+    const iprTableElement = document.createElement("div");
     iprTableElement.innerHTML = iprTable;
     header.appendChild(iprTableElement);
   }
 
-  var disclosure = hyperHTML`
+  const disclosure = hyperHTML`
     <div id="disclosure">
       <p>
         Use of this specification to develop products or services is governed by the license with IMS 
@@ -193,8 +201,8 @@ export async function run(conf) {
     </div>`;
   header.appendChild(disclosure);
 
-  var copyright = hyperHTML`<div id="cpr">
-      <p>© ${(new Date()).getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>
+  const copyright = hyperHTML`<div id="cpr">
+      <p>© ${new Date().getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>
       <p>Trademark information: <a href="http://www.imsglobal.org/copyright.html">http://www.imsglobal.org/copyright.html</a></p>
     </div>`;
 
@@ -206,9 +214,9 @@ export async function run(conf) {
     body.appendChild(header);
   }
 
-  var footer = document.createElement("footer");
+  const footer = document.createElement("footer");
 
-  var endWarranty = hyperHTML`<div id="endWarranty">
+  const endWarranty = hyperHTML`<div id="endWarranty">
     <p>IMS Global Learning Consortium, Inc. ("IMS Global") is publishing the information contained in this document ("Specification") for purposes of scientific, experimental, and scholarly collaboration only.</p>
     <p>IMS Global makes no warranty or representation regarding the accuracy or completeness of the Specification.</p>
     <p>This material is provided on an "As Is" and "As Available" basis.</p>
@@ -216,7 +224,9 @@ export async function run(conf) {
     <p>It is your sole responsibility to evaluate the usefulness, accuracy, and completeness of the Specification as it relates to you.</p>
     <p>IMS Global would appreciate receiving your comments and suggestions.</p>
     <p>Please contact IMS Global through our website at http://www.imsglobal.org.</p>
-    <p>Please refer to Document Name: ${conf.specTitle.replace("<br/>", " ")} ${conf.specVersion} </p>
+    <p>Please refer to Document Name: ${conf.specTitle.replace("<br/>", " ")} ${
+    conf.specVersion
+  } </p>
     <p>Date: ${conf.specDate}</p>
     <div>`;
   footer.appendChild(endWarranty);
