@@ -1,5 +1,4 @@
 // @ts-check
-import { pub } from "../core/pubsubhub.js";
 
 export const name = "ims/title-attrs";
 
@@ -49,13 +48,7 @@ export async function run(conf) {
         // get the text content of the neareset dfn block(?) parent
         const blockishParent = dfn.closest("p, td, li, div, aside");
         if (blockishParent) {
-          // console.log("found blockish parent " + blockishParent);
           text = blockishParent.textContent;
-        } else {
-          pub(
-            "warn",
-            `Could not find suitable parent container for dfn#${dfn.id}`
-          );
         }
       }
 
