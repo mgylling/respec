@@ -1,5 +1,5 @@
 ## API
-This starts the main body of the spec.
+This starts the main body of the spec. See [introduction](#intro).
 
 <section class="appendix">
 ## Examples
