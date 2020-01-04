@@ -31,7 +31,8 @@ function attachScript(url) {
     "load",
     () => {
       if (window.location.hash) {
-        window.location.reload();
+        // eslint-disable-next-line
+        window.location = window.location;
       }
     },
     { once: true }
