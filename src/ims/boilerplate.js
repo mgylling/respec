@@ -4,7 +4,7 @@
  * Add IMS boilerplate front matter to the document.
  */
 
-import html from "hyperhtml";
+import { hyperHTML } from "../core/import-maps.js";
 
 export const name = "ims/boilerplate";
 
@@ -45,25 +45,25 @@ export async function run(conf) {
   var headerTop = document.createElement("div");
   headerTop.setAttribute("class", "header-top");
 
-  var hd = html`<h1 class='title' id='title'>${conf.specTitle}</h1>`;
+  var hd = hyperHTML`<h1 class='title' id='title'>${conf.specTitle}</h1>`;
   headerTop.appendChild(hd);
 
   const imgURL = "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
-  var logo = html`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
+  var logo = hyperHTML`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
   headerTop.appendChild(logo);
 
   header.appendChild(headerTop);
 
   if (conf.specType !== "doc") {
-    var release = html`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`;
+    var release = hyperHTML`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`;
     header.appendChild(release);
 
     var statusClass = "statusPD" + (conf.specStatus === 'IMS Final Release' ? " final" : "");
-    var statusPD = html`<span class='${statusClass}' data-content='${conf.specStatus}'>${conf.specStatus}</span>`;
+    var statusPD = hyperHTML`<span class='${statusClass}' data-content='${conf.specStatus}'>${conf.specStatus}</span>`;
     header.appendChild(statusPD);
   }
 
-  var versionTable = html`
+  var versionTable = hyperHTML`
     <table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
       <tbody>
         <tr>
@@ -78,7 +78,7 @@ export async function run(conf) {
           <td>This version:</td>
           <td><a href='${conf.thisURL}'>${conf.thisURL}</a></td>
         </tr>
-        ${conf.specNature === "normative" ? html`
+        ${conf.specNature === "normative" ? hyperHTML`
         <tr>
           <td>Latest version:</td>
           <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td>
@@ -94,7 +94,7 @@ export async function run(conf) {
   if (conf.specType !== "doc") {
     header.appendChild(versionTable);
   } else {
-    var genericDocTable = html`
+    var genericDocTable = hyperHTML`
       <table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
         <tbody>
           <tr>
@@ -110,7 +110,7 @@ export async function run(conf) {
     header.appendChild(genericDocTable);
   }
 
-  var ipr = html`
+  var ipr = hyperHTML`
     <div id="ipr">
       <h2>IPR and Distribution Notice</h2>
       <p>
@@ -134,7 +134,7 @@ export async function run(conf) {
 
   if (conf.iprs)
   {
-    header.appendChild(html`<p>The following participating organizations have made explicit license
+    header.appendChild(hyperHTML`<p>The following participating organizations have made explicit license
       commitments to this specification:</p>`);
     var iprTable = `<table>
       <thead>
@@ -162,7 +162,7 @@ export async function run(conf) {
     header.appendChild(iprTableElement);
   }
 
-  var disclosure = html`
+  var disclosure = hyperHTML`
     <div id="disclosure">
       <p>
         Use of this specification to develop products or services is governed by the license with IMS 
@@ -193,7 +193,7 @@ export async function run(conf) {
     </div>`;
   header.appendChild(disclosure);
 
-  var copyright = html`<div id="cpr">
+  var copyright = hyperHTML`<div id="cpr">
       <p>© ${(new Date()).getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>
       <p>Trademark information: <a href="http://www.imsglobal.org/copyright.html">http://www.imsglobal.org/copyright.html</a></p>
     </div>`;
@@ -208,7 +208,7 @@ export async function run(conf) {
 
   var footer = document.createElement("footer");
 
-  var endWarranty = html`<div id="endWarranty">
+  var endWarranty = hyperHTML`<div id="endWarranty">
     <p>IMS Global Learning Consortium, Inc. ("IMS Global") is publishing the information contained in this document ("Specification") for purposes of scientific, experimental, and scholarly collaboration only.</p>
     <p>IMS Global makes no warranty or representation regarding the accuracy or completeness of the Specification.</p>
     <p>This material is provided on an "As Is" and "As Available" basis.</p>

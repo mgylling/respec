@@ -1,7 +1,7 @@
 //@ts-check
 
-import { pub } from "../core/pubsubhub";
-import { toHTMLNodes } from "../ims/utils";
+import { pub } from "../core/pubsubhub.js";
+import { toHTMLNodes } from "../ims/utils.js";
 
 export const name = "ims/transclude";
 

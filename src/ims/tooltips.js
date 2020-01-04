@@ -1,6 +1,6 @@
 //@ts-check
 
-import { toHTMLNode } from "../ims/utils";
+import { toHTMLNode } from "../ims/utils.js";
 
 export const name = "ims/tooltips";
 

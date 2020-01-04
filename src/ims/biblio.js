@@ -10,7 +10,7 @@
 * Note: Run before core/biblio
 */
 
-import { pub } from "../core/pubsubhub";
+import { pub } from "../core/pubsubhub.js";
 
 export const name =  "ims/biblio";
 

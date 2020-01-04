@@ -10,7 +10,7 @@
 //
 // Note: Run after core/markdown and before core/inlines
 
-import { addId, children } from "../core/utils";
+import { addId, children } from "../core/utils.js";
 
 export const name = "ims/inlines";
 

@@ -4,7 +4,7 @@
  * check config and inform user if required ones are missing
  */
 
-import { pub } from "../core/pubsubhub";
+import { pub } from "../core/pubsubhub.js";
 
 export const name =  "ims/config";
 

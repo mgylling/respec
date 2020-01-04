@@ -1,6 +1,6 @@
 //@ts-check
-import { pub } from "../core/pubsubhub";
-import { toHTMLNode } from "../ims/utils";
+import { pub } from "../core/pubsubhub.js";
+import { toHTMLNode } from "../ims/utils.js";
 
 export const name =  "ims/abstract";
 

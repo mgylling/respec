@@ -11,7 +11,7 @@
  *   https://purl.imsglobal.org/spec/ims-base.css
  */
 
-import { toKeyValuePairs, linkCSS } from "../core/utils";
+import { toKeyValuePairs, linkCSS } from "../core/utils.js";
 
 export const name = "ims/style";
 

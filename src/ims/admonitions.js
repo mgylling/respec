@@ -1,7 +1,7 @@
 //@ts-check
-import { pub } from "../core/pubsubhub";
-import { toHTMLElement, toHTMLNode } from "../ims/utils";
-import { addId } from "../core/utils";
+import { pub } from "../core/pubsubhub.js";
+import { toHTMLElement, toHTMLNode } from "../ims/utils.js";
+import { addId } from "../core/utils.js";
 
 export const name =  "ims/admonitions";
 
@@ -34,6 +34,7 @@ export async function run(conf) {
     }
 
   //prep the output element
+  /** @type {NodeListOf<HTMLElement>} */
   var admons = document.body.querySelectorAll("aside.note, aside.ednote, aside.warning, aside.issue, "
   +" div.aside.note, div.aside.ednote div.aside.warning, div.aside.issue");
 

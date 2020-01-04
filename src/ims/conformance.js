@@ -8,11 +8,12 @@
 //
 // Note: Run after inlines so the conformance section has an id and NormativeReferences is available.
 
-import html from "hyperhtml";
+import { hyperHTML } from "../core/import-maps.js";
 import { joinAnd } from "../core/utils.js";
 import { pub } from "../core/pubsubhub.js";
 import { renderInlineCitation } from "../core/render-biblio.js";
 import { rfc2119Usage } from "../core/inlines.js";
+
 export const name = "ims/conformance";
 
 /**
@@ -52,14 +53,14 @@ function getNormativeText(conf) {
       );
     const plural = terms.length > 1;
 
-    const content = html`
+    const content = hyperHTML`
     <p>
       As well as sections marked as non-normative, all authoring guidelines, 
       diagrams, examples, and notes in this specification are non-normative. 
       Everything else in this specification is normative.
     </p>
     ${terms.length
-        ? html`
+        ? hyperHTML`
             <p>
               The key word${plural ? "s" : ""} ${[keywords]} in this document
               ${plural ? "are" : "is"} to be interpreted as described in
@@ -81,7 +82,7 @@ function getNormativeText(conf) {
       return content;
     }
 
-    return html`${content}
+    return hyperHTML`${content}
         <p>
             The <a href='#document-set'>Conformance and Certification Guide</a> 
             for this specification may introduce greater normative constraints 
@@ -101,7 +102,7 @@ function getNormativeText(conf) {
       pub("warn", "No mainSpecBiblioKey property found in config')");
     }
 
-    return html`
+    return hyperHTML`
         <p>This document is an informative resource in the Document Set of the 
         ${conf.mainSpecTitle ? conf.mainSpecTitle : ""} specification
         ${conf.mainSpecBiblioKey ? renderInlineCitation(conf.mainSpecBiblioKey) : ""}.
