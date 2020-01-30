@@ -2,7 +2,7 @@
 export const name = "ims/post-markdown";
 
 /**
- * Post processing of markdown transcludes. Run after markkdown.
+ * Post processing of markdown transcludes. Run after markdown.
  *
  * @param {*} conf respecConfig
  */

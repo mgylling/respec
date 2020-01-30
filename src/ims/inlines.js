@@ -31,7 +31,7 @@ function findConformanceSection(parent) {
       const title = header.textContent;
       if (
         title.toLowerCase() == "conformance" ||
-        title.toLowerCase() == "conformance statementss"
+        title.toLowerCase() == "conformance statements"
       ) {
         addId(section, null, "conformance");
         return section;

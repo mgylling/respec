@@ -4,94 +4,89 @@ window.addEventListener("error", ev => {
   console.error(ev.error, ev.message, ev);
 });
 
+// Based on w3c-common profile
 const modules = [
   // order is significant
   import("../src/core/base-runner.js"),
   import("../src/core/ui.js"),
   import("../src/core/jquery-enhanced.js"),
-  import("../src/core/reindent.js"),
   import("../src/core/location-hash.js"),
   import("../src/core/l10n.js"),
-  // Similar to ims/compute and not used by IMS specs
   import("../src/w3c/defaults.js"),
   import("../src/core/style.js"),
-  // Replaced by ims/style
-  // import("../src/w3c/style.js"),
   import("../src/ims/style.js"),
+  // Check configuration
   import("../src/ims/config.js"),
+  // Compute common values
   import("../src/ims/compute.js"),
+  // Process transcludes
   import("../src/ims/transclude.js"),
   import("../src/w3c/l10n.js"),
-  // Adds GitHub links to front matter (not used by IMS specs)
-  // import("../src/core/github.js"),
   import("../src/core/data-include.js"),
   import("../src/core/markdown.js"),
-  // New order: run id-headers after markdown and before post-markdown
+  import("../src/core/reindent.js"),
+  // Make sure markdown abstract has an id
   import("../src/core/id-headers.js"),
-  // Run after id-headers so abstract is identified
-  import("../src/ims/post-markdown.js"),
-  // W3C frontmatter is not used by IMS
-  // import("../src/w3c/headers.js"),
-  // Replaced by ims/abstract
-  // import("../src/w3c/abstract.js"),
+  // Check for abstract
   import("../src/ims/abstract.js"),
+  // Add introductory class to abstract
+  import("../src/ims/post-markdown.js"),
   import("../src/core/data-transform.js"),
   import("../src/core/data-abbr.js"),
-  // Add ims/inlines
+  // Make sure markdown conformance section has an id
   import("../src/ims/inlines.js"),
   import("../src/core/inlines.js"),
-  // Replaced by ims/conformance
-  // import("../src/w3c/conformance.js"),
   import("../src/ims/conformance.js"),
-  import("../src/ims/biblio.js"),
   import("../src/core/dfn.js"),
   import("../src/core/pluralize.js"),
   import("../src/core/examples.js"),
-  // Replaced by ims/admonitions
-  // import("../src/core/issues-notes.js"),
-  import("../src/ims/admonitions.js"),
-  // Removed.js)",
-  // import("../src/core/requirements.js"),
+  import("../src/ims/issues-notes.js"),
   import("../src/core/best-practices.js"),
   import("../src/core/figures.js"),
   import("../src/core/webidl.js"),
   import("../src/core/data-cite.js"),
+  // Import IMS biblio
+  import("../src/ims/biblio.js"),
   import("../src/core/biblio.js"),
   import("../src/core/webidl-index.js"),
   import("../src/core/link-to-dfn.js"),
   import("../src/core/render-biblio.js"),
-  // Replaced by ims/contrib
-  // import("../src/core/contrib.js"),
-  import("../src/ims/contributors.js"),
+  import("../src/ims/contrib.js"),
   import("../src/core/fix-headers.js"),
   import("../src/core/structure.js"),
   import("../src/core/informative.js"),
-  // Moved id-headers up in order
-  // import("../src/core/id-headers.js"),
+  import("../src/core/id-headers.js"),
   import("../src/core/caniuse.js"),
+  import("../src/core/mdn-annotation.js"),
   import("../src/ui/save-html.js"),
   import("../src/ui/search-specref.js"),
+  import("../src/ui/search-xref.js"),
   import("../src/ui/dfn-list.js"),
   import("../src/ui/about-respec.js"),
   import("../src/core/seo.js"),
-  // Replaced by ims/seo
-  // import("../src/w3c/seo.js"),
   import("../src/ims/seo.js"),
   import("../src/core/highlight.js"),
   import("../src/core/webidl-clipboard.js"),
-  // Testing disabled in this profile
-  // import("../src/core/data-tests.js"),
+  import("../src/core/data-tests.js"),
   import("../src/core/list-sorter.js"),
   import("../src/core/highlight-vars.js"),
+  import("../src/core/dfn-panel.js"),
+  import("../src/core/data-type.js"),
   import("../src/core/algorithms.js"),
+  import("../src/core/anchor-expander.js"),
+  import("../src/core/custom-elements/index.js"),
+  // Add IMS boilerplate content
   import("../src/ims/boilerplate.js"),
+  // Clean up the document
   import("../src/ims/cleanBody.js"),
+  // Add title attributes to internal definition references
   import("../src/ims/title-attrs.js"),
+  // Insert IMS stylesheet
   import("../src/ims/scripts.js"),
   // Not working...disable until fixed
   // import("../src/ims/tooltips.js"),
+  // Remove all comment nodes
   import("../src/ims/comments.js"),
-  import("../src/core/anchor-expander.js"),
   /* Linter must be the last thing to run */
   import("../src/core/linter.js"),
 ];

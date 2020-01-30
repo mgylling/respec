@@ -2,7 +2,7 @@
 
 import { toHTMLNode } from "../ims/utils.js";
 
-export const name = "ims/contributors";
+export const name = "ims/contrib";
 
 export async function run(conf) {
   if (!conf.contributors) return;

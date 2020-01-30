@@ -1,9 +1,9 @@
 // @ts-check
 import { addId } from "../core/utils.js";
 import { pub } from "../core/pubsubhub.js";
-import { toHTMLElement } from "../ims/utils.js";
+import { toHTMLElement } from "./utils.js";
 
-export const name = "ims/admonitions";
+export const name = "ims/issues-notes";
 
 /**
  * Handles admonitions, adding a top bar and a11y attrs
