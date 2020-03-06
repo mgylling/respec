@@ -20,7 +20,7 @@ export async function run(conf) {
         ${useRoles ? `<th>Role</th>` : ``}
       </thead>
       <tbody>
-          ${personsToTableRows(conf.contributors)}
+          ${personsToTableRows(conf.contributors, useRoles)}
       </tbody>
     </table>
     </section>`);
@@ -28,7 +28,7 @@ export async function run(conf) {
   }
 }
 
-function personsToTableRows(arr) {
+function personsToTableRows(arr, useRoles) {
   // use incoming sort
   let ret = "";
   arr.forEach(entry => {
@@ -36,9 +36,11 @@ function personsToTableRows(arr) {
     ret += "<td class='co'>";
     if (entry.company) ret += entry.company;
     ret += "</td>";
-    ret += "<td class='role'>";
-    if (entry.role) ret += entry.role;
-    ret += "</td>";
+    if (useRoles) {
+      ret += "<td class='role'>";
+      if (entry.role) ret += entry.role;
+      ret += "</td>";
+    }
     ret += "</tr>";
   });
   return ret;
