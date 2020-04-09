@@ -114,7 +114,7 @@ function getInformativeText(conf) {
         }.
         As such, it does not include any normative requirements. Occurrences in this 
         document of terms such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no 
-        impact on the conformance critera for implementors of this specification.
+        impact on the conformance criteria for implementors of this specification.
         </p>`;
 }
 
