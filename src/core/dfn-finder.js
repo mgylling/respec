@@ -182,10 +182,7 @@ export function decorateDfn(dfnElem, idlAst, parent, name) {
   if (!dfnElem.id) {
     const lCaseParent = parent.toLowerCase();
     const middle = lCaseParent ? `${lCaseParent}-` : "";
-    let last = name
-      .toLowerCase()
-      .replace(/[()]/g, "")
-      .replace(/\s/g, "-");
+    let last = name.toLowerCase().replace(/[()]/g, "").replace(/\s/g, "-");
     if (last === "") last = "the-empty-string";
     dfnElem.id = `dom-${middle}${last}`;
   }
@@ -238,6 +235,9 @@ function getDfns(name, parent, originalName, type) {
   // Definitions that have a name and [data-dfn-for] that exactly match the
   // IDL entity:
   const dfns = dfnForArray.filter(dfn => {
+    // This is explicitly marked as a concept, so we can't use it
+    if (dfn.dataset.dfnType === "dfn") return false;
+
     /** @type {HTMLElement} */
     const closestDfnFor = dfn.closest(`[data-dfn-for]`);
     return closestDfnFor && closestDfnFor.dataset.dfnFor === parent;

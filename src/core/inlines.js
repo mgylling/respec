@@ -15,7 +15,7 @@ import {
   showInlineError,
   showInlineWarning,
 } from "./utils.js";
-import { hyperHTML } from "./import-maps.js";
+import { html } from "./import-maps.js";
 import { idlStringToHtml } from "./inline-idl-parser.js";
 import { renderInlineCitation } from "./render-biblio.js";
 
@@ -64,7 +64,7 @@ const l10n = getIntlData(localizationStrings);
 const inlineCodeRegExp = /(?:`[^`]+`)(?!`)/; // `code`
 const inlineIdlReference = /(?:{{[^}]+}})/; // {{ WebIDLThing }}
 const inlineVariable = /\B\|\w[\w\s]*(?:\s*:[\w\s&;<>]+)?\|\B/; // |var : Type|
-const inlineCitation = /(?:\[\[(?:!|\\|\?)?[A-Za-z0-9.-]+\]\])/; // [[citation]]
+const inlineCitation = /(?:\[\[(?:!|\\|\?)?[\w.-]+(?:|[^\]]+)?\]\])/; // [[citation]]
 const inlineExpansion = /(?:\[\[\[(?:!|\\|\?)?#?[\w-.]+\]\]\])/; // [[[expand]]]
 const inlineAnchor = /(?:\[=[^=]+=\])/; // Inline [= For/link =]
 const inlineElement = /(?:\[\^[^^]+\^\])/; // Inline [^element^]
@@ -81,11 +81,12 @@ function inlineElementMatches(matched) {
   const [xrefType, xrefFor, textContent] = attribute
     ? ["element-attr", element, attribute]
     : ["element", null, element];
-  const html = hyperHTML`<code><a
-    data-xref-type="${xrefType}"
-    data-xref-for="${xrefFor}"
-    >${textContent}</a></code>`;
-  return html;
+  const code = html`<code
+    ><a data-xref-type="${xrefType}" data-xref-for="${xrefFor}"
+      >${textContent}</a
+    ></code
+  >`;
+  return code;
 }
 
 /**
@@ -94,7 +95,7 @@ function inlineElementMatches(matched) {
  */
 function inlineRFC2119Matches(matched) {
   const value = norm(matched);
-  const nodeElement = hyperHTML`<em class="rfc2119" title="${value}">${value}</em>`;
+  const nodeElement = html`<em class="rfc2119">${value}</em>`;
   // remember which ones were used
   rfc2119Usage[value] = true;
   return nodeElement;
@@ -108,12 +109,12 @@ function inlineRefMatches(matched) {
   // slices "[[[" at the beginning and "]]]" at the end
   const ref = matched.slice(3, -3).trim();
   if (!ref.startsWith("#")) {
-    return hyperHTML`<a data-cite="${ref}"></a>`;
+    return html`<a data-cite="${ref}"></a>`;
   }
   if (document.querySelector(ref)) {
-    return hyperHTML`<a href="${ref}"></a>`;
+    return html`<a href="${ref}"></a>`;
   }
-  const badReference = hyperHTML`<span>${matched}</span>`;
+  const badReference = html`<span>${matched}</span>`;
   showInlineError(
     badReference, // cite element
     `Wasn't able to expand ${matched} as it didn't match any id in the document.`,
@@ -145,12 +146,15 @@ function inlineBibrefMatches(matched, txt, conf) {
   if (ref.startsWith("\\")) {
     return [`[[${ref.slice(1)}]]`];
   }
-  const { type, illegal } = refTypeFromContext(ref, txt.parentNode);
-  const cite = renderInlineCitation(ref);
-  const cleanRef = ref.replace(/^(!|\?)/, "");
+
+  const [spec, linkText] = ref.split("|").map(norm);
+  const { type, illegal } = refTypeFromContext(spec, txt.parentNode);
+  const cite = renderInlineCitation(spec, linkText);
+  const cleanRef = spec.replace(/^(!|\?)/, "");
   if (illegal && !conf.normativeReferences.has(cleanRef)) {
+    const citeElem = cite.childNodes[1] || cite;
     showInlineWarning(
-      cite.childNodes[1], // cite element
+      citeElem,
       "Normative references in informative sections are not allowed. " +
         `Remove '!' from the start of the reference \`[[${ref}]]\``
     );
@@ -161,7 +165,7 @@ function inlineBibrefMatches(matched, txt, conf) {
   } else {
     conf.normativeReferences.add(cleanRef);
   }
-  return cite.childNodes;
+  return cite.childNodes[1] ? cite.childNodes : [cite];
 }
 
 /**
@@ -172,7 +176,7 @@ function inlineBibrefMatches(matched, txt, conf) {
 function inlineAbbrMatches(matched, txt, abbrMap) {
   return txt.parentElement.tagName === "ABBR"
     ? matched
-    : hyperHTML`<abbr title="${abbrMap.get(matched)}">${matched}</abbr>`;
+    : html`<abbr title="${abbrMap.get(matched)}">${matched}</abbr>`;
 }
 
 /**
@@ -184,7 +188,7 @@ function inlineVariableMatches(matched) {
   // remove "|" at the beginning and at the end, then split at an optional `:`
   const matches = matched.slice(1, -1).split(":", 2);
   const [varName, type] = matches.map(s => s.trim());
-  return hyperHTML`<var data-type="${type}">${varName}</var>`;
+  return html`<var data-type="${type}">${varName}</var>`;
 }
 
 /**
@@ -196,19 +200,25 @@ function inlineVariableMatches(matched) {
  */
 function inlineAnchorMatches(matched) {
   matched = matched.slice(2, -2); // Chop [= =]
-  const parts = matched.split("/", 2).map(s => s.trim());
+  const parts = splitBySlash(matched, 2);
   const [isFor, content] = parts.length === 2 ? parts : [null, parts[0]];
   const [linkingText, text] = content.includes("|")
     ? content.split("|", 2).map(s => s.trim())
     : [null, content];
   const processedContent = processInlineContent(text);
   const forContext = isFor ? norm(isFor) : null;
-  return hyperHTML`<a data-link-for="${forContext}" data-xref-for="${forContext}" data-lt="${linkingText}">${processedContent}</a>`;
+  return html`<a
+    data-link-type="dfn"
+    data-link-for="${forContext}"
+    data-xref-for="${forContext}"
+    data-lt="${linkingText}"
+    >${processedContent}</a
+  >`;
 }
 
 function inlineCodeMatches(matched) {
   const clean = matched.slice(1, -1); // Chop ` and `
-  return hyperHTML`<code>${clean}</code>`;
+  return html`<code>${clean}</code>`;
 }
 
 function processInlineContent(text) {
@@ -309,4 +319,18 @@ export function run(conf) {
     }
     txt.replaceWith(df);
   }
+}
+
+/**
+ * Split a string by slash (`/`) unless it's escaped by a backslash (`\`)
+ * @param {string} str
+ *
+ * TODO: Use negative lookbehind (`str.split(/(?<!\\)\//)`) when supported.
+ * https://github.com/w3c/respec/issues/2869
+ */
+function splitBySlash(str, limit = Infinity) {
+  return str
+    .replace("\\/", "%%")
+    .split("/", limit)
+    .map(s => s && s.trim().replace("%%", "/"));
 }

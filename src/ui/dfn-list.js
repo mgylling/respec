@@ -3,7 +3,7 @@
 // Displays all definitions with links to the defining element.
 import { definitionMap } from "../core/dfn-map.js";
 import { getIntlData } from "../core/utils.js";
-import { hyperHTML } from "../core/import-maps.js";
+import { html } from "../core/import-maps.js";
 import { ui } from "../core/ui.js";
 
 const localizationStrings = {
@@ -23,6 +23,10 @@ const localizationStrings = {
     definition_list: "Definitionen",
     list_of_definitions: "Liste der Definitionen",
   },
+  zh: {
+    definition_list: "定义",
+    list_of_definitions: "文档中的定义",
+  },
 };
 const l10n = getIntlData(localizationStrings);
 
@@ -35,7 +39,7 @@ const button = ui.addCommand(
 
 const ul = document.createElement("ul");
 ul.classList.add("respec-dfn-list");
-const render = hyperHTML.bind(ul);
+const render = html.bind(ul);
 
 ul.addEventListener("click", ev => {
   if (ev.target instanceof HTMLElement && ev.target.matches("a")) {
@@ -48,7 +52,7 @@ function show() {
   const definitionLinks = Array.from(definitionMap)
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
     .map(([, [dfn]]) => {
-      return hyperHTML.wire(dfn, ":li>a")`
+      return html.wire(dfn, ":li>a")`
         <li>
           <a href="${`#${dfn.id}`}">
             ${dfn.textContent}
@@ -68,7 +72,7 @@ function show() {
 function labelDfnIfExported(dfn) {
   const isExported = dfn.hasAttribute("data-export");
   if (isExported) {
-    return hyperHTML`<span class="dfn-status exported">exported</span>`;
+    return html`<span class="dfn-status exported">exported</span>`;
   }
   return null;
 }
@@ -78,9 +82,12 @@ function labelDfnIfExported(dfn) {
  * @param {HTMLElement} dfn a definition
  */
 function labelDfnIfUnused(dfn) {
-  const isUsed = document.querySelector(`a[href^="#${dfn.id}"]`);
+  // find an <a> that is not inside a `.dfn-panel` and references this <dfn>
+  const isUsed = document.querySelector(
+    `:not(.dfn-panel) > :not(li) > a[href^="#${dfn.id}"]`
+  );
   if (!isUsed) {
-    return hyperHTML`<span class="dfn-status unused">unused</span>`;
+    return html`<span class="dfn-status unused">unused</span>`;
   }
   return null;
 }

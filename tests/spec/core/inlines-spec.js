@@ -32,11 +32,11 @@ describe("Core - Inlines", () => {
     ]);
 
     const inform = [...doc.querySelectorAll("#informative-references dt")];
-    expect(inform.length).toBe(2);
+    expect(inform).toHaveSize(2);
     expect(inform.map(el => el.textContent)).toEqual(["[infra]", "[webidl]"]);
 
     const links = [...doc.querySelectorAll("section cite a")];
-    expect(links.length).toBe(8);
+    expect(links).toHaveSize(8);
     expect(links[0].textContent).toBe("RFC2119");
     expect(links[0].getAttribute("href")).toBe("#bib-rfc2119");
     expect(links[0].dataset.linkType).toBe("biblio");
@@ -58,6 +58,26 @@ describe("Core - Inlines", () => {
     );
   });
 
+  it("processes inline cite content with aliasing", async () => {
+    const body = `
+      <section id="test" class="normative">
+        <p>[[html|not JSX]]</p>
+      </section>
+    `;
+    const ops = makeStandardOps({}, body);
+    const doc = await makeRSDoc(ops);
+
+    const norm = [...doc.querySelectorAll("#normative-references dt")];
+    expect(norm.map(el => el.textContent)).toEqual(["[html]"]);
+
+    const ref = doc.querySelector("#test p");
+    const link = doc.querySelector("#test cite a");
+    expect(ref.textContent).toBe("not JSX");
+    expect(ref.textContent).toBe(link.textContent);
+    expect(link.getAttribute("href")).toBe("#bib-html");
+    expect(link.dataset.linkType).toBe("biblio");
+  });
+
   it("processes abbr and rfc2119 content", async () => {
     const body = `
       <section id='inlines'>
@@ -70,11 +90,11 @@ describe("Core - Inlines", () => {
     const inl = doc.getElementById("inlines");
 
     const abbr = inl.querySelectorAll("abbr[title='ABBR-TIT']");
-    expect(abbr.length).toBe(2);
+    expect(abbr).toHaveSize(2);
     expect([...abbr].every(({ textContent: t }) => t === "ABBR")).toBeTruthy();
 
     const rfc2119 = [...inl.querySelectorAll("em.rfc2119")];
-    expect(rfc2119.length).toBe(2);
+    expect(rfc2119).toHaveSize(2);
     expect(rfc2119[0].textContent).toBe("MUST");
     expect(rfc2119[1].textContent).toBe("NOT RECOMMENDED");
   });
@@ -179,11 +199,11 @@ describe("Core - Inlines", () => {
     expect(refs[2].textContent).toBe("Fetch Standard");
     expect(refs[3].textContent).toBe("Payment Request API");
     const norm = [...doc.querySelectorAll("#normative-references dt")];
-    expect(norm.length).toBe(2);
+    expect(norm).toHaveSize(2);
     expect(norm.map(el => el.textContent)).toEqual(["[fetch]", "[html]"]);
 
     const inform = [...doc.querySelectorAll("#informative-references dt")];
-    expect(inform.length).toBe(2);
+    expect(inform).toHaveSize(2);
     expect(inform.map(el => el.textContent)).toEqual([
       "[dom]",
       "[payment-request]",
@@ -210,7 +230,7 @@ describe("Core - Inlines", () => {
       </p>`;
     const doc = await makeRSDoc(makeStandardOps(null, body));
     const anchors = doc.querySelectorAll("#output a");
-    expect(anchors.length).toBe(4);
+    expect(anchors).toHaveSize(4);
     const [section, figure, exampleAside, examplePre] = anchors;
     expect(section.textContent).toBe("§\u00A01. section heading");
     expect(section.classList).toContain("sec-ref");
@@ -277,7 +297,7 @@ describe("Core - Inlines", () => {
 
     // multi per line
     const multi = doc.querySelectorAll("#multi code");
-    expect(multi.length).toBe(3);
+    expect(multi).toHaveSize(3);
     expect(multi[0].textContent).toBe("123");
     expect(multi[1].textContent).toBe("undefined");
     expect(multi[2].textContent.endsWith("string")).toBeTruthy();
@@ -363,7 +383,7 @@ describe("Core - Inlines", () => {
     const dfnId = doc.querySelector("#definitions dfn").id;
     const anchors = doc.querySelectorAll("#simple-links a");
     const expectedAnchor = `#${dfnId}`;
-    expect(anchors.length).toBe(3);
+    expect(anchors).toHaveSize(3);
     for (const a of anchors) {
       expect(a.getAttribute("href")).toBe(expectedAnchor);
       expect(a.dataset.linkFor).toBeUndefined();
@@ -398,6 +418,19 @@ describe("Core - Inlines", () => {
     expect(codePoint.hash).toBe("#code-point");
     expect(iterationBreak.textContent).toBe("break out of iteration");
     expect(iterationBreak.hash).toBe("#iteration-break");
+  });
+
+  it("allows escaping `/` in [= concept =] links", async () => {
+    const body = `<section id="test">
+      <dfn>foo/bar</dfn> [= foo\\/bar =]
+      [=multipart\\/form-data encoding algorithm=]
+    </section>`;
+    const ops = makeStandardOps({ xref: ["HTML"] }, body);
+    const doc = await makeRSDoc(ops);
+
+    const [localLink, conceptLink] = doc.querySelectorAll("#test a");
+    expect(localLink.hash).toBe("#dfn-foo-bar");
+    expect(conceptLink.hash).toBe("#multipart/form-data-encoding-algorithm");
   });
 
   it("processes {{ forContext/term }} IDL", async () => {

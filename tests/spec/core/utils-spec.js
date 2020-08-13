@@ -1,7 +1,7 @@
 "use strict";
 
 import * as utils from "../../../src/core/utils.js";
-import { hyperHTML } from "../../../src/core/import-maps.js";
+import { html } from "../../../src/core/import-maps.js";
 
 describe("Core - Utils", () => {
   describe("fetchAndCache", () => {
@@ -22,9 +22,9 @@ describe("Core - Utils", () => {
         expect(cache).toBeTruthy();
         const cachedResponse = await cache.match(url);
         expect(cachedResponse).toBeTruthy();
-        const expires = new Date(
-          cachedResponse.headers.get("Expires")
-        ).valueOf();
+        const expiresHeader = cachedResponse.headers.get("Expires");
+        expect(expiresHeader).toBe(new Date(expiresHeader).toISOString());
+        const expires = new Date(expiresHeader).valueOf();
         expect(expires).toBeGreaterThan(Date.now());
         // default is 86400000, but we give a little leeway (~1 day)
         expect(expires).toBeGreaterThan(Date.now() + 86000000);
@@ -228,13 +228,13 @@ describe("Core - Utils", () => {
   describe("linkCSS", () => {
     it("adds a link element", () => {
       utils.linkCSS(document, "BOGUS");
-      expect(document.querySelectorAll("link[href='BOGUS']").length).toBe(1);
+      expect(document.querySelectorAll("link[href='BOGUS']")).toHaveSize(1);
       document.querySelector("link[href='BOGUS']").remove();
     });
 
     it("adds several link elements", () => {
       utils.linkCSS(document, ["BOGUS", "BOGUS", "BOGUS"]);
-      expect(document.querySelectorAll("link[href='BOGUS']").length).toBe(3);
+      expect(document.querySelectorAll("link[href='BOGUS']")).toHaveSize(3);
       document
         .querySelectorAll("link[href='BOGUS']")
         .forEach(element => element.remove());
@@ -313,7 +313,7 @@ describe("Core - Utils", () => {
       const intl = getIntlData(localizationStrings, "ko");
       expect(intl.foo).toBe("KO Foo");
 
-      const intlEn = getIntlData(localizationStrings, "en");
+      const intlEn = getIntlData(localizationStrings, "EN");
       expect(intlEn.foo).toBe("EN Foo");
     });
 
@@ -391,91 +391,43 @@ describe("Core - Utils", () => {
     expect(utils.toKeyValuePairs(obj, " % ", "^")).toBe(expected);
   });
 
-  describe("flatten()", () => {
-    it("flattens arrays", () => {
-      expect(utils.flatten(["pass"], [123, 456])).toEqual(["pass", 123, 456]);
-      const map = new Map([
-        ["key-fail", "pass"],
-        ["anotherKey", 123],
-      ]);
-      expect(utils.flatten([], map)).toEqual([map]);
-      const set = new Set(["pass", 123]);
-      expect(utils.flatten([], set)).toEqual([set]);
-      const object = { "key-fail": "pass", other: 123 };
-      expect(utils.flatten([], object)).toEqual([object]);
-    });
-
-    it("flattens nested arrays as a reducer", () => {
-      const input = [
-        new Map([["fail", "123"]]),
-        new Set([456]),
-        [7, [8, [new Set([9, 10])]]],
-        { key: "11" },
-      ];
-      const output = input.reduce(utils.flatten, ["first", 0]);
-      expect(output).toEqual([
-        "first",
-        0,
-        input[0],
-        input[1],
-        7,
-        8,
-        input[2][1][1][0],
-        input[3],
-      ]);
-    });
-
-    it("flattens sparse and arrays", () => {
-      const input = [, 1, 1, , , , 1, , 1];
-      const output = input.reduce(utils.flatten, ["pass"]);
-      expect(output).toEqual(["pass", 1, 1, 1, 1]);
-    });
-
-    it("flattens dense and arrays", () => {
-      const input = new Array(10);
-      const output = input.reduce(utils.flatten, ["pass"]);
-      expect(output).toEqual(["pass"]);
-    });
-  });
-
   describe("htmlJoinAnd", () => {
     it("joins with proper commas and 'and'", () => {
       const div = document.createElement("div");
-      const render = hyperHTML.bind(div);
+      const render = html.bind(div);
 
-      render`${utils.htmlJoinAnd([], item => hyperHTML`<a>${item}</a>`)}`;
+      render`${utils.htmlJoinAnd([], item => html`<a>${item}</a>`)}`;
       expect(div.textContent).toBe("");
-      expect(div.getElementsByTagName("a").length).toBe(0);
+      expect(div.getElementsByTagName("a")).toHaveSize(0);
 
-      render`${utils.htmlJoinAnd(["<x>"], item => hyperHTML`<a>${item}</a>`)}`;
+      render`${utils.htmlJoinAnd(["<x>"], item => html`<a>${item}</a>`)}`;
       expect(div.textContent).toBe("<x>");
-      expect(div.getElementsByTagName("a").length).toBe(1);
+      expect(div.getElementsByTagName("a")).toHaveSize(1);
 
       render`${utils.htmlJoinAnd(
         ["<x>", "<x>"],
-        item => hyperHTML`<a>${item}</a>`
+        item => html`<a>${item}</a>`
       )}`;
       expect(div.textContent).toBe("<x> and <x>");
-      expect(div.getElementsByTagName("a").length).toBe(2);
+      expect(div.getElementsByTagName("a")).toHaveSize(2);
 
       render`${utils.htmlJoinAnd(
         ["<x>", "<x>", "<x>"],
-        item => hyperHTML`<a>${item}</a>`
+        item => html`<a>${item}</a>`
       )}`;
       expect(div.textContent).toBe("<x>, <x>, and <x>");
-      expect(div.getElementsByTagName("a").length).toBe(3);
+      expect(div.getElementsByTagName("a")).toHaveSize(3);
 
       render`${utils.htmlJoinAnd(
         ["<x>", "<x>", "<X>", "<x>"],
-        item => hyperHTML`<a>${item}</a>`
+        item => html`<a>${item}</a>`
       )}`;
       expect(div.textContent).toBe("<x>, <x>, <X>, and <x>");
-      expect(div.getElementsByTagName("a").length).toBe(4);
+      expect(div.getElementsByTagName("a")).toHaveSize(4);
     });
   });
 
   describe("DOM utils", () => {
-    // migrated from core/jquery-enhanced
     describe("getTextNodes", () => {
       it("finds all the text nodes", () => {
         const node = document.createElement("div");
@@ -483,7 +435,7 @@ describe("Core - Utils", () => {
           "<div>aa<span>bb<div class='exclude'>ignore me</div></span><p>cc<i>dd</i></p><pre>nope</pre></div>";
 
         const textNodes = utils.getTextNodes(node, ["pre", ".exclude"]);
-        expect(textNodes.length).toBe(4);
+        expect(textNodes).toHaveSize(4);
         const str = textNodes.map(tn => tn.nodeValue).join("");
         expect(str).toBe("aabbccdd");
       });
@@ -493,7 +445,7 @@ describe("Core - Utils", () => {
           " <exclude> </exclude> <exclude>\t \n</exclude>include me";
 
         const textNodes = utils.getTextNodes(node, [], "");
-        expect(textNodes.length).toBe(1);
+        expect(textNodes).toHaveSize(1);
         expect(textNodes[0].nodeValue).toBe("include me");
       });
     });
@@ -636,6 +588,17 @@ describe("Core - Utils", () => {
         expect(utils.getDfnTitles(dfn)[0]).toBe("TEXT");
 
         dfn.remove();
+      });
+    });
+
+    describe("getElementIndentation", () => {
+      it("should return the indentation of the given element", () => {
+        const fragment = document.createRange().createContextualFragment(`
+          <a>My link</a>
+        `);
+        const [anchor] = fragment.children;
+
+        expect(utils.getElementIndentation(anchor)).toBe("          ");
       });
     });
   });
