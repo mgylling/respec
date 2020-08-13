@@ -9,7 +9,6 @@ const modules = [
   // order is significant
   import("../src/core/base-runner.js"),
   import("../src/core/ui.js"),
-  import("../src/core/jquery-enhanced.js"),
   import("../src/core/location-hash.js"),
   import("../src/core/l10n.js"),
   import("../src/w3c/defaults.js"),
@@ -22,11 +21,17 @@ const modules = [
   // Process transcludes
   import("../src/ims/transclude.js"),
   import("../src/w3c/l10n.js"),
+  // Don't use github
+  // import("../src/core/github.js"),
   import("../src/core/data-include.js"),
   import("../src/core/markdown.js"),
   import("../src/core/reindent.js"),
   // Make sure markdown abstract has an id
   import("../src/core/id-headers.js"),
+  import("../src/core/title.js"),
+  import("../src/w3c/level.js"),
+  import("../src/w3c/group.js"),
+  import("../src/w3c/headers.js"),
   // Check for abstract
   import("../src/ims/abstract.js"),
   // Add introductory class to abstract
@@ -44,13 +49,15 @@ const modules = [
   import("../src/core/best-practices.js"),
   import("../src/core/figures.js"),
   import("../src/core/webidl.js"),
-  import("../src/core/data-cite.js"),
   // Import IMS biblio
   import("../src/ims/biblio.js"),
   import("../src/core/biblio.js"),
-  import("../src/core/webidl-index.js"),
   import("../src/core/link-to-dfn.js"),
+  import("../src/core/xref.js"),
+  import("../src/core/data-cite.js"),
+  import("../src/core/webidl-index.js"),
   import("../src/core/render-biblio.js"),
+  import("../src/core/dfn-index.js"),
   import("../src/ims/contrib.js"),
   import("../src/core/fix-headers.js"),
   import("../src/core/structure.js"),
@@ -87,8 +94,9 @@ const modules = [
   // import("../src/ims/tooltips.js"),
   // Remove all comment nodes
   import("../src/ims/comments.js"),
-  /* Linter must be the last thing to run */
+  /* Linters must be the last thing to run */
   import("../src/core/linter.js"),
+  import("../src/core/a11y.js"),
 ];
 
 async function domReady() {
