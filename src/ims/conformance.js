@@ -8,7 +8,7 @@
 //
 // Note: Run after inlines so the conformance section has an id and NormativeReferences is available.
 
-import { hyperHTML } from "../core/import-maps.js";
+import { html } from "../core/import-maps.js";
 import { joinAnd } from "../core/utils.js";
 import { pub } from "../core/pubsubhub.js";
 import { renderInlineCitation } from "../core/render-biblio.js";
@@ -53,30 +53,27 @@ function getNormativeText(conf) {
   );
   const plural = terms.length > 1;
 
-  const content = hyperHTML`
-    <p>
-      As well as sections marked as non-normative, all authoring guidelines, 
-      diagrams, examples, and notes in this specification are non-normative. 
+  const content = html`<p>
+      As well as sections marked as non-normative, all authoring guidelines,
+      diagrams, examples, and notes in this specification are non-normative.
       Everything else in this specification is normative.
     </p>
-    ${
-      terms.length
-        ? hyperHTML`
-            <p>
-              The key word${plural ? "s" : ""} ${[keywords]} in this document
-              ${plural ? "are" : "is"} to be interpreted as described in
-              ${renderInlineCitation("RFC2119")}.
-            </p>
-          `
-        : null
-    }
+    ${terms.length
+      ? html`
+          <p>
+            The key word${plural ? "s" : ""} ${[keywords]} in this document
+            ${plural ? "are" : "is"} to be interpreted as described in
+            ${renderInlineCitation("RFC2119")}.
+          </p>
+        `
+      : null}
     <p>
-      An implementation of this specification that fails to implement a 
-      MUST/REQUIRED/SHALL requirement or fails to abide by a MUST NOT/SHALL NOT 
-      prohibition is considered nonconformant. SHOULD/SHOULD NOT/RECOMMENDED 
-      statements constitute a best practice. Ignoring a best practice does not 
-      violate conformance but a decision to disregard such guidance should be 
-      carefully considered. MAY/OPTIONAL statements indicate that implementers 
+      An implementation of this specification that fails to implement a
+      MUST/REQUIRED/SHALL requirement or fails to abide by a MUST NOT/SHALL NOT
+      prohibition is considered nonconformant. SHOULD/SHOULD NOT/RECOMMENDED
+      statements constitute a best practice. Ignoring a best practice does not
+      violate conformance but a decision to disregard such guidance should be
+      carefully considered. MAY/OPTIONAL statements indicate that implementers
       are entirely free to choose whether or not to implement the option.
     </p>`;
 
@@ -84,12 +81,12 @@ function getNormativeText(conf) {
     return content;
   }
 
-  return hyperHTML`${content}
-        <p>
-            The <a href='#document-set'>Conformance and Certification Guide</a> 
-            for this specification may introduce greater normative constraints 
-            than those defined here for specific service or implementation categories.
-        </p>`;
+  return html`${content}
+    <p>
+      The <a href="#document-set">Conformance and Certification Guide</a>
+      for this specification may introduce greater normative constraints than
+      those defined here for specific service or implementation categories.
+    </p>`;
 }
 
 /**
@@ -104,18 +101,16 @@ function getInformativeText(conf) {
     pub("warn", "No mainSpecBiblioKey property found in config')");
   }
 
-  return hyperHTML`
-        <p>This document is an informative resource in the Document Set of the 
-        ${conf.mainSpecTitle ? conf.mainSpecTitle : ""} specification
-        ${
-          conf.mainSpecBiblioKey
-            ? renderInlineCitation(conf.mainSpecBiblioKey)
-            : ""
-        }.
-        As such, it does not include any normative requirements. Occurrences in this 
-        document of terms such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no 
-        impact on the conformance criteria for implementors of this specification.
-        </p>`;
+  return html` <p>
+    This document is an informative resource in the Document Set of the
+    ${conf.mainSpecTitle ? conf.mainSpecTitle : ""} specification
+    ${conf.mainSpecBiblioKey
+      ? renderInlineCitation(conf.mainSpecBiblioKey)
+      : ""}.
+    As such, it does not include any normative requirements. Occurrences in this
+    document of terms such as MAY, MUST, MUST NOT, SHOULD or RECOMMENDED have no
+    impact on the conformance criteria for implementors of this specification.
+  </p>`;
 }
 
 /**

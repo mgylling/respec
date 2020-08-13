@@ -4,7 +4,7 @@
  * Add IMS boilerplate front matter to the document.
  */
 
-import { hyperHTML } from "../core/import-maps.js";
+import { html } from "../core/import-maps.js";
 
 export const name = "ims/boilerplate";
 
@@ -48,29 +48,37 @@ export async function run(conf) {
   const headerTop = document.createElement("div");
   headerTop.setAttribute("class", "header-top");
 
-  const hd = hyperHTML`<h1 class='title' id='title'>${conf.specTitle}</h1>`;
+  const hd = html`<h1 class="title" id="title">${conf.specTitle}</h1>`;
   headerTop.appendChild(hd);
 
   const imgURL =
     "https://www.imsglobal.org/sites/default/files/IMSglobalreg2_2.png";
-  const logo = hyperHTML`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
+  const logo = html`<a href='https://www.imsglobal.org' id='ims-logo'><img src='${imgURL}' alt='IMS logo'></img></a>`;
   headerTop.appendChild(logo);
 
   header.appendChild(headerTop);
 
   if (conf.specType !== "doc") {
-    const release = hyperHTML`<div class='subtitle'>${conf.specStatus}<br/>Version ${conf.specVersion}</div>`;
+    const release = html`<div class="subtitle">
+      ${conf.specStatus}<br />Version ${conf.specVersion}
+    </div>`;
     header.appendChild(release);
 
     const statusClass = `statusPD${
       conf.specStatus === "IMS Final Release" ? " final" : ""
     }`;
-    const statusPD = hyperHTML`<span class='${statusClass}' data-content='${conf.specStatus}'>${conf.specStatus}</span>`;
+    const statusPD = html`<span
+      class="${statusClass}"
+      data-content="${conf.specStatus}"
+      >${conf.specStatus}</span
+    >`;
     header.appendChild(statusPD);
   }
 
-  const versionTable = hyperHTML`
-    <table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
+  const versionTable = html`<table
+    id="version-table"
+    title="Version/Release Details"
+    summary="Details about the version and release."
       <tbody>
         <tr>
           <td>Date Issued:</td>
@@ -86,15 +94,14 @@ export async function run(conf) {
         </tr>
         ${
           conf.specNature === "normative"
-            ? hyperHTML`
-        <tr>
-          <td>Latest version:</td>
-          <td><a href='${conf.latestURI}'>${conf.latestURI}</a></td>
-        </tr>
-        <tr>
-          <td>Errata:</td>
-          <td><a href='${conf.errataURL}'>${conf.errataURL}</a></td>
-        </tr>`
+            ? html` <tr>
+                  <td>Latest version:</td>
+                  <td><a href="${conf.latestURI}">${conf.latestURI}</a></td>
+                </tr>
+                <tr>
+                  <td>Errata:</td>
+                  <td><a href="${conf.errataURL}">${conf.errataURL}</a></td>
+                </tr>`
             : null
         }
       </tbody>
@@ -103,47 +110,55 @@ export async function run(conf) {
   if (conf.specType !== "doc") {
     header.appendChild(versionTable);
   } else {
-    const genericDocTable = hyperHTML`
-      <table id='version-table' title='Version/Release Details' summary='Details about the version and release.'>
-        <tbody>
-          <tr>
-            <td>Date Issued:</td>
-            <td>${conf.specDate}</td>
-          </tr>
-          <tr>
-            <td>Status:</td>
-            <td>${getStatusString(conf)}</td>
-          </tr>
-        </tbody>  
-      </table>`;
+    const genericDocTable = html` <table
+      id="version-table"
+      title="Version/Release Details"
+      summary="Details about the version and release."
+    >
+      <tbody>
+        <tr>
+          <td>Date Issued:</td>
+          <td>${conf.specDate}</td>
+        </tr>
+        <tr>
+          <td>Status:</td>
+          <td>${getStatusString(conf)}</td>
+        </tr>
+      </tbody>
+    </table>`;
     header.appendChild(genericDocTable);
   }
 
-  const ipr = hyperHTML`
-    <div id="ipr">
-      <h2>IPR and Distribution Notice</h2>
-      <p>
-        Recipients of this document are requested to submit, with their comments, notification of any 
-        relevant patent claims or other intellectual property rights of which they may be aware that 
-        might be infringed by any implementation of the specification set forth in this document, and 
-        to provide supporting documentation.
-      </p>
-      <p>
-        IMS takes no position regarding the validity or scope of any intellectual property or other 
-        rights that might be claimed to pertain to the implementation or use of the technology
-        described in this document or the extent to which any license under such rights might or might 
-        not be available; neither does it represent that it has made any effort to identify any such 
-        rights. Information on IMS's procedures with respect to rights in IMS specifications can be 
-        found at the IMS Intellectual Property Rights web page: 
-        <a href="http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf">
-        http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf</a>.
-      </p>
-    </div>`;
+  const ipr = html`<div id="ipr">
+    <h2>IPR and Distribution Notice</h2>
+    <p>
+      Recipients of this document are requested to submit, with their comments,
+      notification of any relevant patent claims or other intellectual property
+      rights of which they may be aware that might be infringed by any
+      implementation of the specification set forth in this document, and to
+      provide supporting documentation.
+    </p>
+    <p>
+      IMS takes no position regarding the validity or scope of any intellectual
+      property or other rights that might be claimed to pertain to the
+      implementation or use of the technology described in this document or the
+      extent to which any license under such rights might or might not be
+      available; neither does it represent that it has made any effort to
+      identify any such rights. Information on IMS's procedures with respect to
+      rights in IMS specifications can be found at the IMS Intellectual Property
+      Rights web page:
+      <a href="http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf">
+        http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf</a
+      >.
+    </p>
+  </div>`;
   header.appendChild(ipr);
 
   if (conf.iprs) {
-    header.appendChild(hyperHTML`<p>The following participating organizations have made explicit license
-      commitments to this specification:</p>`);
+    header.appendChild(html`<p>
+      The following participating organizations have made explicit license
+      commitments to this specification:
+    </p>`);
     let iprTable = `<table>
       <thead>
         <tr>
@@ -168,41 +183,54 @@ export async function run(conf) {
     header.appendChild(iprTableElement);
   }
 
-  const disclosure = hyperHTML`
-    <div id="disclosure">
-      <p>
-        Use of this specification to develop products or services is governed by the license with IMS 
-        found on the IMS website: <a href="http://www.imsglobal.org/speclicense.html">
-        http://www.imsglobal.org/speclicense.html</a>.
-      </p>
-      <p>
-        Permission is granted to all parties to use excerpts from this document as needed in producing 
-        requests for proposals.
-      </p>
-      <p>
-        The limited permissions granted above are perpetual and will not be revoked by IMS or its 
-        successors or assigns.
-      </p>
-      <p>
-        THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY 
-        WARRANTY OF NONINFRINGEMENT IS EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE 
-        MADE ENTIRELY AT THE IMPLEMENTER'S OWN RISK, AND NEITHER THE CONSORTIUM, NOR ANY OF ITS MEMBERS 
-        OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY 
-        DAMAGES OF ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS 
-        SPECIFICATION.
-      </p>
-      <p>
-        Public contributions, comments and questions can be posted here: 
-        <a href="http://www.imsglobal.org/forums/ims-glc-public-forums-and-resources">
-        http://www.imsglobal.org/forums/ims-glc-public-forums-and-resources</a>.
-      </p>
-    </div>`;
+  const disclosure = html` <div id="disclosure">
+    <p>
+      Use of this specification to develop products or services is governed by
+      the license with IMS found on the IMS website:
+      <a href="http://www.imsglobal.org/speclicense.html">
+        http://www.imsglobal.org/speclicense.html</a
+      >.
+    </p>
+    <p>
+      Permission is granted to all parties to use excerpts from this document as
+      needed in producing requests for proposals.
+    </p>
+    <p>
+      The limited permissions granted above are perpetual and will not be
+      revoked by IMS or its successors or assigns.
+    </p>
+    <p>
+      THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND
+      IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS EXPRESSLY DISCLAIMED.
+      ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTER'S
+      OWN RISK, AND NEITHER THE CONSORTIUM, NOR ANY OF ITS MEMBERS OR
+      SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR
+      THIRD PARTY FOR ANY DAMAGES OF ANY NATURE WHATSOEVER, DIRECTLY OR
+      INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+    </p>
+    <p>
+      Public contributions, comments and questions can be posted here:
+      <a
+        href="http://www.imsglobal.org/forums/ims-glc-public-forums-and-resources"
+      >
+        http://www.imsglobal.org/forums/ims-glc-public-forums-and-resources</a
+      >.
+    </p>
+  </div>`;
   header.appendChild(disclosure);
 
-  const copyright = hyperHTML`<div id="cpr">
-      <p>© ${new Date().getFullYear()} IMS Global Learning Consortium, Inc. All Rights Reserved.</p>
-      <p>Trademark information: <a href="http://www.imsglobal.org/copyright.html">http://www.imsglobal.org/copyright.html</a></p>
-    </div>`;
+  const copyright = html`<div id="cpr">
+    <p>
+      © ${new Date().getFullYear()} IMS Global Learning Consortium, Inc. All
+      Rights Reserved.
+    </p>
+    <p>
+      Trademark information:
+      <a href="http://www.imsglobal.org/copyright.html"
+        >http://www.imsglobal.org/copyright.html</a
+      >
+    </p>
+  </div>`;
 
   header.appendChild(copyright);
 
@@ -214,19 +242,36 @@ export async function run(conf) {
 
   const footer = document.createElement("footer");
 
-  const endWarranty = hyperHTML`<div id="endWarranty">
-    <p>IMS Global Learning Consortium, Inc. ("IMS Global") is publishing the information contained in this document ("Specification") for purposes of scientific, experimental, and scholarly collaboration only.</p>
-    <p>IMS Global makes no warranty or representation regarding the accuracy or completeness of the Specification.</p>
+  const endWarranty = html`<div id="endWarranty">
+    <p>
+      IMS Global Learning Consortium, Inc. ("IMS Global") is publishing the
+      information contained in this document ("Specification") for purposes of
+      scientific, experimental, and scholarly collaboration only.
+    </p>
+    <p>
+      IMS Global makes no warranty or representation regarding the accuracy or
+      completeness of the Specification.
+    </p>
     <p>This material is provided on an "As Is" and "As Available" basis.</p>
-    <p>The Specification is at all times subject to change and revision without notice.</p>
-    <p>It is your sole responsibility to evaluate the usefulness, accuracy, and completeness of the Specification as it relates to you.</p>
+    <p>
+      The Specification is at all times subject to change and revision without
+      notice.
+    </p>
+    <p>
+      It is your sole responsibility to evaluate the usefulness, accuracy, and
+      completeness of the Specification as it relates to you.
+    </p>
     <p>IMS Global would appreciate receiving your comments and suggestions.</p>
-    <p>Please contact IMS Global through our website at http://www.imsglobal.org.</p>
-    <p>Please refer to Document Name: ${conf.specTitle.replace("<br/>", " ")} ${
-    conf.specVersion
-  } </p>
+    <p>
+      Please contact IMS Global through our website at http://www.imsglobal.org.
+    </p>
+    <p>
+      Please refer to Document Name: ${conf.specTitle.replace("<br/>", " ")}
+      ${conf.specVersion}
+    </p>
     <p>Date: ${conf.specDate}</p>
-    <div>`;
+    <div></div>
+  </div>`;
   footer.appendChild(endWarranty);
 
   document.body.appendChild(footer);
