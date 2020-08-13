@@ -10,7 +10,7 @@
 //
 // Note: Run after core/markdown and before core/inlines
 
-import { addId, children } from "../core/utils.js";
+import { addId } from "../core/utils.js";
 
 export const name = "ims/inlines";
 
@@ -20,7 +20,8 @@ export const name = "ims/inlines";
  * @param {Element | HTMLElement} parent
  */
 function findConformanceSection(parent) {
-  const sectionElements = children(parent, "section");
+  /** @type {NodeListOf<HTMLElement>} */
+  const sectionElements = parent.querySelectorAll(":scope > section");
   for (const section of sectionElements) {
     if (!section.children.length) {
       continue;
