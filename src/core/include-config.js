@@ -18,5 +18,5 @@ sub("end-all", () => {
     if (prop in userConfig) delete userConfig[prop];
   }
   script.innerHTML = JSON.stringify(userConfig, null, 2);
-  document.head.appendChild(script);
+  //document.head.appendChild(script);
 });

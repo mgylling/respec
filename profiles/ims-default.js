@@ -28,10 +28,10 @@ const modules = [
   import("../src/core/reindent.js"),
   // Make sure markdown abstract has an id
   import("../src/core/id-headers.js"),
-  import("../src/core/title.js"),
+  //import("../src/core/title.js"), //mod in  qti-fixes
   import("../src/w3c/level.js"),
   import("../src/w3c/group.js"),
-  import("../src/w3c/headers.js"),
+  //import("../src/w3c/headers.js"), //mod in  qti-fixes
   // Check for abstract
   import("../src/ims/abstract.js"),
   // Add introductory class to abstract
@@ -63,7 +63,7 @@ const modules = [
   import("../src/core/structure.js"),
   import("../src/core/informative.js"),
   import("../src/core/id-headers.js"),
-  import("../src/core/caniuse.js"),
+  //import("../src/core/caniuse.js"), //mod in  qti-fixes  
   import("../src/core/mdn-annotation.js"),
   import("../src/ui/save-html.js"),
   import("../src/ui/search-specref.js"),
@@ -72,7 +72,7 @@ const modules = [
   import("../src/ui/about-respec.js"),
   import("../src/core/seo.js"),
   import("../src/ims/seo.js"),
-  import("../src/core/highlight.js"),
+  // import("../src/core/highlight.js"),  //mod in  qti-fixes  
   import("../src/core/webidl-clipboard.js"),
   import("../src/core/data-tests.js"),
   import("../src/core/list-sorter.js"),
@@ -92,6 +92,7 @@ const modules = [
   import("../src/ims/scripts.js"),
   // Not working...disable until fixed
   // import("../src/ims/tooltips.js"),
+  import("../src/ims/highlight-prism.js"),  //mod in  qti-fixes
   // Remove all comment nodes
   import("../src/ims/comments.js"),
   /* Linters must be the last thing to run */

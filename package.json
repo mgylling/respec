@@ -64,6 +64,7 @@
     "webidl2": "^23.12.1"
   },
   "scripts": {
+    "build:ims": "node ./tools/builder.js --profile=ims-default",
     "build:geonovum-debug": "npm run build:geonovum -- --debug",
     "build:geonovum": "node ./tools/builder.js --profile=geonovum",
     "build:w3c-debug": "npm run build:w3c -- --debug",
